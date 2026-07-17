@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import { VenetianMask, Zap, HardDriveDownload, Shield } from "lucide-react";
@@ -13,7 +14,11 @@ import { Footer } from "../components/layout/Footer";
 import ChatWindow from "../components/ui/ChatWindow";
 import PersonasGrid from "../components/ui/PersonasGrid";
 
+// Navigation
+import { useRouter } from "next/navigation";
+
 export default function Home() {
+  const router = useRouter();
   return (
     <div className="bg-white">
       <Navbar />
@@ -31,6 +36,7 @@ export default function Home() {
         </p>
         <div className="flex justify-center gap-20 items-center w-full">
           <button
+            onClick={() => router.push("/chat")}
             className={`bg-black text-xl font-semibold text-white py-4 px-14 rounded-xl tracking-tighter hover:bg-neutral-800 ${dmSans.className}`}
           >
             Start Chatting
