@@ -60,3 +60,11 @@ body {
 @keyframes l12 {
   100% { transform: rotate(0.5turn); }
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
+html {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
