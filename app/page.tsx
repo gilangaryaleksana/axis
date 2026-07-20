@@ -28,65 +28,8 @@ export default function Home() {
       <ScrollIndicator />
       <div className="bg-white">
         <Navbar />
-
-        <div className="flex flex-col gap-12 pt-24 justify-center items-center min-h-screen">
-          <h1
-            className={`text-5xl font-bold text-center text-black ${dmSans.className}`}
-          >
-            Meet AI That Actually Has a Personality
-            <div className="w-6xl h-px mx-auto mt-2 bg-linear-to-r from-transparent via-gray-300 to-transparent" />{" "}
-          </h1>
-          <p
-            className={`text-xl text-center text-[#757575] ${dmSans.className}`}
-          >
-            Axis lets you chat with AI personas built to think, respond, and
-            connect — not just answer.
-          </p>
-          <div className="flex justify-center gap-20 items-center w-full">
-            <button
-              onClick={() => router.push("/chat")}
-              className={`bg-black text-xl font-semibold text-white py-4 px-14 rounded-xl tracking-tighter hover:bg-neutral-800 ${dmSans.className}`}
-            >
-              Start Chatting
-            </button>
-            <a href="" className={`text-xl text-[#303030] ${dmSans.className}`}>
-              See How It Works
-            </a>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-12 pt-24 justify-center items-center">
-          <div className="flex flex-col gap-4 justify-center items-center w-full relative">
-            <Image
-              src="/images/banner-hero.jpg"
-              alt="Hero Image"
-              width={833}
-              height={415}
-              className="w-2xl h-85 object-top object-cover rounded-tr-[150px] rounded-tl-[65px] relative z-10"
-            />
-
-            <div className="w-4xl h-92.5 absolute bottom-0 z-0 bg-[#AEAEB2] rounded-b-[160px]"></div>
-
-            <div className="flex flex-col justify-center items-center gap-4 w-5xl relative z-20 pb-12">
-              <h1
-                className={`text-4xl font-semibold text-center text-white ${dmSans.className}`}
-              >
-                Generic chatbots feel... generic.
-              </h1>
-              <p
-                className={`text-xl w-2xl text-center font-extralight text-white ${dmSans.className}`}
-              >
-                Most AI feels the same no matter who you're talking to. Axis
-                gives you personas with distinct personalities, tone, and memory
-                — so every conversation feels like talking to someone, not
-                something
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full flex mt-20 flex-col gap-12 justify-center items-center">
-          <div className="w-7xl mx-auto relative">
+        <div className="w-full flex mt-20 flex-col justify-center items-center">
+          <div className="w-full mx-auto relative">
             <div className="flex flex-col gap-12 pt-24 justify-center items-center min-h-screen">
               <h1
                 className={`text-5xl font-bold text-center text-black ${dmSans.className}`}
@@ -116,7 +59,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col gap-12 pt-24 justify-center items-center">
-              <div className="flex flex-col gap-4 justify-center items-center w-full relative">
+              <div className="flex flex-col gap-4 justify-center items-center w-full relative isolate">
                 <Image
                   src="/images/banner-hero.jpg"
                   alt="Hero Image"
@@ -266,7 +209,7 @@ export default function Home() {
                 <PersonasGrid />
               </div>
 
-              <div className="relative mx-auto flex h-142.75 w-full items-center px-6">
+              <div className="relative flex h-142.75 w-full items-center">
                 <div className="relative z-10 flex w-full flex-col items-center gap-10 pr-0 text-center">
                   <h1
                     className={`text-6xl font-bold leading-tight text-black ${dmSans.className}`}
