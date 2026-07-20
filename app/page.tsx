@@ -45,6 +45,7 @@ export default function Home() {
               </p>
               <div className="flex justify-center gap-20 items-center w-full">
                 <button
+                  onClick={() => router.push("/chat")}
                   className={`bg-black text-xl font-semibold text-white py-4 px-14 rounded-xl tracking-tighter hover:bg-neutral-800 ${dmSans.className}`}
                 >
                   Start Chatting
