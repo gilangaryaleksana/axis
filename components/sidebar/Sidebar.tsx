@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { PanelLeft, Plus } from "lucide-react";
+import { PanelLeft, Plus, Settings } from "lucide-react";
 import { PERSONAS, PersonaKey } from "../persona/personas";
 import PersonaList from "./PersonaList";
 import LatestList from "./LatestList";
@@ -84,11 +84,14 @@ export default function Sidebar({
         </>
       )}
 
-      <div className="flex items-center gap-3 pt-4 mt-auto border-t border-[#444]">
-        <div className="w-[34px] h-[34px] rounded-full bg-[#5a5a56] flex items-center justify-center text-sm font-semibold">
-          {userName.charAt(0).toUpperCase()}
+      <div className="flex items-center justify-between gap-3 pt-4 mt-auto border-t border-[#444]">
+        <div className="flex items-center gap-2">
+          <div className="w-[34px] h-[34px] rounded-full bg-[#5a5a56] flex items-center justify-center text-sm font-semibold">
+            {userName.charAt(0).toUpperCase()}
+          </div>
+          {!collapsed && <span className="text-sm">{userName}</span>}
         </div>
-        {!collapsed && <span className="text-sm">{userName}</span>}
+        <Settings size={18} className="cursor-pointer" />
       </div>
     </aside>
   );
