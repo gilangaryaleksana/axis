@@ -262,7 +262,7 @@ export default function Home() {
                   </Reveal>
                 </div>
 
-                <div className="absolute right-0 top-0 h-125.75 w-35.75 overflow-hidden rounded-tl-[35px] rounded-tr-[250px] rounded-bl-[250px] rounded-br-none md:block hidden">
+                <div className="absolute right-0 bottom-9 h-125.75 w-35.75 overflow-hidden rounded-tl-[35px] rounded-tr-[250px] rounded-bl-[250px] rounded-br-none md:block hidden">
                   <Image
                     src="/images/decoration/cta-laptop.jpg"
                     alt="Person typing on a laptop"
