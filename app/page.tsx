@@ -18,6 +18,9 @@ import ChatWindow from "../components/ui/ChatWindow";
 import PersonasGrid from "../components/ui/PersonasGrid";
 import ScrollIndicator from "../components/ui/ScrollIndicator";
 
+// Animations
+import { Reveal } from "../components/animations/Reveal";
+
 // Navigation
 import { useRouter } from "next/navigation";
 
@@ -31,63 +34,71 @@ export default function Home() {
         <div className="w-full flex mt-20 flex-col justify-center items-center">
           <div className="w-full mx-auto relative">
             <div className="flex flex-col gap-12 justify-center items-center min-h-screen">
-              <h1
-                className={`text-5xl font-bold text-center text-black ${dmSans.className}`}
-              >
-                Meet AI That Actually Has a Personality
-                <div className="w-6xl h-px mx-auto mt-2 bg-linear-to-r from-transparent via-gray-300 to-transparent" />{" "}
-              </h1>
-              <p
-                className={`text-xl text-center text-[#757575] ${dmSans.className}`}
-              >
-                Axis lets you chat with AI personas built to think, respond, and
-                connect — not just answer.
-              </p>
-              <div className="flex justify-center gap-20 items-center w-full">
-                <button
-                  onClick={() => router.push("/chat")}
-                  className={`bg-black text-xl font-semibold text-white py-4 px-14 rounded-xl tracking-tighter hover:bg-neutral-800 ${dmSans.className}`}
+              <Reveal direction="up">
+                <h1
+                  className={`text-5xl font-bold text-center text-black ${dmSans.className}`}
                 >
-                  Start Chatting
-                </button>
-                <a
-                  href=""
-                  className={`text-xl text-[#303030] ${dmSans.className}`}
+                  Meet AI That Actually Has a Personality
+                  <div className="w-6xl h-px mx-auto mt-2 bg-linear-to-r from-transparent via-gray-300 to-transparent" />{" "}
+                </h1>
+              </Reveal>
+              <Reveal direction="up" delay={100}>
+                <p
+                  className={`text-xl text-center text-[#757575] ${dmSans.className}`}
                 >
-                  See How It Works
-                </a>
-              </div>
+                  Axis lets you chat with AI personas built to think, respond,
+                  and connect — not just answer.
+                </p>
+              </Reveal>
+              <Reveal direction="up" delay={200}>
+                <div className="flex justify-center gap-20 items-center w-full">
+                  <button
+                    onClick={() => router.push("/chat")}
+                    className={`bg-black text-xl font-semibold text-white py-4 px-14 rounded-xl tracking-tighter hover:bg-neutral-800 ${dmSans.className}`}
+                  >
+                    Start Chatting
+                  </button>
+                  <a
+                    href=""
+                    className={`text-xl text-[#303030] ${dmSans.className}`}
+                  >
+                    See How It Works
+                  </a>
+                </div>
+              </Reveal>
             </div>
 
-            <div className="flex flex-col gap-12 pt-24 justify-center items-center">
-              <div className="flex flex-col gap-4 justify-center items-center w-full relative isolate">
-                <Image
-                  src="/images/banner-hero.jpg"
-                  alt="Hero Image"
-                  width={833}
-                  height={415}
-                  className="w-2xl h-85 object-top object-cover rounded-tr-[150px] rounded-tl-[65px] relative z-10"
-                />
+            <Reveal direction="down" delay={300}>
+              <div className="flex flex-col gap-12 pt-24 justify-center items-center">
+                <div className="flex flex-col gap-4 justify-center items-center w-full relative isolate">
+                  <Image
+                    src="/images/banner-hero.jpg"
+                    alt="Hero Image"
+                    width={833}
+                    height={415}
+                    className="w-2xl h-85 object-top object-cover rounded-tr-[150px] rounded-tl-[65px] relative z-10"
+                  />
 
-                <div className="w-4xl h-92.5 absolute bottom-0 z-0 bg-[#AEAEB2] rounded-b-[160px]"></div>
+                  <div className="w-4xl h-92.5 absolute bottom-0 z-0 bg-[#AEAEB2] rounded-b-[160px]"></div>
 
-                <div className="flex flex-col justify-center items-center gap-4 w-5xl relative z-20 pb-12">
-                  <h1
-                    className={`text-4xl font-semibold text-center text-white ${dmSans.className}`}
-                  >
-                    Generic chatbots feel... generic.
-                  </h1>
-                  <p
-                    className={`text-xl w-2xl text-center font-extralight text-white ${dmSans.className}`}
-                  >
-                    Most AI feels the same no matter who you're talking to. Axis
-                    gives you personas with distinct personalities, tone, and
-                    memory — so every conversation feels like talking to
-                    someone, not something
-                  </p>
+                  <div className="flex flex-col justify-center items-center gap-4 w-5xl relative z-20 pb-12">
+                    <h1
+                      className={`text-4xl font-semibold text-center text-white ${dmSans.className}`}
+                    >
+                      Generic chatbots feel... generic.
+                    </h1>
+                    <p
+                      className={`text-xl w-2xl text-center font-extralight text-white ${dmSans.className}`}
+                    >
+                      Most AI feels the same no matter who you&apos;re talking
+                      to. Axis gives you personas with distinct personalities,
+                      tone, and memory — so every conversation feels like
+                      talking to someone, not something
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Reveal>
 
             <div className="w-full flex mt-20 flex-col gap-12 justify-center items-center">
               <div className="w-7xl mx-auto relative">
@@ -96,66 +107,76 @@ export default function Home() {
                 >
                   Built Different :
                 </h1>
-                <p
-                  className={`text-3xl text-center my-20 text-black ${crimsonText.className}`}
-                >
-                  Every part of Axis is built around one idea: AI should feel
-                  like someone, not something.
-                </p>
+                <Reveal direction="up">
+                  <p
+                    className={`text-3xl text-center my-20 text-black ${crimsonText.className}`}
+                  >
+                    Every part of Axis is built around one idea: AI should feel
+                    like someone, not something.
+                  </p>
+                </Reveal>
                 <div className="grid grid-cols-4 gap-12 justify-center items-start w-6xl mx-auto">
-                  <div className="w-55 h-auto gap-4 flex flex-col justify-center items-start">
-                    <h1
-                      className={`text-black text-[18px] flex justify-center items-center gap-2 ${dmSans.className}`}
-                    >
-                      <VenetianMask size={20} />
-                      Multiple Personas
-                    </h1>
-                    <p
-                      className={`text-[15px] text-[#757575] ${dmSans.className}`}
-                    >
-                      Choose from a range of AI characters, each with their own
-                      voice and vibe.
-                    </p>
-                  </div>
-                  <div className="w-55 h-auto gap-4 flex flex-col justify-center items-start">
-                    <h1
-                      className={`text-black text-[18px] flex justify-center items-center gap-2 ${dmSans.className}`}
-                    >
-                      <Zap size={20} />
-                      Lightning Fast
-                    </h1>
-                    <p
-                      className={`text-[15px] text-[#757575] ${dmSans.className}`}
-                    >
-                      Powered by Groq + LLaMA for near-instant responses.
-                    </p>
-                  </div>
-                  <div className="w-55 h-auto gap-4 flex flex-col justify-center items-start">
-                    <h1
-                      className={`text-black text-[18px] flex justify-center items-center gap-2 ${dmSans.className}`}
-                    >
-                      <HardDriveDownload size={20} />
-                      Conversations, Saved
-                    </h1>
-                    <p
-                      className={`text-[15px] text-[#757575] ${dmSans.className}`}
-                    >
-                      Pick up right where you left off, every time.
-                    </p>
-                  </div>
-                  <div className="w-55 h-auto gap-4 flex flex-col justify-center items-start">
-                    <h1
-                      className={`text-black text-[18px] flex justify-center items-center gap-2 ${dmSans.className}`}
-                    >
-                      <Shield size={20} />
-                      Secure Sign-In
-                    </h1>
-                    <p
-                      className={`text-[15px] text-[#757575] ${dmSans.className}`}
-                    >
-                      Quick and safe login, no hassle.
-                    </p>
-                  </div>
+                  <Reveal direction="up" delay={0}>
+                    <div className="w-55 h-auto gap-4 flex flex-col justify-center items-start">
+                      <h1
+                        className={`text-black text-[18px] flex justify-center items-center gap-2 ${dmSans.className}`}
+                      >
+                        <VenetianMask size={20} />
+                        Multiple Personas
+                      </h1>
+                      <p
+                        className={`text-[15px] text-[#757575] ${dmSans.className}`}
+                      >
+                        Choose from a range of AI characters, each with their
+                        own voice and vibe.
+                      </p>
+                    </div>
+                  </Reveal>
+                  <Reveal direction="up" delay={100}>
+                    <div className="w-55 h-auto gap-4 flex flex-col justify-center items-start">
+                      <h1
+                        className={`text-black text-[18px] flex justify-center items-center gap-2 ${dmSans.className}`}
+                      >
+                        <Zap size={20} />
+                        Lightning Fast
+                      </h1>
+                      <p
+                        className={`text-[15px] text-[#757575] ${dmSans.className}`}
+                      >
+                        Powered by Groq + LLaMA for near-instant responses.
+                      </p>
+                    </div>
+                  </Reveal>
+                  <Reveal direction="up" delay={200}>
+                    <div className="w-55 h-auto gap-4 flex flex-col justify-center items-start">
+                      <h1
+                        className={`text-black text-[18px] flex justify-center items-center gap-2 ${dmSans.className}`}
+                      >
+                        <HardDriveDownload size={20} />
+                        Conversations, Saved
+                      </h1>
+                      <p
+                        className={`text-[15px] text-[#757575] ${dmSans.className}`}
+                      >
+                        Pick up right where you left off, every time.
+                      </p>
+                    </div>
+                  </Reveal>
+                  <Reveal direction="up" delay={300}>
+                    <div className="w-55 h-auto gap-4 flex flex-col justify-center items-start">
+                      <h1
+                        className={`text-black text-[18px] flex justify-center items-center gap-2 ${dmSans.className}`}
+                      >
+                        <Shield size={20} />
+                        Secure Sign-In
+                      </h1>
+                      <p
+                        className={`text-[15px] text-[#757575] ${dmSans.className}`}
+                      >
+                        Quick and safe login, no hassle.
+                      </p>
+                    </div>
+                  </Reveal>
                   <div className="w-4xl h-px mx-auto mt-2 bg-linear-to-r from-transparent via-gray-300 to-transparent" />{" "}
                 </div>
               </div>
@@ -196,15 +217,21 @@ export default function Home() {
 
               <div className="w-full flex flex-col gap-20 justify-center items-center my-20">
                 <div className="flex flex-col gap-8 justify-center items-center w-full relative z-20">
-                  <h1
-                    className={`text-5xl text-black font-bold ${dmSans.className}`}
-                  >
-                    Find Your Match
-                  </h1>
-                  <p className={`text-2xl text-[#757575] ${dmSans.className}`}>
-                    Every persona is built with its own personality, tone, and
-                    way of talking
-                  </p>
+                  <Reveal direction="up">
+                    <h1
+                      className={`text-5xl text-black font-bold ${dmSans.className}`}
+                    >
+                      Find Your Match
+                    </h1>
+                  </Reveal>
+                  <Reveal direction="up" delay={100}>
+                    <p
+                      className={`text-2xl text-[#757575] ${dmSans.className}`}
+                    >
+                      Every persona is built with its own personality, tone, and
+                      way of talking
+                    </p>
+                  </Reveal>
                 </div>
 
                 <PersonasGrid />
@@ -212,21 +239,27 @@ export default function Home() {
 
               <div className="relative flex h-142.75 w-full items-center">
                 <div className="relative z-10 flex w-full flex-col items-center gap-10 pr-0 text-center">
-                  <h1
-                    className={`text-6xl font-bold leading-tight text-black ${dmSans.className}`}
-                  >
-                    Your Next Conversation Is Waiting
-                  </h1>
-                  <p
-                    className={`text-lg text-[#757575] ${dmSans.className} max-w-2xl text-center`}
-                  >
-                    No credit card, no commitment — just start talking.
-                  </p>
-                  <button
-                    className={`rounded-xl bg-black px-8 py-3 text-sm font-black text-white transition hover:bg-neutral-800 ${dmSans.className}`}
-                  >
-                    Try Axis Now
-                  </button>
+                  <Reveal direction="up">
+                    <h1
+                      className={`text-6xl font-bold leading-tight text-black ${dmSans.className}`}
+                    >
+                      Your Next Conversation Is Waiting
+                    </h1>
+                  </Reveal>
+                  <Reveal direction="up" delay={100}>
+                    <p
+                      className={`text-lg text-[#757575] ${dmSans.className} max-w-2xl text-center`}
+                    >
+                      No credit card, no commitment — just start talking.
+                    </p>
+                  </Reveal>
+                  <Reveal direction="up" delay={200}>
+                    <button
+                      className={`rounded-xl bg-black px-8 py-3 text-sm font-black text-white transition hover:bg-neutral-800 ${dmSans.className}`}
+                    >
+                      Try Axis Now
+                    </button>
+                  </Reveal>
                 </div>
 
                 <div className="absolute right-0 top-0 h-125.75 w-35.75 overflow-hidden rounded-tl-[35px] rounded-tr-[250px] rounded-bl-[250px] rounded-br-none md:block hidden">
