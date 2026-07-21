@@ -30,7 +30,7 @@ export default function Home() {
         <Navbar />
         <div className="w-full flex mt-20 flex-col justify-center items-center">
           <div className="w-full mx-auto relative">
-            <div className="flex flex-col gap-12 pt-24 justify-center items-center min-h-screen">
+            <div className="flex flex-col gap-12 justify-center items-center min-h-screen">
               <h1
                 className={`text-5xl font-bold text-center text-black ${dmSans.className}`}
               >
