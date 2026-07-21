@@ -1,97 +1,36 @@
-# Chatbot Backend (Express.js + TypeScript + Prisma) — TERPISAH dari Frontend
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Backend murni REST API, tidak ada kode UI sama sekali. Struktur MVC:
-`routes/` → `controllers/` → Prisma (database).
+## Getting Started
 
-```
-src/
-  config/         # koneksi Prisma & strategi Passport (Google/GitHub OAuth)
-  controllers/    # logic bisnis tiap fitur
-  routes/         # pemetaan URL ke controller
-  middlewares/    # auth guard (JWT) & error handler
-  utils/          # JWT helper, asyncHandler, AppError
-  app.ts          # setup Express (middleware + mount routes)
-  server.ts       # entry point, jalankan server
-prisma/
-  schema.prisma   # sinkron 1:1 dengan database MySQL yang sudah dibuat
-  seed.ts         # isi 4 persona awal
-```
-
-## 1. Install dependency
-
-```bash
-npm install
-```
-
-## 2. Setup environment
-
-Copy `.env.example` jadi `.env`, isi:
-
-- `DATABASE_URL` — connection string MySQL kamu
-- `JWT_SECRET` — generate pakai `openssl rand -base64 32`
-- `FRONTEND_URL` — URL project frontend kamu (untuk CORS & redirect OAuth)
-- Kredensial Google & GitHub OAuth (client ID/secret + callback URL)
-
-## 3. Migrasi database & seed persona
-
-```bash
-npx prisma migrate dev --name init
-npm run prisma:seed
-```
-
-## 4. Jalankan server (mode development)
+First, run the development server:
 
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Server jalan di `http://localhost:5000`. Cek health check di `GET /`.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Alur Login (OAuth)
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-1. Frontend arahkan user ke `GET http://localhost:5000/api/auth/google`
-   (atau `/api/auth/github`).
-2. Setelah user setuju di Google/GitHub, backend redirect balik ke:
-   `FRONTEND_URL/auth/callback?token=<JWT>`
-3. Frontend ambil `token` dari query string, simpan (misal di localStorage),
-   lalu kirim di setiap request API sebagai header:
-   `Authorization: Bearer <token>`
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Daftar Endpoint
+## Learn More
 
-| Method | Endpoint                          | Keterangan                              | Auth  |
-|--------|------------------------------------|-------------------------------------------|-------|
-| GET    | `/api/auth/google`                | Mulai login Google                        | -     |
-| GET    | `/api/auth/github`                | Mulai login GitHub                        | -     |
-| GET    | `/api/auth/me`                    | Profil user yang login                    | user  |
-| POST   | `/api/auth/logout`                | Logout                                    | user  |
-| PATCH  | `/api/user/persona`               | Pilih role: tentara/polisi/dokter/guru    | user  |
-| GET    | `/api/personas`                   | Daftar persona untuk dipilih saat chat    | user  |
-| POST   | `/api/personas`                   | Tambah persona baru                       | admin |
-| PATCH  | `/api/personas/:id`               | Update persona                            | admin |
-| DELETE | `/api/personas/:id`               | Nonaktifkan persona                       | admin |
-| POST   | `/api/conversations`              | Mulai percakapan baru                     | user  |
-| GET    | `/api/conversations`              | Riwayat percakapan                        | user  |
-| GET    | `/api/conversations/:id`          | Lanjutkan percakapan lama                 | user  |
-| PATCH  | `/api/conversations/:id`          | Ganti judul percakapan                    | user  |
-| DELETE | `/api/conversations/:id`          | Hapus percakapan                          | user  |
-| GET    | `/api/conversations/:id/messages` | Ambil semua pesan                         | user  |
-| POST   | `/api/conversations/:id/messages` | Kirim pesan & terima respons bot          | user  |
-| GET    | `/api/admin/users`                | Lihat semua user                          | admin |
-| GET    | `/api/admin/personas`             | Lihat semua persona (termasuk nonaktif)   | admin |
+To learn more about Next.js, take a look at the following resources:
 
-## Catatan integrasi AI
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-Fungsi `generateBotReply()` di `src/controllers/message.controller.ts`
-masih placeholder. Ganti dengan pemanggilan API model (Anthropic/OpenAI)
-sesuai `persona.systemPrompt` supaya bot benar-benar membalas sesuai
-karakter (tentara/polisi/dokter/guru). Contoh kodenya sudah ada di
-komentar di atas fungsi tersebut.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Kalau ada error
+## Deploy on Vercel
 
-Karena strukturnya sudah terpisah rapi:
-- Error soal routing/URL → cek folder `src/routes/`
-- Error soal logic (nggak ketemu data, dsb) → cek folder `src/controllers/`
-- Error soal auth/token → cek `src/middlewares/auth.middleware.ts`
-- Error soal database/kolom → cek `prisma/schema.prisma`
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
