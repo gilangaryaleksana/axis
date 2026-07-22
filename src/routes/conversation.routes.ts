@@ -7,7 +7,10 @@ import {
   updateConversation,
   deleteConversation,
 } from "@/controllers/conversation.controller";
-import { getMessages, sendMessage } from "@/controllers/message.controller";
+import {
+  getMessages,
+  sendMessage,
+} from "@/controllers/message.controller";
 
 const router = Router();
 
