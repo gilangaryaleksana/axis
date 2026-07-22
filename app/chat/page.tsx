@@ -6,13 +6,12 @@ import ChatHeader from "../../components/chat/ChatHeader";
 import ChatBody, { Message } from "../../components/chat/ChatBody";
 import Composer from "../../components/chat/Composer";
 import { PERSONAS, PersonaKey } from "../../components/persona/personas";
-import { authFetch, getToken } from "@/lib/auth";
 
 export default function ChatPage() {
   const router = useRouter();
   const [currentPersona, setCurrentPersona] = useState<PersonaKey>("police");
   const [currentConvoId, setCurrentConvoId] = useState(
-    "2c0e1e8c-bc2d-4694-aca7-d7cad950d523",
+    "00000000-0000-0000-0000-000000000000",
   );
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,13 +24,6 @@ export default function ChatPage() {
     { id: "2", title: persona.name, sub: persona.sub },
   ];
 
-  // Guard: kalau belum ada token, tendang ke halaman login
-  useEffect(() => {
-    if (!getToken()) {
-      router.replace("/");
-    }
-  }, [router]);
-
   // Fetch history tiap kali convo aktif berubah
   useEffect(() => {
     if (!currentConvoId) return;
@@ -41,14 +33,10 @@ export default function ChatPage() {
     const loadMessages = async () => {
       setIsLoadingHistory(true);
       try {
-        const res = await authFetch(
+        const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${currentConvoId}/messages`,
         );
 
-        if (res.status === 401) {
-          router.replace("/");
-          return;
-        }
         if (!res.ok) throw new Error("Gagal load pesan");
 
         const data = await res.json();
@@ -82,14 +70,14 @@ export default function ChatPage() {
     return () => {
       cancelled = true;
     };
-  }, [currentConvoId, router]);
+  }, [currentConvoId]);
 
   const handleSend = async (text: string) => {
     setMessages((prev) => [...prev, { from: "user", text }]);
     setIsLoading(true);
 
     try {
-      const res = await authFetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${currentConvoId}/messages`,
         {
           method: "POST",
@@ -98,10 +86,6 @@ export default function ChatPage() {
         },
       );
 
-      if (res.status === 401) {
-        router.replace("/");
-        return;
-      }
       if (!res.ok) throw new Error("Gagal kirim pesan");
 
       const reply = await res.json();
