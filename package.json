@@ -4,14 +4,17 @@
   "private": true,
   "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts --exec \"ts-node -P tsconfig.server.json -r tsconfig-paths/register --transpile-only src/server.ts\"",
-    "build": "tsc && tsc-alias",
-    "start": "node dist/server.js",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio",
-    "prisma:seed": "ts-node --transpile-only prisma/seed.ts"
-  },
+  "dev": "next dev",
+  "dev:backend": "nodemon --watch src --ext ts --exec \"ts-node -P tsconfig.server.json -r tsconfig-paths/register --transpile-only src/server.ts\"",
+  "build": "next build",
+  "build:backend": "tsc -p tsconfig.server.json && tsc-alias -p tsconfig.server.json",
+  "start": "next start",
+  "start:backend": "node dist/server.js",
+  "prisma:generate": "prisma generate",
+  "prisma:migrate": "prisma migrate dev",
+  "prisma:studio": "prisma studio",
+  "prisma:seed": "ts-node --transpile-only prisma/seed.ts"
+},
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "bcryptjs": "^2.4.3",
