@@ -4,7 +4,7 @@ import { PanelLeft, Plus, Settings } from "lucide-react";
 import { PERSONAS, PersonaKey } from "../persona/personas";
 import PersonaList from "./PersonaList";
 import LatestList from "./LatestList";
-import { crimsonText } from "@/lib/font";
+import { crimsonText, dmSans } from "@/lib/font";
 
 interface SidebarProps {
   currentPersona: PersonaKey;
@@ -86,8 +86,8 @@ export default function Sidebar({
 
       <div className="flex items-center justify-between gap-3 pt-4 mt-auto border-t border-[#444]">
         <div className="flex items-center gap-2">
-          <div className="w-[34px] h-[34px] rounded-full bg-[#5a5a56] flex items-center justify-center text-sm font-semibold">
-            {userName.charAt(0).toUpperCase()}
+          <div className={`w-[34px] h-[34px] rounded-full bg-[#5a5a56] flex items-center justify-center text-sm font-semibold ${dmSans.className}`}>
+            <span>{userName.charAt(0).toUpperCase()}</span>
           </div>
           {!collapsed && <span className="text-sm">{userName}</span>}
         </div>

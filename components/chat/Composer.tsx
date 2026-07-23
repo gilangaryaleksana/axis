@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 
 export default function Composer({
@@ -8,26 +8,53 @@ export default function Composer({
   onSend: (text: string) => void;
 }) {
   const [value, setValue] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = () => {
     if (!value.trim()) return;
     onSend(value.trim());
     setValue("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValue(e.target.value);
+    const el = e.target;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const hasValue = value.trim().length > 0;
 
   return (
     <div className="px-10 pt-4 pb-2 bg-[#2b2b2b]">
-      <div className="flex max-w-3xl mx-auto items-center gap-2.5 bg-[#4d4d4a] rounded-2xl pl-5 pr-2 py-2">
-        <input
+      <div className="flex max-w-3xl mx-auto items-end gap-2.5 bg-[#4d4d4a] rounded-2xl pl-5 pr-2 py-2">
+        <textarea
+          ref={textareaRef}
           value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
           placeholder="Write a Message..."
-          className="flex-1 bg-transparent outline-none text-[#f4f3f0] placeholder:text-[#c9c8c4] text-[15px]"
+          rows={1}
+          className="flex-1 bg-transparent outline-none resize-none text-[#f4f3f0] placeholder:text-[#c9c8c4] text-[15px] py-2 max-h-[200px] overflow-y-auto chat-scrollbar"
         />
         <button
           onClick={handleSend}
-          className="w-[42px] h-[42px] rounded-xl bg-[#3d3d3a] hover:bg-[#474743] flex items-center justify-center text-[#f4f3f0] shrink-0"
+          disabled={!hasValue}
+          className={`w-[42px] h-[42px] rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+            hasValue
+              ? "bg-[#f4f3f0] text-[#2b2b2b] hover:bg-[#e0dfda]"
+              : "bg-[#3d3d3a] text-[#6f6f6b] "
+          }`}
         >
           <ArrowRight size={18} />
         </button>
