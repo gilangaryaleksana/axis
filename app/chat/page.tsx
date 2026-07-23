@@ -23,17 +23,25 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSend = async (text: string) => {
-    setMessages((prev) => [...prev, { from: "user", text }]);
-    setIsLoading(true);
+  setMessages((prev) => [...prev, { from: "user", text }]);
+  setIsLoading(true);
 
-    const reply = await fetch("/api/chat", {
+  try {
+    const res = await fetch("/api/chat", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ persona: currentPersona, message: text }),
-    }).then((r) => r.json());
-
+    });
+    const reply = await res.json();
+    if (!res.ok) throw new Error(reply?.error || "Gagal menghubungi AI");
     setMessages((prev) => [...prev, { from: "bot", text: reply.text }]);
+  } catch (err) {
+    console.error(err);
+    setMessages((prev) => [...prev, { from: "bot", text: "Maaf, ada error. Coba lagi ya." }]);
+  } finally {
     setIsLoading(false);
-  };
+  }
+};
 
   return (
     <div className="flex h-screen">
