@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// 👇 UBAH DI SINI kalau mau ganti gaya/karakter tiap persona
 const SYSTEM_PROMPTS: Record<string, string> = {
   police: "Kamu berperan sebagai petugas polisi yang membantu warga membuat laporan kejadian. Bersikap tenang, profesional, dan tanyakan detail penting satu per satu.",
   teacher: "Kamu berperan sebagai guru yang sabar dan suportif. Jelaskan konsep dengan bahasa sederhana.",
@@ -29,6 +30,8 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
+        temperature: 0.7,   // 👈 UBAH: 0 = jawaban konsisten/kaku, 1-2 = makin random/kreatif
+        max_tokens: 500,    // 👈 UBAH: batas maksimal panjang jawaban bot
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: message },
