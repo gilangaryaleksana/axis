@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { prisma } from "@/config/prisma";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { AppError } from "@/utils/AppError";
+import { prisma } from "../config/prisma";
+import { asyncHandler } from "../utils/asyncHandler";
+import { AppError } from "../utils/AppError";
 
 // GET /api/conversations — riwayat percakapan user (use case: Melihat Daftar Riwayat)
 export const getConversations = asyncHandler(async (req: Request, res: Response) => {
