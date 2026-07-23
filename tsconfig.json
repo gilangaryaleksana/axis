@@ -23,10 +23,11 @@
     }
   },
   "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
-  },
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node"
+  }
+},
   "include": [
     "next-env.d.ts",
     "**/*.ts",
