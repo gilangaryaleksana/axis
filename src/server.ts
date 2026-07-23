@@ -1,5 +1,5 @@
 import "dotenv/config";
-import app from "@/app";
+import app from "./app";
 import cors from "cors";
 
 const PORT = process.env.PORT || 5000;

@@ -34,10 +34,17 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
     data: { conversationId: req.params.id, sender: "user", content },
   });
 
-  const botReplyText = await generateBotReply(conversation.persona.systemPrompt, content);
+  const botReplyText = await generateBotReply(
+    conversation.persona.systemPrompt,
+    content,
+  );
 
   const botMessage = await prisma.message.create({
-    data: { conversationId: req.params.id, sender: "bot", content: botReplyText },
+    data: {
+      conversationId: req.params.id,
+      sender: "bot",
+      content: botReplyText,
+    },
   });
 
   await prisma.conversation.update({
@@ -68,7 +75,30 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
  * const data = await result.json();
  * return data.content[0].text;
  */
-async function generateBotReply(systemPrompt: string, userText: string): Promise<string> {
-  // TODO: ganti dengan pemanggilan LLM API sesungguhnya
-  return `[${systemPrompt.split(":")[0]}] Menerima pesan: "${userText}"`;
+async function generateBotReply(
+  systemPrompt: string,
+  userText: string,
+): Promise<string> {
+  const response = await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userText },
+        ],
+      }),
+    },
+  );
+
+  if (!response.ok) throw new AppError("Gagal memanggil AI", 502);
+
+  const data = await response.json();
+  return data.choices[0].message.content;
 }

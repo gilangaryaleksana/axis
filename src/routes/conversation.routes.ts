@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticate } from "@/middlewares/auth.middleware";
+import { mockAuth } from "@/middlewares/mockAuth.middleware";
 import {
   getConversations,
   createConversation,
@@ -11,14 +11,13 @@ import { getMessages, sendMessage } from "@/controllers/message.controller";
 
 const router = Router();
 
-router.get("/", authenticate, getConversations);
-router.post("/", authenticate, createConversation);
-router.get("/:id", authenticate, getConversationById);
-router.patch("/:id", authenticate, updateConversation);
-router.delete("/:id", authenticate, deleteConversation);
+router.get("/", mockAuth, getConversations);
+router.post("/", mockAuth, createConversation);
+router.get("/:id", mockAuth, getConversationById);
+router.patch("/:id", mockAuth, updateConversation);
+router.delete("/:id", mockAuth, deleteConversation);
 
-// Nested: pesan dalam satu percakapan
-router.get("/:id/messages", authenticate, getMessages);
-router.post("/:id/messages", authenticate, sendMessage);
+router.get("/:id/messages", mockAuth, getMessages);
+router.post("/:id/messages", mockAuth, sendMessage);
 
 export default router;
