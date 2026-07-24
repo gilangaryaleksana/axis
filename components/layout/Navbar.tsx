@@ -1,7 +1,9 @@
 import { crimsonText } from "../../lib/font";
 import { ArrowUpRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
+  const router = useRouter();
   return (
     <nav className={crimsonText.className}>
       <div className="flex items-end justify-between text-black">
@@ -22,7 +24,10 @@ export function Navbar() {
           </a>
         </div>
         <div className="absolute top-12 right-10">
-          <button className="text-2xl relative hover:text-gray-400">
+          <button
+            className="text-2xl relative hover:text-gray-400"
+            onClick={() => router.push("/login")}
+          >
             Login
             <ArrowUpRight size={13} className="absolute top-1 -right-1" />
           </button>
