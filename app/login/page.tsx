@@ -51,12 +51,23 @@ export default function LoginPage() {
             </p>
 
             {/* toggle */}
-            <div className="flex bg-neutral-100 rounded-xl p-1 mb-4">
+            <div className="relative flex bg-neutral-100 rounded-xl p-1 mb-4">
+              {/* Sliding background */}
+              <div
+                className="absolute top-1 bottom-1 w-[calc(50%-4px)] bg-black rounded-lg transition-transform duration-100 ease-out"
+                style={{
+                  transform:
+                    mode === "signin"
+                      ? "translateX(0%)"
+                      : "translateX(calc(100% + 8px))",
+                }}
+              />
+
               <button
                 type="button"
                 onClick={() => setMode("signin")}
-                className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
-                  mode === "signin" ? "bg-black text-white" : "text-neutral-500"
+                className={`relative z-10 flex-1 py-2.5 text-sm font-semibold rounded-lg transition-colors duration-100 ${
+                  mode === "signin" ? "text-white" : "text-neutral-500"
                 }`}
               >
                 Sign In
@@ -64,8 +75,8 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setMode("signup")}
-                className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
-                  mode === "signup" ? "bg-black text-white" : "text-neutral-500"
+                className={`relative z-10 flex-1 py-2.5 text-sm font-semibold rounded-lg transition-colors duration-100 ${
+                  mode === "signup" ? "text-white" : "text-neutral-500"
                 }`}
               >
                 Sign Up
@@ -96,7 +107,7 @@ export default function LoginPage() {
                   htmlFor="password"
                   className={`text-[13px] block mb-1.5 text-neutral-900 ${dmSans.className}`}
                 >
-                  Kata sandi
+                  Password
                 </label>
                 <input
                   id="password"
@@ -232,7 +243,7 @@ export default function LoginPage() {
               Did you enter this position with a stop-loss or do you dare again?
             </div>
             <div
-              className={`px-4 py-3 max-w-[80%] self-end leading-relaxed text-[13.5px] rounded-l-[35px] rounded-br-[25px] bg-[#4d4d4a] text-[#f4f3f0] font-extralight ${dmSans.className}`}
+              className={`px-4 py-3 max-w-[80%] self-end leading-relaxed text-[13.5px] rounded-l-[35px] rounded-br-[25px] bg-[#4d4d4a] shadow-[0_2px_12px_rgba(0,0,0,0.35)] text-[#f4f3f0] font-extralight ${dmSans.className}`}
             >
               Not yet, I just have a feeling the price will go up.
             </div>
