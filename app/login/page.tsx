@@ -76,7 +76,7 @@ export default function LoginPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className={`text-[13px] block mb-1.5 text-neutral-500 ${dmSans.className}`}
+                  className={`text-[13px] block mb-1.5 text-neutral-900 ${dmSans.className}`}
                 >
                   Email
                 </label>
@@ -85,16 +85,16 @@ export default function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="nama@email.com"
+                  placeholder="name@example.com"
                   required
-                  className="w-full px-3.5 py-2.5 border border-neutral-200 rounded-xl text-[14px] outline-none focus:border-black transition-colors placeholder:text-neutral-400"
+                  className="w-full px-3.5 py-2.5 border border-neutral-200 rounded-xl text-[14px] text-neutral-900 outline-none focus:border-black transition-colors placeholder:text-neutral-400"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className={`text-[13px] block mb-1.5 text-neutral-500 ${dmSans.className}`}
+                  className={`text-[13px] block mb-1.5 text-neutral-900 ${dmSans.className}`}
                 >
                   Kata sandi
                 </label>
@@ -105,7 +105,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full px-3.5 py-2.5 border border-neutral-200 rounded-xl text-[14px] outline-none focus:border-black transition-colors placeholder:text-neutral-400"
+                  className="w-full px-3.5 py-2.5 border border-neutral-200 rounded-xl text-[14px]  text-neutral-900 outline-none focus:border-black transition-colors placeholder:text-neutral-400"
                 />
               </div>
 
@@ -226,13 +226,19 @@ export default function LoginPage() {
               persona={persona}
               sub="Trading discipline, no excuses"
             />
-            <div className={`px-4 py-3 max-w-[80%] self-start leading-relaxed text-[13.5px] rounded-r-[35px] rounded-bl-[25px] bg-[#e7e5e0] text-[#2a2a28] font-extralight ${dmSans.className}`}>
+            <div
+              className={`px-4 py-3 max-w-[80%] self-start leading-relaxed text-[13.5px] rounded-r-[35px] rounded-bl-[25px] bg-[#e7e5e0] text-[#2a2a28] font-extralight ${dmSans.className}`}
+            >
               Did you enter this position with a stop-loss or do you dare again?
             </div>
-            <div className={`px-4 py-3 max-w-[80%] self-end leading-relaxed text-[13.5px] rounded-l-[35px] rounded-br-[25px] bg-[#4d4d4a] text-[#f4f3f0] font-extralight ${dmSans.className}`}>
+            <div
+              className={`px-4 py-3 max-w-[80%] self-end leading-relaxed text-[13.5px] rounded-l-[35px] rounded-br-[25px] bg-[#4d4d4a] text-[#f4f3f0] font-extralight ${dmSans.className}`}
+            >
               Not yet, I just have a feeling the price will go up.
             </div>
-            <div className={`px-4 py-3 max-w-[80%] self-start leading-relaxed text-[13.5px] rounded-r-[35px] rounded-bl-[25px] bg-[#e7e5e0] text-[#2a2a28] font-extralight ${dmSans.className}`}>
+            <div
+              className={`px-4 py-3 max-w-[80%] self-start leading-relaxed text-[13.5px] rounded-r-[35px] rounded-bl-[25px] bg-[#e7e5e0] text-[#2a2a28] font-extralight ${dmSans.className}`}
+            >
               That's not a strategy, it's gambling. Set a stop-loss first, then
               we can continue talking.
             </div>
