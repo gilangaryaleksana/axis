@@ -218,7 +218,7 @@ export default function LoginPage() {
           <div
             className="relative w-full max-w-md flex flex-col gap-2.5"
             style={{
-              transform: "perspective(1000px) rotateY(-8deg) rotateX(4deg)",
+              transform: "perspective(1000px) rotateY(-25deg) rotateX(8deg)",
               transformStyle: "preserve-3d",
             }}
           >
