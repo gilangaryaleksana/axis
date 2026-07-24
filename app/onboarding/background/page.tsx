@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { crimsonText, dmSans } from "../../../lib/font";
+import * as Select from "@radix-ui/react-select";
+import { Check, ChevronDown } from "lucide-react";
 
 const OPTIONS = [
   { value: "pemula", label: "Beginner, just getting started" },
@@ -81,25 +83,33 @@ export default function BackgroundQuizPage() {
           </label>
 
           <div className="relative mb-7">
-            <select
-              id="background"
-              value={background}
-              onChange={(e) => setBackground(e.target.value)}
-              required
-              className="w-full appearance-none px-4 py-3.5 pr-11 border border-neutral-200 rounded-xl text-[15px] text-black bg-white outline-none focus:border-black transition-colors cursor-pointer"
-            >
-              <option value="" disabled hidden>
-                -- Select your background --
-              </option>
-              {OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-500 text-xs">
-              ▼
-            </span>
+            <Select.Root value={background} onValueChange={setBackground}>
+              <Select.Trigger className="w-full flex items-center justify-between px-4 py-3.5 border border-neutral-200 rounded-xl text-[15px] bg-white outline-none focus:border-black transition-colors data-[placeholder]:text-neutral-400">
+                <Select.Value placeholder="-- Select your background --" />
+                <Select.Icon>
+                  <ChevronDown className="w-4 h-4 text-neutral-400" />
+                </Select.Icon>
+              </Select.Trigger>
+
+              <Select.Portal>
+                <Select.Content className="overflow-hidden bg-white rounded-xl border border-neutral-200 shadow-lg z-50">
+                  <Select.Viewport className="p-1">
+                    {OPTIONS.map((opt) => (
+                      <Select.Item
+                        key={opt.value}
+                        value={opt.value}
+                        className="flex items-center justify-between px-3 py-2.5 text-[14px] rounded-lg text-black cursor-pointer outline-none data-[highlighted]:bg-black data-[highlighted]:text-white transition-colors"
+                      >
+                        <Select.ItemText>{opt.label}</Select.ItemText>
+                        <Select.ItemIndicator>
+                          <Check className="w-4 h-4" />
+                        </Select.ItemIndicator>
+                      </Select.Item>
+                    ))}
+                  </Select.Viewport>
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
           </div>
 
           <div className="flex items-center justify-between gap-3">
