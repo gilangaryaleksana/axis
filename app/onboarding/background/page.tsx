@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { crimsonText, dmSans } from "../../../lib/font";
 
 const OPTIONS = [
   { value: "pemula", label: "Beginner, just getting started" },
@@ -40,11 +41,10 @@ export default function BackgroundQuizPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white text-black">
       <nav className="flex items-center justify-between px-16 py-7">
-        <div
-          className="text-2xl"
-          style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-        >
-          <span className="text-3xl">A</span>xis
+        <div className={`text-2xl mb-6 leading-snug ${crimsonText.className}`}>
+          <h1 className="text-5xl text-black">
+            A<span className="text-3xl">xis</span>
+          </h1>
         </div>
         <div className="text-sm text-neutral-500">Question 2 of 5</div>
       </nav>
@@ -58,16 +58,17 @@ export default function BackgroundQuizPage() {
 
       <main className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-md">
-          <p className="text-sm text-neutral-500 mb-3">Get to know yourself</p>
+          <p className={`text-sm text-neutral-500 mb-3 ${dmSans.className}`}>
+            Get to know yourself
+          </p>
 
-          <h1
-            className="text-3xl mb-3 leading-snug"
-            style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-          >
+          <h1 className={`text-3xl mb-3 leading-snug ${crimsonText.className}`}>
             What is your background as a trader?
           </h1>
 
-          <p className="text-neutral-500 text-sm mb-8 leading-relaxed">
+          <p
+            className={`text-neutral-500 text-sm mb-8 leading-relaxed ${dmSans.className}`}
+          >
             This helps Axis choose the persona and conversation style that fits
             you best.
           </p>
