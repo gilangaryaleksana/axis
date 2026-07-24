@@ -216,7 +216,7 @@ export default function LoginPage() {
           />
 
           <div
-            className="relative w-full max-w-md flex flex-col gap-2.5"
+            className="relative w-full max-w-md flex flex-col gap-2.5 font-extralight"
             style={{
               transform: "perspective(1000px) rotateY(-25deg) rotateX(8deg)",
               transformStyle: "preserve-3d",
@@ -226,13 +226,13 @@ export default function LoginPage() {
               persona={persona}
               sub="Trading discipline, no excuses"
             />
-            <div className="px-4 py-3 max-w-[80%] self-start leading-relaxed text-[13.5px] rounded-r-[35px] rounded-bl-[25px] bg-[#e7e5e0] text-[#2a2a28]">
+            <div className={`px-4 py-3 max-w-[80%] self-start leading-relaxed text-[13.5px] rounded-r-[35px] rounded-bl-[25px] bg-[#e7e5e0] text-[#2a2a28] font-extralight ${dmSans.className}`}>
               Did you enter this position with a stop-loss or do you dare again?
             </div>
-            <div className="px-4 py-3 max-w-[80%] self-end leading-relaxed text-[13.5px] rounded-l-[35px] rounded-br-[25px] bg-[#4d4d4a] text-[#f4f3f0]">
+            <div className={`px-4 py-3 max-w-[80%] self-end leading-relaxed text-[13.5px] rounded-l-[35px] rounded-br-[25px] bg-[#4d4d4a] text-[#f4f3f0] font-extralight ${dmSans.className}`}>
               Not yet, I just have a feeling the price will go up.
             </div>
-            <div className="px-4 py-3 max-w-[80%] self-start leading-relaxed text-[13.5px] rounded-r-[35px] rounded-bl-[25px] bg-[#e7e5e0] text-[#2a2a28]">
+            <div className={`px-4 py-3 max-w-[80%] self-start leading-relaxed text-[13.5px] rounded-r-[35px] rounded-bl-[25px] bg-[#e7e5e0] text-[#2a2a28] font-extralight ${dmSans.className}`}>
               That's not a strategy, it's gambling. Set a stop-loss first, then
               we can continue talking.
             </div>
