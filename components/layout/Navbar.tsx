@@ -1,10 +1,18 @@
+"use client";
+import { useState, useEffect } from "react";
 import { crimsonText } from "../../lib/font";
 import { ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { GoogleOneTap } from "../auth/GoogleOneTap";
+import { getToken } from "../../lib/auth";
 
 export function Navbar() {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!getToken());
+  }, []);
   return (
     <nav className={crimsonText.className}>
       <GoogleOneTap />
@@ -28,10 +36,10 @@ export function Navbar() {
         <div className="absolute top-12 right-10">
           <button
             className="text-2xl relative hover:text-gray-400"
-            onClick={() => router.push("/login")}
+            onClick={() => router.push(isLoggedIn ? "/chat" : "/login")}
           >
-            Login
-            <ArrowUpRight size={13} className="absolute top-1 -right-1" />
+            {isLoggedIn ? "Chat" : "Login"}
+            <ArrowUpRight size={13} className="absolute top-1 -right-4" />
           </button>
         </div>
       </div>

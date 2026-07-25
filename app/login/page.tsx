@@ -1,23 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { dmSans, crimsonText } from "../../lib/font";
 import { Persona, PERSONAS } from "../../components/persona/personas";
 import ChatHeader from "../../components/chat/ChatHeader";
+import { setToken, getToken } from "../../lib/auth";
 
 export default function LoginPage() {
+  const router = useRouter();
   const persona = PERSONAS.find((p) => p.name === "Police") ?? PERSONAS[0];
   const Icon = persona.icon;
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (getToken()) {
+      router.replace("/chat");
+    }
+  }, [router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: connect to your auth API (NextAuth / custom JWT)
-    // example: await signIn("credentials", { email, password })
-    console.log({ mode, email, password, remember });
+    setError(null);
+    setIsSubmitting(true);
+
+    const endpoint = mode === "signin" ? "login" : "register";
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Terjadi kesalahan");
+      }
+
+      setToken(data.token);
+      router.push("/chat");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleOAuth = (provider: "google" | "github") => {
