@@ -1,6 +1,6 @@
 import { Router } from "express";
 import passport from "@/config/passport";
-import { oauthCallback, getMe, logout, register, login } from "@/controllers/auth.controller";
+import { oauthCallback, getMe, logout, register, login, googleOneTap } from "@/controllers/auth.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 
 const router = Router();
@@ -12,8 +12,11 @@ router.get(
 );
 router.get(
   "/google/callback",
-  passport.authenticate("google", { session: false, failureRedirect: "/login" }),
-  oauthCallback
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed`,
+  }),
+  oauthCallback,
 );
 
 // --- GitHub OAuth ---
@@ -23,8 +26,11 @@ router.get(
 );
 router.get(
   "/github/callback",
-  passport.authenticate("github", { session: false, failureRedirect: "/login" }),
-  oauthCallback
+  passport.authenticate("github", {
+    session: false,
+    failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed`,
+  }),
+  oauthCallback,
 );
 
 // --- Umum ---
@@ -34,5 +40,8 @@ router.post("/logout", authenticate, logout);
 // --- Login Manual ---
 router.post("/register", register);
 router.post("/login", login);
+
+// --- One Tap Login ---
+router.post("/google/onetap", googleOneTap);
 
 export default router;

@@ -21,9 +21,7 @@ export default function LoginPage() {
   };
 
   const handleOAuth = (provider: "google" | "github") => {
-    // TODO: connect to NextAuth signIn(provider) or manual OAuth redirect
-    // example: signIn(provider)
-    console.log("oauth:", provider);
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/${provider}`;
   };
 
   return (

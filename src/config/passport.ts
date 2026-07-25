@@ -7,7 +7,7 @@ import { prisma } from "@/config/prisma";
  * Cari user berdasarkan account OAuth (provider + providerAccountId).
  * Kalau belum ada, buat user baru sekaligus record account-nya.
  */
-async function findOrCreateUser(params: {
+export async function findOrCreateUser(params: {
   provider: "google" | "github";
   providerAccountId: string;
   email: string;

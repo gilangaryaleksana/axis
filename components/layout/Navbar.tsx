@@ -1,11 +1,13 @@
 import { crimsonText } from "../../lib/font";
 import { ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { GoogleOneTap } from "../auth/GoogleOneTap";
 
 export function Navbar() {
   const router = useRouter();
   return (
     <nav className={crimsonText.className}>
+      <GoogleOneTap />
       <div className="flex items-end justify-between text-black">
         <div className="absolute top-6 left-10">
           <h1 className="text-6xl">

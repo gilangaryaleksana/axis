@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
 import { prisma } from "@/config/prisma";
 import { verifyJwt } from "@/utils/jwt";
 
@@ -9,7 +10,7 @@ import { verifyJwt } from "@/utils/jwt";
 export async function authenticate(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const authHeader = req.headers.authorization;
@@ -26,7 +27,9 @@ export async function authenticate(
     });
 
     if (!user || !user.isActive) {
-      return res.status(401).json({ message: "User tidak ditemukan atau nonaktif" });
+      return res
+        .status(401)
+        .json({ message: "User tidak ditemukan atau nonaktif" });
     }
 
     req.user = {
@@ -36,7 +39,15 @@ export async function authenticate(
     };
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Token tidak valid atau kedaluwarsa" });
+    if (err instanceof TokenExpiredError) {
+      return res
+        .status(401)
+        .json({ message: "Sesi kedaluwarsa, silakan login ulang" });
+    }
+    if (err instanceof JsonWebTokenError) {
+      return res.status(401).json({ message: "Token tidak valid" });
+    }
+    return res.status(401).json({ message: "Autentikasi gagal" });
   }
 }
 
@@ -45,7 +56,9 @@ export async function authenticate(
  */
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   if (req.user?.role !== "admin") {
-    return res.status(403).json({ message: "Hanya admin yang boleh mengakses ini" });
+    return res
+      .status(403)
+      .json({ message: "Hanya admin yang boleh mengakses ini" });
   }
   next();
 }
