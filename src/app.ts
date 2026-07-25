@@ -13,7 +13,7 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 app.use(cookieParser());
@@ -22,13 +22,13 @@ app.use(passport.initialize());
 
 // --- Health check ---
 app.get("/", (req, res) => {
-  res.json({ message: "Chatbot backend jalan 🚀" });
+  res.json({ message: "Chatbot backend is running 🚀" });
 });
 
-// --- Semua route API di-prefix /api ---
+// --- All API routes are prefixed with /api ---
 app.use("/api", routes);
 
-// --- 404 & error handler (harus paling bawah) ---
+// --- 404 & error handler (must be at the bottom) ---
 app.use(notFoundHandler);
 app.use(errorHandler);
 

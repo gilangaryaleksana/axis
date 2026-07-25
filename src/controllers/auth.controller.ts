@@ -51,7 +51,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
     res.status(409);
-    throw new Error("Email sudah terdaftar");
+    throw new Error("Email already registered");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -67,7 +67,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const token = signJwt({ userId: newUser.id, role: newUser.role });
 
   res.status(201).json({
-    message: "Register berhasil",
+    message: "Registration successful",
     token,
     user: { id: newUser.id, email: newUser.email },
   });
@@ -81,19 +81,19 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   if (!user || !user.password) {
     res.status(401);
-    throw new Error("Email atau password salah");
+    throw new Error("Email or password is incorrect");
   }
 
   const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) {
     res.status(401);
-    throw new Error("Email atau password salah");
+    throw new Error("Email or password is incorrect");
   }
 
   const token = signJwt({ userId: user.id, role: user.role });
 
   res.json({
-    message: "Login berhasil",
+    message: "Login successful",
     token,
     user: { id: user.id, email: user.email, role: user.role },
   });
@@ -101,7 +101,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
 // 5. POST /api/auth/logout
 export const logout = asyncHandler(async (req: Request, res: Response) => {
-  res.json({ message: "Logout berhasil" });
+  res.json({ message: "Logout successful" });
 });
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -118,7 +118,7 @@ export const googleOneTap = asyncHandler(
     const payload = ticket.getPayload();
     if (!payload?.email) {
       res.status(401);
-      throw new Error("Token Google tidak valid");
+      throw new Error("Google token is invalid");
     }
 
     const user = await findOrCreateUser({

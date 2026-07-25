@@ -3,10 +3,10 @@ import jwt, { SignOptions } from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET belum diset di .env");
+  throw new Error("JWT_SECRET has not been set in .env");
 }
 
-// Simpan sebagai constant baru yang eksplisit typed string
+// Store as an explicit typed string constant
 const SECRET: string = JWT_SECRET;
 
 export interface JwtPayload {

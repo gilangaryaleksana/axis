@@ -4,13 +4,15 @@ import cors from "cors";
 
 const PORT = process.env.PORT || 5000;
 
-// 1. Pasang CORS di sini (di atas app.listen)
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true
-}));
+// 1. Set up CORS here (before app.listen)
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
 
-// 2. Server baru mendengarkan request
+// 2. Start the server and listen for requests
 app.listen(PORT, () => {
-  console.log(`✅ Server berjalan di http://localhost:${PORT}`);
+  console.log(`✅ Server is running at http://localhost:${PORT}`);
 });

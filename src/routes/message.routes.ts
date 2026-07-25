@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { getMessages, sendMessage } from "../controllers/message.controller";
-// Import fungsi 'authenticate' dari middleware lu
+// Import the 'authenticate' function from the middleware
 import { authenticate } from "@/middlewares/auth.middleware";
 
 const router = Router();
 
-// Endpoint untuk mengambil riwayat chat berdasarkan ID percakapan (Wajib Login)
+// Endpoint to retrieve chat history based on conversation ID (login required)
 router.get("/:id/messages", authenticate, getMessages);
 
-// Endpoint untuk mengirim pesan baru & mendapatkan response AI (Wajib Login)
+// Endpoint to send a new message and receive an AI response (login required)
 router.post("/:id/messages", authenticate, sendMessage);
 
 export default router;

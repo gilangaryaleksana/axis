@@ -13,7 +13,7 @@ export default function ScrollIndicator() {
     const setup = () => {
       const lenis = lenisRef.current;
       if (!lenis) {
-        // Lenis belum siap, coba lagi frame berikutnya
+        // Lenis is not ready yet, retry on the next frame
         requestAnimationFrame(setup);
         return;
       }
@@ -28,8 +28,8 @@ export default function ScrollIndicator() {
         if (!thumbRef.current) return;
         const progress = limit > 0 ? scroll / limit : 0;
 
-        const trackHeight = window.innerHeight; // full height, gak ada margin lagi
-        const thumbHeight = 64; // samain sama h-10 (40px)
+        const trackHeight = window.innerHeight; // full height, no extra margin
+        const thumbHeight = 64; // matches h-10 (40px)
         const maxTranslate = trackHeight - thumbHeight;
 
         thumbRef.current.style.transform = `translateY(${progress * maxTranslate}px)`;

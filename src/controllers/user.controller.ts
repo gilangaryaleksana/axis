@@ -4,26 +4,28 @@ import { asyncHandler } from "@/utils/asyncHandler";
 import { AppError } from "@/utils/AppError";
 import { PersonaType } from "@prisma/client";
 
-const VALID_TYPES: PersonaType[] = ["tentara", "polisi", "dokter", "guru"];
+const VALID_TYPES: PersonaType[] = ["soldier", "police", "doctor", "teacher"];
 
 // PATCH /api/user/persona
-// Body: { "persona": "tentara" | "polisi" | "dokter" | "guru" }
-// Dipanggil saat register/onboarding pertama kali
-export const setDefaultPersona = asyncHandler(async (req: Request, res: Response) => {
-  const persona = req.body?.persona as PersonaType;
+// Body: { "persona": "soldier" | "police" | "doctor" | "teacher" }
+// Called during registration/onboarding for the first time
+export const setDefaultPersona = asyncHandler(
+  async (req: Request, res: Response) => {
+    const persona = req.body?.persona as PersonaType;
 
-  if (!persona || !VALID_TYPES.includes(persona)) {
-    throw new AppError(
-      "Pilihan role tidak valid. Gunakan: tentara, polisi, dokter, guru",
-      400
-    );
-  }
+    if (!persona || !VALID_TYPES.includes(persona)) {
+      throw new AppError(
+        "Invalid role choice. Use: soldier, police, doctor, teacher",
+        400,
+      );
+    }
 
-  const updated = await prisma.user.update({
-    where: { id: req.user!.id },
-    data: { defaultPersona: persona },
-    select: { id: true, defaultPersona: true },
-  });
+    const updated = await prisma.user.update({
+      where: { id: req.user!.id },
+      data: { defaultPersona: persona },
+      select: { id: true, defaultPersona: true },
+    });
 
-  res.json(updated);
-});
+    res.json(updated);
+  },
+);

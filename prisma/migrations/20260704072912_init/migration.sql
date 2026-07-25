@@ -5,7 +5,7 @@ CREATE TABLE `users` (
     `email` VARCHAR(191) NOT NULL,
     `avatar_url` VARCHAR(191) NULL,
     `role` ENUM('user', 'admin') NOT NULL DEFAULT 'user',
-    `default_persona` ENUM('tentara', 'polisi', 'dokter', 'guru') NULL,
+    `default_persona` ENUM('soldier', 'police', 'doctor', 'teacher') NULL,
     `is_active` BOOLEAN NOT NULL DEFAULT true,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE `sessions` (
 -- CreateTable
 CREATE TABLE `personas` (
     `id` VARCHAR(191) NOT NULL,
-    `type` ENUM('tentara', 'polisi', 'dokter', 'guru') NOT NULL,
+    `type` ENUM('soldier', 'police', 'doctor', 'teacher') NOT NULL,
     `display_name` VARCHAR(191) NOT NULL,
     `description` TEXT NULL,
     `system_prompt` TEXT NOT NULL,

@@ -20,11 +20,13 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   res.json(users);
 });
 
-// GET /api/admin/personas — termasuk yang nonaktif
-export const getAllPersonasAdmin = asyncHandler(async (req: Request, res: Response) => {
-  const personas = await prisma.persona.findMany({
-    include: { _count: { select: { conversations: true } } },
-    orderBy: { createdAt: "asc" },
-  });
-  res.json(personas);
-});
+// GET /api/admin/personas — includes inactive ones
+export const getAllPersonasAdmin = asyncHandler(
+  async (req: Request, res: Response) => {
+    const personas = await prisma.persona.findMany({
+      include: { _count: { select: { conversations: true } } },
+      orderBy: { createdAt: "asc" },
+    });
+    res.json(personas);
+  },
+);

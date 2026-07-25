@@ -4,8 +4,8 @@ import { prisma } from "@/config/prisma";
 import { verifyJwt } from "@/utils/jwt";
 
 /**
- * Wajib login. Ambil token dari header "Authorization: Bearer <token>".
- * Kalau valid, isi req.user supaya bisa dipakai controller berikutnya.
+ * Authentication required. Read the token from the "Authorization: Bearer <token>" header.
+ * If valid, populate req.user for the next controller.
  */
 export async function authenticate(
   req: Request,
@@ -15,7 +15,7 @@ export async function authenticate(
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Belum login" });
+      return res.status(401).json({ message: "Not logged in" });
     }
 
     const token = authHeader.split(" ")[1];
@@ -27,9 +27,7 @@ export async function authenticate(
     });
 
     if (!user || !user.isActive) {
-      return res
-        .status(401)
-        .json({ message: "User tidak ditemukan atau nonaktif" });
+      return res.status(401).json({ message: "User not found or inactive" });
     }
 
     req.user = {
@@ -42,23 +40,21 @@ export async function authenticate(
     if (err instanceof TokenExpiredError) {
       return res
         .status(401)
-        .json({ message: "Sesi kedaluwarsa, silakan login ulang" });
+        .json({ message: "Session expired, please log in again" });
     }
     if (err instanceof JsonWebTokenError) {
-      return res.status(401).json({ message: "Token tidak valid" });
+      return res.status(401).json({ message: "Invalid token" });
     }
-    return res.status(401).json({ message: "Autentikasi gagal" });
+    return res.status(401).json({ message: "Authentication failed" });
   }
 }
 
 /**
- * Wajib role admin. Pasang setelah middleware `authenticate`.
+ * Requires admin role. Place it after the `authenticate` middleware.
  */
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   if (req.user?.role !== "admin") {
-    return res
-      .status(403)
-      .json({ message: "Hanya admin yang boleh mengakses ini" });
+    return res.status(403).json({ message: "Only admins can access this" });
   }
   next();
 }

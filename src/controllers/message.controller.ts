@@ -8,7 +8,7 @@ export const getMessages = asyncHandler(async (req: Request, res: Response) => {
   const conversation = await prisma.conversation.findFirst({
     where: { id: req.params.id, userId: req.user!.id, isDeleted: false },
   });
-  if (!conversation) throw new AppError("Percakapan tidak ditemukan", 404);
+  if (!conversation) throw new AppError("Conversation not found", 404);
 
   const messages = await prisma.message.findMany({
     where: { conversationId: req.params.id },
@@ -18,17 +18,17 @@ export const getMessages = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // POST /api/conversations/:id/messages
-// Body: { "content": "teks pesan dari user" }
-// Use case: Mengirim Pesan & Menerima Respons
+// Body: { "content": "user message text" }
+// Use case: send a message and receive a response
 export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   const conversation = await prisma.conversation.findFirst({
     where: { id: req.params.id, userId: req.user!.id, isDeleted: false },
     include: { persona: true },
   });
-  if (!conversation) throw new AppError("Percakapan tidak ditemukan", 404);
+  if (!conversation) throw new AppError("Conversation not found", 404);
 
   const content = (req.body?.content as string)?.trim();
-  if (!content) throw new AppError("content pesan tidak boleh kosong", 400);
+  if (!content) throw new AppError("Message content cannot be empty", 400);
 
   const userMessage = await prisma.message.create({
     data: { conversationId: req.params.id, sender: "user", content },
@@ -56,7 +56,7 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
 });
 
 /**
- * Placeholder pemanggilan AI. Ganti dengan integrasi Anthropic API sesungguhnya:
+ * Placeholder for the AI call. Replace with a real Anthropic API integration:
  *
  * const result = await fetch("https://api.anthropic.com/v1/messages", {
  *   method: "POST",
@@ -97,7 +97,7 @@ async function generateBotReply(
     },
   );
 
-  if (!response.ok) throw new AppError("Gagal memanggil AI", 502);
+  if (!response.ok) throw new AppError("Failed to call the AI service", 502);
 
   const data = await response.json();
   return data.choices[0].message.content;

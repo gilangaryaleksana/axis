@@ -4,8 +4,8 @@ import { Strategy as GitHubStrategy } from "passport-github2";
 import { prisma } from "@/config/prisma";
 
 /**
- * Cari user berdasarkan account OAuth (provider + providerAccountId).
- * Kalau belum ada, buat user baru sekaligus record account-nya.
+ * Find a user based on the OAuth account (provider + providerAccountId).
+ * If it does not exist, create a new user and its account record.
  */
 export async function findOrCreateUser(params: {
   provider: "google" | "github";
@@ -56,9 +56,9 @@ export async function findOrCreateUser(params: {
   return user;
 }
 
-// Google Strategy hanya didaftarkan kalau credential-nya sudah diisi di .env
-// Ini supaya server tetap bisa jalan untuk testing awal, sebelum kamu
-// sempat bikin OAuth App di Google/GitHub Developer Console.
+// Google Strategy is only registered when credentials are present in .env
+// This keeps the server running for early testing before you
+// have set up the Google/GitHub OAuth app.
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   passport.use(
     new GoogleStrategy(
@@ -82,16 +82,16 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         } catch (err) {
           done(err as Error, undefined);
         }
-      }
-    )
+      },
+    ),
   );
 } else {
   console.warn(
-    "⚠️  GOOGLE_CLIENT_ID/SECRET belum diisi di .env — login Google dinonaktifkan sementara."
+    "⚠️  GOOGLE_CLIENT_ID/SECRET have not been set in .env — Google login is temporarily disabled.",
   );
 }
 
-// GitHub Strategy hanya didaftarkan kalau credential-nya sudah diisi
+// GitHub Strategy is only registered when credentials are present
 if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   passport.use(
     new GitHubStrategy(
@@ -104,7 +104,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
         accessToken: string,
         refreshToken: string,
         profile: any,
-        done: (error: any, user?: any) => void
+        done: (error: any, user?: any) => void,
       ) => {
         try {
           const email =
@@ -124,12 +124,12 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
         } catch (err) {
           done(err as Error, undefined);
         }
-      }
-    )
+      },
+    ),
   );
 } else {
   console.warn(
-    "⚠️  GITHUB_CLIENT_ID/SECRET belum diisi di .env — login GitHub dinonaktifkan sementara."
+    "⚠️  GITHUB_CLIENT_ID/SECRET have not been set in .env — GitHub login is temporarily disabled.",
   );
 }
 

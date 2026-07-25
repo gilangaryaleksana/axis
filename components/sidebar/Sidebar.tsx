@@ -15,6 +15,7 @@ interface SidebarProps {
   latest: { id: string; title: string; sub: string }[];
   currentConvoId: string;
   onSelectConvo: (id: string) => void;
+  userName?: string;
 }
 
 interface MeResponse {
@@ -32,6 +33,7 @@ export default function Sidebar({
   latest,
   currentConvoId,
   onSelectConvo,
+  userName = "Guest",
 }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<MeResponse | null>(null);
@@ -54,7 +56,7 @@ export default function Sidebar({
           setUser(data);
         }
       } catch (err) {
-        console.error("Gagal ambil data user:", err);
+        console.error("Failed to fetch user data:", err);
       } finally {
         setLoading(false);
       }
@@ -64,7 +66,7 @@ export default function Sidebar({
   }, []);
 
   const isLoggedIn = !!user;
-  const displayName = isLoggedIn ? user.name : "Guest";
+  const displayName = isLoggedIn ? user.name : userName;
   const userImage = user?.avatarUrl;
   const [imgError, setImgError] = useState(false);
 

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "@/utils/AppError";
 
 export function notFoundHandler(req: Request, res: Response) {
-  res.status(404).json({ message: `Route ${req.originalUrl} tidak ditemukan` });
+  res.status(404).json({ message: `Route ${req.originalUrl} was not found` });
 }
 
 export function errorHandler(
@@ -10,7 +10,7 @@ export function errorHandler(
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
+  next: NextFunction,
 ) {
   console.error(err);
 
@@ -18,5 +18,5 @@ export function errorHandler(
     return res.status(err.statusCode).json({ message: err.message });
   }
 
-  res.status(500).json({ message: "Terjadi kesalahan pada server" });
+  res.status(500).json({ message: "An error occurred on the server" });
 }

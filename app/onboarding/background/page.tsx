@@ -7,16 +7,16 @@ import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 
 const OPTIONS = [
-  { value: "pemula", label: "Beginner, just getting started" },
+  { value: "beginner", label: "Beginner, just getting started" },
   {
-    value: "menengah",
+    value: "intermediate",
     label: "Intermediate, have traded before but not consistently",
   },
   {
-    value: "berpengalaman",
+    value: "experienced",
     label: "Experienced, trading regularly every week",
   },
-  { value: "profesional", label: "Professional / full-time trader" },
+  { value: "professional", label: "Professional / full-time trader" },
   {
     value: "observer",
     label: "Just want to follow the market, not trading yet",

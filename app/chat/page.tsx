@@ -6,6 +6,7 @@ import ChatHeader from "../../components/chat/ChatHeader";
 import ChatBody, { Message } from "../../components/chat/ChatBody";
 import Composer from "../../components/chat/Composer";
 import { PERSONAS, PersonaKey } from "../../components/persona/personas";
+import { authFetch } from "../../lib/auth";
 
 export default function ChatPage() {
   const router = useRouter();
@@ -33,11 +34,11 @@ export default function ChatPage() {
     const loadMessages = async () => {
       setIsLoadingHistory(true);
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${currentConvoId}/messages`,
         );
 
-        if (!res.ok) throw new Error("Gagal load pesan");
+        if (!res.ok) throw new Error("Failed to load messages");
 
         const data = await res.json();
         if (cancelled) return;
@@ -77,16 +78,15 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(
+      const res = await authFetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${currentConvoId}/messages`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content: text }),
         },
       );
 
-      if (!res.ok) throw new Error("Gagal kirim pesan");
+      if (!res.ok) throw new Error("Failed to send message");
 
       const reply = await res.json();
       setMessages((prev) => [
@@ -97,7 +97,7 @@ export default function ChatPage() {
       console.error(err);
       setMessages((prev) => [
         ...prev,
-        { from: "bot", text: "Maaf, ada gangguan. Coba lagi ya." },
+        { from: "bot", text: "Sorry, something went wrong. Please try again." },
       ]);
     } finally {
       setIsLoading(false);
@@ -117,7 +117,6 @@ export default function ChatPage() {
         latest={latest}
         currentConvoId={currentConvoId}
         onSelectConvo={setCurrentConvoId}
-        userName="User"
       />
       <div className="flex-1 flex flex-col">
         <ChatHeader persona={persona} sub={persona.sub} />

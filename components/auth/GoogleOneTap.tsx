@@ -32,13 +32,13 @@ export function GoogleOneTap() {
           },
         );
 
-        if (!res.ok) throw new Error("Login gagal");
+        if (!res.ok) throw new Error("Login failed");
 
         const data = await res.json();
         setToken(data.token);
         router.push("/chat");
       } catch (err) {
-        console.error("One Tap login gagal:", err);
+        console.error("One Tap login failed:", err);
       }
     };
 
@@ -66,7 +66,7 @@ export function GoogleOneTap() {
       if (window.google) {
         window.google.accounts.id.cancel();
       }
-      initialized.current = false; // ← reset biar mount berikutnya bisa init ulang
+      initialized.current = false; // ← reset so it can initialize again on the next mount
     };
   }, [router]);
 

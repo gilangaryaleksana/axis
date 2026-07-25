@@ -12,7 +12,7 @@ export default function AuthCallbackPage() {
     const token = searchParams.get("token");
 
     if (!token) {
-      setError("Token tidak ditemukan di URL. Login gagal.");
+      setError("Token not found in the URL. Login failed.");
       return;
     }
 
@@ -26,7 +26,7 @@ export default function AuthCallbackPage() {
         <div>
           <p className="text-red-500 mb-2">{error}</p>
           <a href="/" className="underline text-sm">
-            Kembali ke halaman utama
+            Back to homepage
           </a>
         </div>
       </div>
@@ -35,7 +35,7 @@ export default function AuthCallbackPage() {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <p>Sedang masuk...</p>
+      <p>Logging in...</p>
     </div>
   );
 }
