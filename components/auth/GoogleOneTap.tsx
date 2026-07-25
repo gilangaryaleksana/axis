@@ -15,9 +15,7 @@ export function GoogleOneTap() {
   const initialized = useRef(false);
 
   useEffect(() => {
-    // Jangan munculin One Tap kalau user udah login
     if (getToken()) return;
-
     if (initialized.current) return;
     initialized.current = true;
 
@@ -68,6 +66,7 @@ export function GoogleOneTap() {
       if (window.google) {
         window.google.accounts.id.cancel();
       }
+      initialized.current = false; // ← reset biar mount berikutnya bisa init ulang
     };
   }, [router]);
 
