@@ -22,7 +22,7 @@ export default function ChatPage() {
   const startNewConversation = async () => {
     setMessages([{ from: "bot", text: "hey! what's on your mind today?" }]);
     try {
-      const conv = await createConversation(persona.key); 
+      const conv = await createConversation(persona.key);
       setCurrentConvoId(conv.id);
     } catch (err) {
       console.error("Failed to create conversation", err);
@@ -35,30 +35,30 @@ export default function ChatPage() {
   ];
 
   useEffect(() => {
-  const initConversation = async () => {
-    try {
-      const res = await authFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/conversations`,
-      );
-      const existing = await res.json();
+    const initConversation = async () => {
+      try {
+        const res = await authFetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/conversations`,
+        );
+        const existing = await res.json();
 
-      if (Array.isArray(existing) && existing.length > 0) {
-        setCurrentConvoId(existing[0].id);
-        setCurrentPersona(existing[0].persona.type as PersonaKey);
-      } else {
-        // belum ada sama sekali, baru bikin
+        if (Array.isArray(existing) && existing.length > 0) {
+          setCurrentConvoId(existing[0].id);
+          setCurrentPersona(existing[0].persona.type as PersonaKey);
+        } else {
+          // There are no conversations yet, so create one.
+          await startNewConversation();
+        }
+      } catch (err) {
+        console.error("Failed to init conversation", err);
         await startNewConversation();
       }
-    } catch (err) {
-      console.error("Failed to init conversation", err);
-      await startNewConversation();
-    }
-  };
+    };
 
-  if (!currentConvoId) {
-    initConversation();
-  }
-}, []);
+    if (!currentConvoId) {
+      initConversation();
+    }
+  }, []);
 
   useEffect(() => {
     if (!currentConvoId) return;
