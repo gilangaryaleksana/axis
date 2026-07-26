@@ -117,7 +117,8 @@ model Persona {
 // ---------------------------------------------------------------------
 model Conversation {
   id        String    @id @default(uuid())
-  userId    String    @map("user_id")
+  userId    String?   @map("user_id")      
+  guestId   String?   @map("guest_id")     
   personaId String    @map("persona_id")
   title     String    @default("New Conversation")
   isDeleted Boolean   @default(false) @map("is_deleted")
@@ -125,10 +126,11 @@ model Conversation {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   persona  Persona   @relation(fields: [personaId], references: [id])
   messages Message[]
 
+  @@index([guestId])
   @@map("conversations")
 }
 

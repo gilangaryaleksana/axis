@@ -2,8 +2,12 @@ import { Router } from "express";
 import passport from "@/config/passport";
 import { oauthCallback, getMe, logout, register, login, googleOneTap } from "@/controllers/auth.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
+import { guestMiddleware } from "@/middlewares/guest.middleware";
 
 const router = Router();
+
+// Check the login if there is a token, if not, fill in the guestId from the cookie
+router.use(guestMiddleware);
 
 // --- Google OAuth ---
 router.get(

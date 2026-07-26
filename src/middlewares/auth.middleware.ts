@@ -58,3 +58,37 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   }
   next();
 }
+
+export async function optionalAuthenticate(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith("Bearer ")) {
+      return next();
+    }
+
+    const token = authHeader.split(" ")[1];
+    const payload = verifyJwt(token);
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { id: true, role: true, defaultPersona: true, isActive: true },
+    });
+
+    if (!user || !user.isActive) {
+      return next(); 
+    }
+
+    req.user = {
+      id: user.id,
+      role: user.role,
+      defaultPersona: user.defaultPersona,
+    };
+    next();
+  } catch {
+    next();
+  }
+}

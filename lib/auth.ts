@@ -16,8 +16,8 @@ export function clearToken() {
 }
 
 /**
- * Helper fetch yang otomatis nempelin header Authorization
- * kalau ada token tersimpan.
+ * Helper fetch that automatically attaches the Authorization header
+ * if there is a token stored, and always include cookies (create guest_id).
  */
 let isRedirecting = false;
 
@@ -34,7 +34,11 @@ export async function authFetch(input: string, init: RequestInit = {}) {
     headers.set("Content-Type", "application/json");
   }
 
-  const res = await fetch(input, { ...init, headers });
+  const res = await fetch(input, {
+    ...init,
+    headers,
+    credentials: "include", // mandatory, so that the guest_id cookie is also sent & saved
+  });
 
   if (res.status === 401 && !isRedirecting) {
     isRedirecting = true;

@@ -5,8 +5,19 @@ import { AppError } from "@/utils/AppError";
 
 // GET /api/conversations/:id/messages
 export const getMessages = asyncHandler(async (req: Request, res: Response) => {
+  const ownerId = req.user?.id;
+  const guestId = req.guestId;
+
+  if (!ownerId && !guestId) {
+    throw new AppError("No user or guest identity found", 400);
+  }
+
   const conversation = await prisma.conversation.findFirst({
-    where: { id: req.params.id, userId: req.user!.id, isDeleted: false },
+    where: {
+      id: req.params.id,
+      isDeleted: false,
+      ...(ownerId ? { userId: ownerId } : { guestId }),
+    },
   });
   if (!conversation) throw new AppError("Conversation not found", 404);
 
@@ -18,11 +29,20 @@ export const getMessages = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // POST /api/conversations/:id/messages
-// Body: { "content": "user message text" }
-// Use case: send a message and receive a response
 export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
+  const ownerId = req.user?.id;
+  const guestId = req.guestId;
+
+  if (!ownerId && !guestId) {
+    throw new AppError("No user or guest identity found", 400);
+  }
+
   const conversation = await prisma.conversation.findFirst({
-    where: { id: req.params.id, userId: req.user!.id, isDeleted: false },
+    where: {
+      id: req.params.id,
+      isDeleted: false,
+      ...(ownerId ? { userId: ownerId } : { guestId }),
+    },
     include: { persona: true },
   });
   if (!conversation) throw new AppError("Conversation not found", 404);
@@ -55,26 +75,6 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   res.status(201).json({ userMessage, botMessage });
 });
 
-/**
- * Placeholder for the AI call. Replace with a real Anthropic API integration:
- *
- * const result = await fetch("https://api.anthropic.com/v1/messages", {
- *   method: "POST",
- *   headers: {
- *     "x-api-key": process.env.ANTHROPIC_API_KEY!,
- *     "anthropic-version": "2023-06-01",
- *     "content-type": "application/json",
- *   },
- *   body: JSON.stringify({
- *     model: "claude-sonnet-4-6",
- *     max_tokens: 1000,
- *     system: systemPrompt,
- *     messages: [{ role: "user", content: userText }],
- *   }),
- * });
- * const data = await result.json();
- * return data.content[0].text;
- */
 async function generateBotReply(
   systemPrompt: string,
   userText: string,

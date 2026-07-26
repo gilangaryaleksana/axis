@@ -3,11 +3,25 @@ import { prisma } from "@/config/prisma";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { AppError } from "@/utils/AppError";
 
-// GET /api/conversations — user's conversation history (use case: viewing the history list)
+// Small helper so you don't rewrite each function
+function getOwnerFilter(req: Request) {
+  const ownerId = req.user?.id;
+  const guestId = req.guestId;
+
+  if (!ownerId && !guestId) {
+    throw new AppError("No user or guest identity found", 400);
+  }
+
+  return ownerId ? { userId: ownerId } : { guestId };
+}
+
+// GET /api/conversations — conversation history (login or guest)
 export const getConversations = asyncHandler(
   async (req: Request, res: Response) => {
+    const ownerFilter = getOwnerFilter(req);
+
     const conversations = await prisma.conversation.findMany({
-      where: { userId: req.user!.id, isDeleted: false },
+      where: { ...ownerFilter, isDeleted: false },
       include: { persona: true },
       orderBy: { updatedAt: "desc" },
     });
@@ -15,24 +29,31 @@ export const getConversations = asyncHandler(
   },
 );
 
-// POST /api/conversations — start a new conversation (use case: starting a new conversation)
-// Body: { "personaId": "...", "title"?: "..." }
+// POST /api/conversations — start a new conversation (login or guest)
 export const createConversation = asyncHandler(
   async (req: Request, res: Response) => {
-    const { personaId, title } = req.body;
-    if (!personaId) throw new AppError("personaId is required", 400);
+    const ownerId = req.user?.id;
+    const guestId = req.guestId;
+    if (!ownerId && !guestId)
+      throw new AppError("No user or guest identity found", 400);
 
-    const persona = await prisma.persona.findUnique({
-      where: { id: personaId },
-    });
+    const { personaId, personaType, title } = req.body;
+    if (!personaId && !personaType) {
+      throw new AppError("personaId or personaType is required", 400);
+    }
+
+    const persona = personaId
+      ? await prisma.persona.findUnique({ where: { id: personaId } })
+      : await prisma.persona.findUnique({ where: { type: personaType } });
+
     if (!persona || !persona.isActive) {
       throw new AppError("Persona not found or inactive", 404);
     }
 
     const conversation = await prisma.conversation.create({
       data: {
-        userId: req.user!.id,
-        personaId,
+        ...(ownerId ? { userId: ownerId } : { guestId }),
+        personaId: persona.id,
         title: title ?? `Conversation with ${persona.displayName}`,
       },
       include: { persona: true },
@@ -42,11 +63,13 @@ export const createConversation = asyncHandler(
   },
 );
 
-// GET /api/conversations/:id — continue an existing conversation (with messages)
+// GET /api/conversations/:id — continue conversation (with message)
 export const getConversationById = asyncHandler(
   async (req: Request, res: Response) => {
+    const ownerFilter = getOwnerFilter(req);
+
     const conversation = await prisma.conversation.findFirst({
-      where: { id: req.params.id, userId: req.user!.id, isDeleted: false },
+      where: { id: req.params.id, ...ownerFilter, isDeleted: false },
       include: { persona: true, messages: { orderBy: { createdAt: "asc" } } },
     });
 
@@ -55,11 +78,13 @@ export const getConversationById = asyncHandler(
   },
 );
 
-// PATCH /api/conversations/:id — rename a conversation
+// PATCH /api/conversations/:id — rename conversation
 export const updateConversation = asyncHandler(
   async (req: Request, res: Response) => {
+    const ownerFilter = getOwnerFilter(req);
+
     const owned = await prisma.conversation.findFirst({
-      where: { id: req.params.id, userId: req.user!.id, isDeleted: false },
+      where: { id: req.params.id, ...ownerFilter, isDeleted: false },
     });
     if (!owned) throw new AppError("Conversation not found", 404);
 
@@ -71,11 +96,13 @@ export const updateConversation = asyncHandler(
   },
 );
 
-// DELETE /api/conversations/:id — delete a conversation (use case: deleting a conversation)
+// DELETE /api/conversations/:id — delete conversation
 export const deleteConversation = asyncHandler(
   async (req: Request, res: Response) => {
+    const ownerFilter = getOwnerFilter(req);
+
     const owned = await prisma.conversation.findFirst({
-      where: { id: req.params.id, userId: req.user!.id, isDeleted: false },
+      where: { id: req.params.id, ...ownerFilter, isDeleted: false },
     });
     if (!owned) throw new AppError("Conversation not found", 404);
 
@@ -86,3 +113,13 @@ export const deleteConversation = asyncHandler(
     res.json({ message: "Conversation deleted successfully" });
   },
 );
+
+// Migrate guest conversations
+export async function migrateGuestConversations(guestId: string, userId: string) {
+  if (!guestId) return;
+
+  await prisma.conversation.updateMany({
+    where: { guestId, isDeleted: false },
+    data: { userId, guestId: null },
+  });
+}

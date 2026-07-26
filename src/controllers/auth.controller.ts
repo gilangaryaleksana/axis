@@ -6,11 +6,18 @@ import { findOrCreateUser } from "@/config/passport";
 import { signJwt } from "@/utils/jwt";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { OAuth2Client } from "google-auth-library";
+import { migrateGuestConversations } from "./conversation.controller";
 
-// 1. OAuth Callback (Google/GitHub)
+// 1. OAuth Callback (Google/GitHub via Passport redirect flow)
 export const oauthCallback = asyncHandler(
   async (req: Request, res: Response) => {
     const user = req.user as any;
+
+    // Migrasi guest → user, kalau guestId ada dari cookie
+    if (req.guestId) {
+      await migrateGuestConversations(req.guestId, user.id);
+      res.clearCookie("guest_id");
+    }
 
     const token = signJwt({ userId: user.id, role: user.role });
 
@@ -64,6 +71,11 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
+  if (req.guestId) {
+    await migrateGuestConversations(req.guestId, newUser.id);
+    res.clearCookie("guest_id");
+  }
+
   const token = signJwt({ userId: newUser.id, role: newUser.role });
 
   res.status(201).json({
@@ -88,6 +100,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   if (!isValid) {
     res.status(401);
     throw new Error("Email or password is incorrect");
+  }
+
+  if (req.guestId) {
+    await migrateGuestConversations(req.guestId, user.id);
+    res.clearCookie("guest_id");
   }
 
   const token = signJwt({ userId: user.id, role: user.role });
@@ -128,6 +145,11 @@ export const googleOneTap = asyncHandler(
       name: payload.name || payload.email.split("@")[0],
       avatarUrl: payload.picture,
     });
+
+    if (req.guestId) {
+      await migrateGuestConversations(req.guestId, user.id);
+      res.clearCookie("guest_id");
+    }
 
     const token = signJwt({ userId: user.id, role: user.role });
 

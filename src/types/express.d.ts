@@ -7,6 +7,10 @@ declare global {
       role: string;
       defaultPersona?: string | null;
     }
+
+    interface Request {
+      guestId?: string;
+    }
   }
 }
 

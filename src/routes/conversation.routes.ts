@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { mockAuth } from "@/middlewares/mockAuth.middleware";
+import { optionalAuthenticate } from "@/middlewares/auth.middleware";
+import { guestMiddleware } from "@/middlewares/guest.middleware";
 import {
   getConversations,
   createConversation,
@@ -11,13 +12,16 @@ import { getMessages, sendMessage } from "@/controllers/message.controller";
 
 const router = Router();
 
-router.get("/", mockAuth, getConversations);
-router.post("/", mockAuth, createConversation);
-router.get("/:id", mockAuth, getConversationById);
-router.patch("/:id", mockAuth, updateConversation);
-router.delete("/:id", mockAuth, deleteConversation);
+// Check the login if there is a token, if not, fill in the guestId from the cookie
+router.use(optionalAuthenticate, guestMiddleware);
 
-router.get("/:id/messages", mockAuth, getMessages);
-router.post("/:id/messages", mockAuth, sendMessage);
+router.get("/", getConversations);
+router.post("/", createConversation);
+router.get("/:id", getConversationById);
+router.patch("/:id", updateConversation);
+router.delete("/:id", deleteConversation);
+
+router.get("/:id/messages", getMessages);
+router.post("/:id/messages", sendMessage);
 
 export default router;

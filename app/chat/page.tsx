@@ -7,25 +7,59 @@ import ChatBody, { Message } from "../../components/chat/ChatBody";
 import Composer from "../../components/chat/Composer";
 import { PERSONAS, PersonaKey } from "../../components/persona/personas";
 import { authFetch } from "../../lib/auth";
+import { createConversation } from "../../lib/conversations";
 
 export default function ChatPage() {
   const router = useRouter();
   const [currentPersona, setCurrentPersona] = useState<PersonaKey>("police");
-  const [currentConvoId, setCurrentConvoId] = useState(
-    "00000000-0000-0000-0000-000000000000",
-  );
+  const [currentConvoId, setCurrentConvoId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
   const persona = PERSONAS.find((p) => p.key === currentPersona)!;
 
+  const startNewConversation = async () => {
+    setMessages([{ from: "bot", text: "hey! what's on your mind today?" }]);
+    try {
+      const conv = await createConversation(persona.key); 
+      setCurrentConvoId(conv.id);
+    } catch (err) {
+      console.error("Failed to create conversation", err);
+    }
+  };
+
   const latest = [
     { id: "1", title: persona.name, sub: persona.sub },
     { id: "2", title: persona.name, sub: persona.sub },
   ];
 
-  // Fetch history tiap kali convo aktif berubah
+  useEffect(() => {
+  const initConversation = async () => {
+    try {
+      const res = await authFetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/conversations`,
+      );
+      const existing = await res.json();
+
+      if (Array.isArray(existing) && existing.length > 0) {
+        setCurrentConvoId(existing[0].id);
+        setCurrentPersona(existing[0].persona.type as PersonaKey);
+      } else {
+        // belum ada sama sekali, baru bikin
+        await startNewConversation();
+      }
+    } catch (err) {
+      console.error("Failed to init conversation", err);
+      await startNewConversation();
+    }
+  };
+
+  if (!currentConvoId) {
+    initConversation();
+  }
+}, []);
+
   useEffect(() => {
     if (!currentConvoId) return;
 
@@ -109,13 +143,9 @@ export default function ChatPage() {
       <Sidebar
         currentPersona={currentPersona}
         onSelectPersona={setCurrentPersona}
-        onNewConversation={() =>
-          setMessages([
-            { from: "bot", text: "hey! what's on your mind today?" },
-          ])
-        }
+        onNewConversation={startNewConversation}
         latest={latest}
-        currentConvoId={currentConvoId}
+        currentConvoId={currentConvoId ?? ""}
         onSelectConvo={setCurrentConvoId}
       />
       <div className="flex-1 flex flex-col">
