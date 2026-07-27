@@ -12,6 +12,7 @@ interface SidebarProps {
   currentPersona: PersonaKey;
   onSelectPersona: (key: PersonaKey) => void;
   onNewConversation: () => void;
+  isCreatingConversation: boolean;
   latest: { id: string; title: string; sub: string }[];
   currentConvoId: string;
   onSelectConvo: (id: string) => void;
@@ -34,6 +35,7 @@ export default function Sidebar({
   currentConvoId,
   onSelectConvo,
   userName = "Guest",
+  isCreatingConversation = false,
 }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<MeResponse | null>(null);
@@ -98,12 +100,17 @@ export default function Sidebar({
       {/* Button New Conversation */}
       <button
         onClick={onNewConversation}
-        className={`flex items-center gap-2 bg-[#D9D9D9] rounded-full text-[#5A5A5A] mb-6 text-sm ${
+        disabled={isCreatingConversation}
+        className={`flex items-center gap-2 bg-[#D9D9D9] rounded-full text-[#5A5A5A] mb-6 text-sm ${isCreatingConversation ? "opacity-50" : ""} ${
           crimsonText.className
         } ${collapsed ? "justify-center w-7 h-7 mx-auto" : "px-4 py-2"}`}
       >
         <Plus size={14} className="text-[#2a2a28]" />
-        {!collapsed && <span>New Conversation</span>}
+        {!collapsed && (
+          <span>
+            {isCreatingConversation ? "Creating..." : "New Conversation"}
+          </span>
+        )}
       </button>
 
       {/* Persona Selection */}

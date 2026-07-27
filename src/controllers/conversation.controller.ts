@@ -34,8 +34,10 @@ export const createConversation = asyncHandler(
   async (req: Request, res: Response) => {
     const ownerId = req.user?.id;
     const guestId = req.guestId;
-    if (!ownerId && !guestId)
+
+    if (!ownerId && !guestId) {
       throw new AppError("No user or guest identity found", 400);
+    }
 
     const { personaId, personaType, title } = req.body;
     if (!personaId && !personaType) {
@@ -115,7 +117,10 @@ export const deleteConversation = asyncHandler(
 );
 
 // Migrate guest conversations
-export async function migrateGuestConversations(guestId: string, userId: string) {
+export async function migrateGuestConversations(
+  guestId: string,
+  userId: string,
+) {
   if (!guestId) return;
 
   await prisma.conversation.updateMany({

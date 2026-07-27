@@ -29,7 +29,7 @@ export default function ChatWindow() {
 
   return (
     <div className="mx-auto flex h-80 w-full max-w-3xl flex-col rounded-[65px] bg-neutral-100 p-6">
-      {/* Area pesan */}
+      {/* Message area */}
       <div className="flex flex-1 flex-col justify-center gap-5 overflow-y-auto mx-10">
         {messages.map((msg, index) => (
           <Reveal

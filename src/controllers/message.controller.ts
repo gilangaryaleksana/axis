@@ -50,6 +50,12 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   const content = (req.body?.content as string)?.trim();
   if (!content) throw new AppError("Message content cannot be empty", 400);
 
+  // First check whether this is the FIRST message in this conversation (before insert)
+  const messageCount = await prisma.message.count({
+    where: { conversationId: req.params.id },
+  });
+  const isFirstMessage = messageCount === 0;
+
   const userMessage = await prisma.message.create({
     data: { conversationId: req.params.id, sender: "user", content },
   });
@@ -67,12 +73,18 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
+  // If this is the first message, automatically generate the title from the message content
+  let updatedTitle = conversation.title;
+  if (isFirstMessage) {
+    updatedTitle = await generateConversationTitle(content);
+  }
+
   await prisma.conversation.update({
     where: { id: req.params.id },
-    data: { updatedAt: new Date() },
+    data: { updatedAt: new Date(), title: updatedTitle },
   });
 
-  res.status(201).json({ userMessage, botMessage });
+  res.status(201).json({ userMessage, botMessage, title: updatedTitle });
 });
 
 async function generateBotReply(
@@ -101,4 +113,35 @@ async function generateBotReply(
 
   const data = await response.json();
   return data.choices[0].message.content;
+}
+
+async function generateConversationTitle(userMessage: string): Promise<string> {
+  const response = await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Create a short title (max 5 words) that summarizes the topic of the following message, in the SAME language as the message. Reply with ONLY the title, no quotes, no additional explanation.",
+          },
+          { role: "user", content: userMessage },
+        ],
+        max_tokens: 20,
+        temperature: 0.5,
+      }),
+    },
+  );
+
+  if (!response.ok) return "New Conversation";
+
+  const data = await response.json();
+  return data.choices[0].message.content.trim();
 }

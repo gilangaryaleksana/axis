@@ -38,19 +38,19 @@ export default function LoginPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
-        }
+        },
       );
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Terjadi kesalahan");
+        throw new Error(data.message || "An error occurred");
       }
 
       setToken(data.token);
       router.push("/chat");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Terjadi kesalahan");
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsSubmitting(false);
     }

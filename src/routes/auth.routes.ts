@@ -1,18 +1,25 @@
 import { Router } from "express";
 import passport from "@/config/passport";
-import { oauthCallback, getMe, logout, register, login, googleOneTap } from "@/controllers/auth.controller";
+import {
+  oauthCallback,
+  getMe,
+  logout,
+  register,
+  login,
+  googleOneTap,
+} from "@/controllers/auth.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 import { guestMiddleware } from "@/middlewares/guest.middleware";
 
 const router = Router();
 
-// Check the login if there is a token, if not, fill in the guestId from the cookie
-router.use(guestMiddleware);
-
 // --- Google OAuth ---
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"], session: false })
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    session: false,
+  }),
 );
 router.get(
   "/google/callback",
@@ -20,13 +27,14 @@ router.get(
     session: false,
     failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed`,
   }),
+  guestMiddleware, // setelah passport, req.user udah keisi -> guestMiddleware skip generate baru
   oauthCallback,
 );
 
 // --- GitHub OAuth ---
 router.get(
   "/github",
-  passport.authenticate("github", { scope: ["user:email"], session: false })
+  passport.authenticate("github", { scope: ["user:email"], session: false }),
 );
 router.get(
   "/github/callback",
@@ -34,18 +42,19 @@ router.get(
     session: false,
     failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed`,
   }),
+  guestMiddleware,
   oauthCallback,
 );
 
-// --- Umum ---
+// --- General ---
 router.get("/me", authenticate, getMe);
 router.post("/logout", authenticate, logout);
 
-// --- Login Manual ---
-router.post("/register", register);
-router.post("/login", login);
+// --- Manual login (requires guestId from cookie for migration) ---
+router.post("/register", guestMiddleware, register);
+router.post("/login", guestMiddleware, login);
 
 // --- One Tap Login ---
-router.post("/google/onetap", googleOneTap);
+router.post("/google/onetap", guestMiddleware, googleOneTap);
 
 export default router;

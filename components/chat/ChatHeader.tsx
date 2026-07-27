@@ -3,10 +3,10 @@ import { dmSans } from "@/lib/font";
 
 export default function ChatHeader({
   persona,
-  sub,
+  title,
 }: {
   persona: Persona;
-  sub: string;
+  title: string;
 }) {
   const Icon = persona.icon;
   return (
@@ -15,11 +15,13 @@ export default function ChatHeader({
         <Icon size={18} strokeWidth={1.75} className="text-[#e8e8e6]" />
       </div>
       <div>
-        <p className={`text-sm font-semibold text-[#e8e8e6] ${dmSans.className}`}>
+        <p
+          className={`text-sm font-semibold text-[#e8e8e6] ${dmSans.className}`}
+        >
           {persona.name}
         </p>
         <p className={`text-xs text-[#6f6f6b] mt-0.5 ${dmSans.className}`}>
-          {sub}
+          {title}
         </p>
       </div>
     </div>

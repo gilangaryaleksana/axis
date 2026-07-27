@@ -13,7 +13,7 @@ export const oauthCallback = asyncHandler(
   async (req: Request, res: Response) => {
     const user = req.user as any;
 
-    // Migrasi guest → user, kalau guestId ada dari cookie
+    // Migrate guest to user if guestId exists in the cookie
     if (req.guestId) {
       await migrateGuestConversations(req.guestId, user.id);
       res.clearCookie("guest_id");
