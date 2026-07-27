@@ -43,7 +43,7 @@ export default function ChatPage() {
   const startNewConversation = async () => {
     if (isCreatingRef.current) return;
 
-    // Kalau ada conversation kosong yang masih "nganggur", pindah ke situ aja
+    // If there is an empty conversation that is still idle, switch to it
     if (emptyConvoIdRef.current) {
       setCurrentConvoId(emptyConvoIdRef.current);
       setMessages([{ from: "bot", text: "hey! what's on your mind today?" }]);
