@@ -10,8 +10,8 @@ export default function ChatHeader({
 }) {
   const Icon = persona.icon;
   return (
-    <div className="flex items-center gap-3.5 px-8 py-5 bg-[#2b2b2b]">
-      <div className="w-[35px] h-[35px] rounded-full border-[1.5px] bg-[#3a3a3a] border-[#5a5a56] flex items-center justify-center">
+    <div className="flex items-center gap-3.5 px-8 py-5 bg-[#202023]">
+      <div className="w-[35px] h-[35px] rounded-full border-[1.5px] bg-[#2c2c2f] border-[#5a5a56] flex items-center justify-center">
         <Icon size={18} strokeWidth={1.75} className="text-[#e8e8e6]" />
       </div>
       <div>

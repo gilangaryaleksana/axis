@@ -5,6 +5,7 @@ import { PanelLeft, Plus, Settings } from "lucide-react";
 import { PERSONAS, PersonaKey } from "../persona/personas";
 import PersonaList from "./PersonaList";
 import LatestList from "./LatestList";
+import SettingsModal from "../../components/settings/SettingsModal";
 import { crimsonText, dmSans } from "@/lib/font";
 import { authFetch, getToken } from "@/lib/auth";
 
@@ -40,6 +41,7 @@ export default function Sidebar({
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<MeResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     async function fetchMe() {
@@ -74,7 +76,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`flex flex-col h-full bg-[#2b2b2b] text-[#e8e8e6] transition-all duration-200 ${
+      className={`flex flex-col h-full bg-[#202023] border-[#333336] border-r text-[#e8e8e6] transition-all duration-200 ${
         collapsed ? "w-[82px] px-4" : "w-[280px] px-[18px]"
       } py-[22px]`}
     >
@@ -91,7 +93,7 @@ export default function Sidebar({
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center hover:bg-[#383838] transition-colors"
+          className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center hover:bg-[#2c2c2f] transition-colors"
         >
           <PanelLeft size={18} />
         </button>
@@ -175,10 +177,16 @@ export default function Sidebar({
         {!collapsed && (
           <Settings
             size={18}
+            onClick={() => setIsSettingsOpen(true)}
             className="cursor-pointer shrink-0 text-gray-400 hover:text-white transition-colors"
           />
         )}
       </div>
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </aside>
   );
 }

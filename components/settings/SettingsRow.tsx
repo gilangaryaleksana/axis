@@ -1,0 +1,19 @@
+export default function SettingsRow({
+  label,
+  desc,
+  children,
+}: {
+  label: string;
+  desc: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-xs text-[#6f6f73]">{desc}</div>
+      </div>
+      {children}
+    </div>
+  );
+}

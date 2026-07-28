@@ -36,8 +36,8 @@ export default function Composer({
   const hasValue = value.trim().length > 0;
 
   return (
-    <div className="px-10 pt-4 pb-2 bg-[#2b2b2b]">
-      <div className="flex max-w-3xl mx-auto items-end gap-2.5 bg-[#4d4d4a] rounded-2xl pl-5 pr-2 py-2">
+    <div className="px-10 pt-4 pb-2 bg-[#202023]">
+      <div className="flex max-w-3xl mx-auto items-end gap-2.5 bg-[#2c2c2f] rounded-2xl pl-5 pr-2 py-2">
         <textarea
           ref={textareaRef}
           value={value}

@@ -24,12 +24,12 @@ export default function PersonaList({
             key={p.key}
             onClick={() => onSelect(p.key)}
             className={`flex items-center gap-2 p-1 rounded-lg cursor-pointer ${
-              collapsed ? "justify-center" : "hover:bg-[#3a3a3a]"
-            } ${!collapsed && isActive ? "bg-[#3a3a3a]" : ""}`}
+              collapsed ? "justify-center" : "hover:bg-[#2c2c2f]"
+            } ${!collapsed && isActive ? "bg-[#2c2c2f]" : ""}`}
           >
             <div
               className={`w-7 h-7 rounded-full border border-[#5a5a56] flex items-center justify-center shrink-0 ${
-                collapsed && isActive ? "bg-[#4a4a46]" : "bg-[#3a3a3a]"
+                collapsed && isActive ? "bg-[#2c2c2f]" : "bg-[#2c2c2f]"
               }`}
             >
               <Icon size={13} strokeWidth={1.75} className="text-[#e8e8e6]" />

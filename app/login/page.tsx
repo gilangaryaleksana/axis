@@ -251,7 +251,7 @@ export default function LoginPage() {
           </div>
         </div>
         {/* RIGHT: chat preview visual */}
-        <div className="hidden md:flex relative bg-[#2b2b2b] items-center justify-center p-12 overflow-hidden">
+        <div className="hidden md:flex relative bg-[#202023]items-center justify-center p-12 overflow-hidden">
           <div
             className="absolute w-[480px] h-[480px] rounded-full -top-20 -right-28 z-10"
             style={{

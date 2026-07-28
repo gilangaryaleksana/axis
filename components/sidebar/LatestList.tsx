@@ -17,8 +17,8 @@ export default function LatestList({ items, currentId, onSelect }: Props) {
         <div
           key={item.id}
           onClick={() => onSelect(item.id)}
-          className={`px-1.5 py-1.5 rounded-lg cursor-pointer hover:bg-[#3a3a3a] mb-0.5 ${
-            currentId === item.id ? "bg-[#3a3a3a]" : ""
+          className={`px-1.5 py-1.5 rounded-lg cursor-pointer hover:bg-[#2c2c2f] mb-0.5 ${
+            currentId === item.id ? "bg-[#2c2c2f]" : ""
           }`}
         >
           <p className="text-xs text-[#f1f0ee]">{item.title}</p>
