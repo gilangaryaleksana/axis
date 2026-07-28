@@ -22,7 +22,12 @@ export function useChatConversations() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const hasInitialized = useRef(false);
   const isCreatingRef = useRef(false);
+  const isSwitchingRef = useRef(false);
   const persona = PERSONAS.find((p) => p.key === currentPersona)!;
+
+  // ⬅️ BARU: penanda conversation yang belum pernah dipakai
+  const isEmptyConvo = (c: ConversationSummary) =>
+    c.title === `Conversation with ${c.persona.displayName}`;
 
   const loadConversationList = async () => {
     const res = await authFetch(
@@ -35,10 +40,20 @@ export function useChatConversations() {
   };
 
   const startNewConversation = async () => {
-    if (isCreatingRef.current) return;
+    if (isCreatingRef.current || isSwitchingRef.current) return;
 
-    const isCurrentEmpty = messages.length <= 1;
-    if (currentConvoId && isCurrentEmpty) return;
+    // ⬅️ BARU: cari conversation kosong milik persona AKTIF di seluruh list,
+    // bukan cuma ngecek currentConvoId doang
+    const emptyForCurrentPersona = conversations.find(
+      (c) => c.persona.type === currentPersona && isEmptyConvo(c),
+    );
+    if (emptyForCurrentPersona) {
+      if (emptyForCurrentPersona.id !== currentConvoId) {
+        isSwitchingRef.current = true;
+        setCurrentConvoId(emptyForCurrentPersona.id);
+      }
+      return;
+    }
 
     isCreatingRef.current = true;
     setIsCreatingConversation(true);
@@ -58,8 +73,16 @@ export function useChatConversations() {
   const handleSelectPersona = async (key: PersonaKey) => {
     if (key === currentPersona || isCreatingRef.current) return;
     setCurrentPersona(key);
-    const existing = conversations.find((c) => c.persona.type === key);
+
+    // ⬅️ BARU: prioritaskan conversation kosong milik persona tujuan
+    const emptyExisting = conversations.find(
+      (c) => c.persona.type === key && isEmptyConvo(c),
+    );
+    const existing =
+      emptyExisting ?? conversations.find((c) => c.persona.type === key);
+
     if (existing) {
+      isSwitchingRef.current = true;
       setCurrentConvoId(existing.id);
     } else {
       isCreatingRef.current = true;
@@ -81,6 +104,7 @@ export function useChatConversations() {
   const handleSelectConvo = (id: string) => {
     const conv = conversations.find((c) => c.id === id);
     if (conv) setCurrentPersona(conv.persona.type as PersonaKey);
+    isSwitchingRef.current = true;
     setCurrentConvoId(id);
   };
 
@@ -148,6 +172,7 @@ export function useChatConversations() {
           console.error("loadMessages failed", res.status, currentConvoId);
         }
         setIsLoadingHistory(false);
+        isSwitchingRef.current = false;
       }
     })();
     return () => {
