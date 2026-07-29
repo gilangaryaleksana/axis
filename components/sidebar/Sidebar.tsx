@@ -87,8 +87,8 @@ export default function Sidebar({
         }`}
       >
         {!collapsed && (
-          <span className="font-serif text-2xl tracking-wide">
-            A<span className="text-sm">xis</span>
+          <span className={`font-serif text-4xl tracking-wide ${crimsonText.className}`}>
+            A<span className="text-2xl">xis</span>
           </span>
         )}
         <button
@@ -117,7 +117,7 @@ export default function Sidebar({
 
       {/* Persona Selection */}
       {!collapsed && (
-        <p className="text-[11px] uppercase tracking-wider text-[#9a9a97] mb-3.5">
+        <p className={`text-xs tracking-wider text-[#9a9a97] mb-3.5 ${dmSans.className}`}>
           Select Persona
         </p>
       )}
@@ -131,7 +131,7 @@ export default function Sidebar({
       {/* History / Latest Conversations */}
       {!collapsed && (
         <>
-          <p className="text-[11px] uppercase tracking-wider text-[#9a9a97] mt-7 mb-3.5">
+          <p className={`text-xs tracking-wider text-[#9a9a97] mt-7 mb-3.5 ${dmSans.className}`}>
             Latest
           </p>
           <LatestList
