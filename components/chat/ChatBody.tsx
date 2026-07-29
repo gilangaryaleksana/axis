@@ -28,7 +28,7 @@ export default function ChatBody({
     "translate-y-4 px-6 py-4 rounded-l-[35px] font-extralight rounded-br-[25px] text-[15px] leading-relaxed max-w-[56ch] bg-[#4d4d4a] text-[#f4f3f0] whitespace-pre-wrap break-words";
 
   return (
-    <div className="flex-1 overflow-y-auto px-10 py-9 flex flex-col bg-[#202023] chat-scrollbar">
+    <div className="flex-1 overflow-y-auto px-10 pt-24 pb-9 flex flex-col bg-[#202023] chat-scrollbar">
       <div className="max-w-3xl mx-auto w-full flex flex-col gap-5">
         {messages.map((m, i) => (
           <div

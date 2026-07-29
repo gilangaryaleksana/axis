@@ -36,7 +36,7 @@ export default function ChatPage() {
         currentConvoId={currentConvoId ?? ""}
         onSelectConvo={handleSelectConvo}
       />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative overflow-hidden">
         <ChatHeader
           persona={persona}
           title={

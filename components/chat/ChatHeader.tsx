@@ -10,20 +10,23 @@ export default function ChatHeader({
 }) {
   const Icon = persona.icon;
   return (
-    <div className="flex items-center gap-3.5 px-8 py-5 bg-[#202023]">
-      <div className="w-[35px] h-[35px] rounded-full border-[1.5px] bg-[#2c2c2f] border-[#5a5a56] flex items-center justify-center">
-        <Icon size={18} strokeWidth={1.75} className="text-[#e8e8e6]" />
+    <div className="absolute top-0 left-0 right-0 z-10">
+      <div className="flex items-center gap-3.5 px-8 py-3 bg-[#202023] backdrop-blur-md">
+        <div className="w-[35px] h-[35px] rounded-full border-[1.5px] bg-[#2c2c2f] border-[#5a5a56] flex items-center justify-center">
+          <Icon size={18} strokeWidth={1.75} className="text-[#e8e8e6]" />
+        </div>
+        <div>
+          <p
+            className={`text-sm font-semibold text-[#e8e8e6] ${dmSans.className}`}
+          >
+            {persona.name}
+          </p>
+          <p className={`text-xs text-[#6f6f6b] mt-0.5 ${dmSans.className}`}>
+            {title}
+          </p>
+        </div>
       </div>
-      <div>
-        <p
-          className={`text-sm font-semibold text-[#e8e8e6] ${dmSans.className}`}
-        >
-          {persona.name}
-        </p>
-        <p className={`text-xs text-[#6f6f6b] mt-0.5 ${dmSans.className}`}>
-          {title}
-        </p>
-      </div>
+      <div className="h-5 bg-gradient-to-b from-[#202023]/100 to-[#202023]/0" />{" "}
     </div>
   );
 }
