@@ -3,6 +3,7 @@ import passport from "@/config/passport";
 import {
   oauthCallback,
   getMe,
+  updateMe,
   logout,
   register,
   login,
@@ -48,6 +49,7 @@ router.get(
 
 // --- General ---
 router.get("/me", authenticate, getMe);
+router.patch("/me", authenticate, updateMe);
 router.post("/logout", authenticate, logout);
 
 // --- Manual login (requires guestId from cookie for migration) ---

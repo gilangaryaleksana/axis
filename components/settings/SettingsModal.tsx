@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 import { X } from "lucide-react";
-import { dmSans } from "../../lib/font";
 import SettingsNav, { SettingsCategory } from "./SettingsNav";
 import GeneralPane from "./panes/GeneralPane";
 import PersonaPane from "./panes/PersonaPane";
 import AppearancePane from "./panes/AppearancePane";
 import NotificationsPane from "./panes/NotificationsPane";
 import PrivacyPane from "./panes/PrivacyPane";
+import { SettingsProvider, useSettings } from "@/lib/settings-context";
 
 const TITLES: Record<SettingsCategory, string> = {
   general: "General",
@@ -17,43 +17,46 @@ const TITLES: Record<SettingsCategory, string> = {
   privacy: "Privacy & Data",
 };
 
-export default function SettingsModal({
-  isOpen,
+const PANES: Record<SettingsCategory, React.ReactNode> = {
+  general: <GeneralPane />,
+  persona: <PersonaPane />,
+  appearance: <AppearancePane />,
+  notifications: <NotificationsPane />,
+  privacy: <PrivacyPane />,
+};
+
+function SettingsModalContent({
   onClose,
+  onSaved,
 }: {
-  isOpen: boolean;
   onClose: () => void;
+  onSaved?: (data: { displayName: string; language: string }) => void;
 }) {
   const [active, setActive] = useState<SettingsCategory>("general");
-  const [isDirty, setIsDirty] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
-  if (!isOpen) return null;
-
-  const PANES: Record<SettingsCategory, React.ReactNode> = {
-    general: <GeneralPane onDirty={() => setIsDirty(true)} />,
-    persona: <PersonaPane onDirty={() => setIsDirty(true)} />,
-    appearance: <AppearancePane onDirty={() => setIsDirty(true)} />,
-    notifications: <NotificationsPane onDirty={() => setIsDirty(true)} />,
-    privacy: <PrivacyPane onDirty={() => setIsDirty(true)} />,
-  };
+  const { isDirty, isSaving, save, reset, data } = useSettings();
 
   const requestClose = () => {
-    if (isDirty) {
-      setShowConfirm(true);
-    } else {
-      onClose();
-    }
+    if (isDirty) setShowConfirm(true);
+    else onClose();
   };
 
   const discardAndClose = () => {
-    setIsDirty(false);
+    reset();
     setShowConfirm(false);
     onClose();
   };
 
+  const handleSave = async () => {
+    const ok = await save();
+    if (ok) {
+      onSaved?.(data);
+      onClose();
+    }
+  };
+  
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 ${dmSans.className}`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div className="flex h-[560px] w-full max-w-[820px] overflow-hidden rounded-xl border border-[#333336] bg-[#1b1b1d] text-[#f2f2f0] shadow-2xl">
         <SettingsNav active={active} onSelect={setActive} />
         <section className="flex flex-1 flex-col">
@@ -77,13 +80,11 @@ export default function SettingsModal({
               Cancel
             </button>
             <button
-              onClick={() => {
-                setIsDirty(false);
-                onClose();
-              }}
-              className="rounded-md bg-[#f2f2f0] px-4 py-2 text-sm font-medium text-[#1b1b1d] hover:bg-white"
+              onClick={handleSave}
+              disabled={!isDirty || isSaving}
+              className="rounded-md bg-[#f2f2f0] px-4 py-2 text-sm font-medium text-[#1b1b1d] hover:bg-white disabled:opacity-50"
             >
-              Save changes
+              {isSaving ? "Saving..." : "Save changes"}
             </button>
           </div>
         </section>
@@ -98,29 +99,44 @@ export default function SettingsModal({
             className="w-full max-w-sm rounded-lg border border-[#333336] bg-[#232326] p-5 text-[#f2f2f0]"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="text-sm font-medium">
-              Buang perubahan yang belum disimpan?
-            </p>
+            <p className="text-sm font-medium">Discard unsaved changes?</p>
             <p className="mt-1 text-xs text-[#9a9a9e]">
-              Perubahan yang kamu buat belum disimpan.
+              You have changes that haven&apos;t been saved yet.
             </p>
             <div className="mt-4 flex justify-end gap-2">
               <button
                 onClick={() => setShowConfirm(false)}
                 className="rounded-md px-3 py-1.5 text-sm text-[#9a9a9e] hover:bg-[#2c2c2f]"
               >
-                Batal
+                Cancel
               </button>
               <button
                 onClick={discardAndClose}
                 className="rounded-md bg-red-500/90 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-500"
               >
-                Buang
+                Discard
               </button>
             </div>
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+export default function SettingsModal({
+  isOpen,
+  onClose,
+  onSaved,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSaved?: (data: { displayName: string; language: string }) => void;
+}) {
+  if (!isOpen) return null;
+  return (
+    <SettingsProvider>
+      <SettingsModalContent onClose={onClose} onSaved={onSaved} />
+    </SettingsProvider>
   );
 }
