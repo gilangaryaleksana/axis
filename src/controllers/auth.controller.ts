@@ -46,6 +46,7 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
       role: true,
       defaultPersona: true,
       language: true,
+      autoGenerateTitle: true,
       createdAt: true,
     },
   });
@@ -163,13 +164,15 @@ export const googleOneTap = asyncHandler(
 
 // 6. PATCH /api/auth/me
 export const updateMe = asyncHandler(async (req: Request, res: Response) => {
-  const { name, language } = req.body;
+  const { name, language, defaultPersona, autoGenerateTitle } = req.body;
 
   const updated = await prisma.user.update({
     where: { id: req.user!.id },
     data: {
       ...(name !== undefined && { name }),
       ...(language !== undefined && { language }),
+      ...(defaultPersona !== undefined && { defaultPersona }),
+      ...(autoGenerateTitle !== undefined && { autoGenerateTitle }),
     },
     select: {
       id: true,
@@ -179,6 +182,7 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
       role: true,
       defaultPersona: true,
       language: true,
+      autoGenerateTitle: true,
       createdAt: true,
     },
   });

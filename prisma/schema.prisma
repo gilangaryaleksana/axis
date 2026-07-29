@@ -50,6 +50,8 @@ model User {
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
 
+  autoGenerateTitle Boolean @default(true)
+  
   accounts        Account[]
   sessions        Session[]
   conversations   Conversation[]

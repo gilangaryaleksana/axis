@@ -10,7 +10,10 @@ interface ConversationSummary {
   title: string;
   persona: { type: string; displayName: string };
   updatedAt: string;
+  _count: { messages: number };
 }
+
+const isEmptyConvo = (c: ConversationSummary) => c._count.messages === 0;
 
 export function useChatConversations() {
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
@@ -24,10 +27,6 @@ export function useChatConversations() {
   const isCreatingRef = useRef(false);
   const isSwitchingRef = useRef(false);
   const persona = PERSONAS.find((p) => p.key === currentPersona)!;
-
-  // ⬅️ BARU: penanda conversation yang belum pernah dipakai
-  const isEmptyConvo = (c: ConversationSummary) =>
-    c.title === `Conversation with ${c.persona.displayName}`;
 
   const loadConversationList = async () => {
     const res = await authFetch(

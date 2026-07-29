@@ -76,7 +76,19 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   // If this is the first message, automatically generate the title from the message content
   let updatedTitle = conversation.title;
   if (isFirstMessage) {
-    updatedTitle = await generateConversationTitle(content);
+    let shouldAutoGenerate = true;
+
+    if (ownerId) {
+      const user = await prisma.user.findUnique({
+        where: { id: ownerId },
+        select: { autoGenerateTitle: true },
+      });
+      shouldAutoGenerate = user?.autoGenerateTitle ?? true;
+    }
+
+    if (shouldAutoGenerate) {
+      updatedTitle = await generateConversationTitle(content);
+    }
   }
 
   await prisma.conversation.update({

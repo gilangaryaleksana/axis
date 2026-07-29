@@ -11,19 +11,29 @@ import { authFetch } from "@/lib/auth";
 interface SettingsData {
   displayName: string;
   language: string;
+  defaultPersona: string;
+  autoGenerateTitle: boolean;
 }
+
+const DEFAULTS: SettingsData = {
+  displayName: "",
+  language: "en",
+  defaultPersona: "",
+  autoGenerateTitle: true,
+};
 
 interface SettingsContextValue {
   data: SettingsData;
-  setField: (key: keyof SettingsData, value: string) => void;
+  setField: <K extends keyof SettingsData>(
+    key: K,
+    value: SettingsData[K],
+  ) => void;
   isDirty: boolean;
   isLoading: boolean;
   isSaving: boolean;
   save: () => Promise<boolean>;
   reset: () => void;
 }
-
-const DEFAULTS: SettingsData = { displayName: "", language: "id" };
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
@@ -44,6 +54,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
           const loaded: SettingsData = {
             displayName: user.name ?? "",
             language: user.language ?? "id",
+            defaultPersona: user.defaultPersona ?? "",
+            autoGenerateTitle: user.autoGenerateTitle ?? true,
           };
           setOriginal(loaded);
           setData(loaded);
@@ -57,9 +69,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     fetchSettings();
   }, []);
 
-  const setField = (key: keyof SettingsData, value: string) => {
-    setData((prev) => ({ ...prev, [key]: value }));
-  };
+const setField: SettingsContextValue["setField"] = (key, value) => {
+  setData((prev) => ({ ...prev, [key]: value }));
+};
 
   const isDirty = JSON.stringify(data) !== JSON.stringify(original);
 
@@ -74,6 +86,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify({
             name: data.displayName,
             language: data.language,
+            defaultPersona: data.defaultPersona,
+            autoGenerateTitle: data.autoGenerateTitle,
           }),
         },
       );

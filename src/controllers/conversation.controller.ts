@@ -22,7 +22,7 @@ export const getConversations = asyncHandler(
 
     const conversations = await prisma.conversation.findMany({
       where: { ...ownerFilter, isDeleted: false },
-      include: { persona: true },
+      include: { persona: true, _count: { select: { messages: true } } },
       orderBy: { updatedAt: "desc" },
     });
     res.json(conversations);
