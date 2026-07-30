@@ -36,8 +36,8 @@ export default function Composer({
   const hasValue = value.trim().length > 0;
 
   return (
-    <div className="px-10 pt-4 pb-2 bg-[#202023]">
-      <div className="flex max-w-3xl mx-auto items-end gap-2.5 bg-[#2c2c2f] rounded-2xl pl-5 pr-2 py-2">
+    <div className="px-10 pt-4 pb-2 bg-white dark:bg-[#202023]">
+      <div className="flex max-w-3xl mx-auto items-end gap-2.5 bg-gray-100 dark:bg-[#2c2c2f] rounded-2xl pl-5 pr-2 py-2">
         <textarea
           ref={textareaRef}
           value={value}
@@ -45,21 +45,21 @@ export default function Composer({
           onKeyDown={handleKeyDown}
           placeholder="Write a Message..."
           rows={1}
-          className="flex-1 bg-transparent outline-none resize-none text-[#f4f3f0] placeholder:text-[#c9c8c4] text-[15px] py-2 max-h-[200px] overflow-y-auto chat-scrollbar"
+          className="flex-1 bg-transparent outline-none resize-none text-[#1a1a1a] dark:text-[#f4f3f0] placeholder:text-gray-400 dark:placeholder:text-[#c9c8c4] text-[15px] py-2 max-h-[200px] overflow-y-auto chat-scrollbar"
         />
         <button
           onClick={handleSend}
           disabled={!hasValue}
           className={`w-[42px] h-[42px] rounded-xl flex items-center justify-center shrink-0 transition-colors ${
             hasValue
-              ? "bg-[#f4f3f0] text-[#2b2b2b] hover:bg-[#e0dfda]"
-              : "bg-[#3d3d3a] text-[#6f6f6b] "
+              ? "bg-[#2b2b2b] dark:bg-[#f4f3f0] text-white dark:text-[#2b2b2b] hover:bg-black dark:hover:bg-[#e0dfda]"
+              : "bg-gray-300 dark:bg-[#3d3d3a] text-gray-500 dark:text-[#6f6f6b]"
           }`}
         >
           <ArrowRight size={18} />
         </button>
       </div>
-      <p className="text-center italic text-xs text-[#6f6f6b] pt-1.5">
+      <p className="text-center italic text-xs text-gray-500 dark:text-[#6f6f6b] pt-1.5">
         AI can make mistakes. It is not a substitute for certified
         professionals.
       </p>

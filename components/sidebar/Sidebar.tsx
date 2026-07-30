@@ -76,7 +76,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`flex flex-col h-full bg-[#202023] border-[#333336] border-r text-[#e8e8e6] transition-all duration-200 ${
+      className={`flex flex-col h-full bg-white dark:bg-[#202023] border-gray-200 dark:border-[#333336] border-r text-[#1a1a1a] dark:text-[#e8e8e6] transition-all duration-200 ${
         collapsed ? "w-[82px] px-4" : "w-[280px] px-[18px]"
       } py-[22px]`}
     >
@@ -95,7 +95,7 @@ export default function Sidebar({
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center hover:bg-[#2c2c2f] transition-colors"
+          className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#2c2c2f] transition-colors"
         >
           <PanelLeft size={18} />
         </button>
@@ -120,7 +120,7 @@ export default function Sidebar({
       {/* Persona Selection */}
       {!collapsed && (
         <p
-          className={`text-xs tracking-wider text-[#9a9a97] mb-3.5 ${dmSans.className}`}
+          className={`text-xs tracking-wider text-gray-500 dark:text-[#9a9a97] mb-3.5 ${dmSans.className}`}
         >
           Select Persona
         </p>
@@ -136,7 +136,7 @@ export default function Sidebar({
       {!collapsed && (
         <>
           <p
-            className={`text-xs tracking-wider text-[#9a9a97] mt-7 mb-3.5 ${dmSans.className}`}
+            className={`text-xs tracking-wider text-gray-500 dark:text-[#9a9a97] mt-7 mb-3.5 ${dmSans.className}`}
           >
             Latest
           </p>
@@ -149,10 +149,10 @@ export default function Sidebar({
       )}
 
       {/* User Profile Footer */}
-      <div className="flex items-center justify-between gap-3 pt-4 mt-auto border-t border-[#444]">
+      <div className="flex items-center justify-between gap-3 pt-4 mt-auto border-t border-gray-200 dark:border-[#444]">
         <div className="flex items-center gap-2 overflow-hidden">
           {loading ? (
-            <div className="w-[34px] h-[34px] rounded-full bg-[#5a5a56] animate-pulse shrink-0" />
+            <div className="w-[34px] h-[34px] rounded-full bg-gray-300 dark:bg-[#5a5a56] animate-pulse shrink-0" />
           ) : isLoggedIn && userImage && !imgError ? (
             <img
               src={userImage}
@@ -162,7 +162,7 @@ export default function Sidebar({
             />
           ) : (
             <div
-              className={`w-[34px] h-[34px] shrink-0 rounded-full bg-[#5a5a56] flex items-center justify-center text-sm font-semibold ${dmSans.className}`}
+              className={`w-[34px] h-[34px] shrink-0 rounded-full bg-gray-300 dark:bg-[#5a5a56] flex items-center justify-center text-sm font-semibold ${dmSans.className}`}
             >
               <span>{displayName.charAt(0).toUpperCase()}</span>
             </div>
@@ -170,10 +170,10 @@ export default function Sidebar({
 
           {!collapsed && !loading && (
             <div className="flex flex-col truncate">
-              <span className="text-sm font-medium text-white truncate">
+              <span className="text-sm font-medium text-[#1a1a1a] dark:text-white truncate">
                 {displayName}
               </span>
-              <span className="text-[10px] text-gray-400">
+              <span className="text-[10px] text-gray-500 dark:text-gray-400">
                 {isLoggedIn ? user.email : "Not logged in"}
               </span>
             </div>
@@ -184,7 +184,7 @@ export default function Sidebar({
           <Settings
             size={18}
             onClick={() => setIsSettingsOpen(true)}
-            className="cursor-pointer shrink-0 text-gray-400 hover:text-white transition-colors"
+            className="cursor-pointer shrink-0 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
           />
         )}
       </div>

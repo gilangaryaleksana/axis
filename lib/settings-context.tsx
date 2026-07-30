@@ -13,6 +13,8 @@ interface SettingsData {
   language: string;
   defaultPersona: string;
   autoGenerateTitle: boolean;
+  theme: string;
+  compactSidebar: boolean;
 }
 
 const DEFAULTS: SettingsData = {
@@ -20,6 +22,8 @@ const DEFAULTS: SettingsData = {
   language: "en",
   defaultPersona: "",
   autoGenerateTitle: true,
+  theme: "dark",
+  compactSidebar: false,
 };
 
 interface SettingsContextValue {
@@ -56,6 +60,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
             language: user.language ?? "id",
             defaultPersona: user.defaultPersona ?? "",
             autoGenerateTitle: user.autoGenerateTitle ?? true,
+            theme: user.theme ?? "dark",
+            compactSidebar: user.compactSidebar ?? false,
           };
           setOriginal(loaded);
           setData(loaded);
@@ -88,6 +94,8 @@ const setField: SettingsContextValue["setField"] = (key, value) => {
             language: data.language,
             defaultPersona: data.defaultPersona,
             autoGenerateTitle: data.autoGenerateTitle,
+            theme: data.theme,
+            compactSidebar: data.compactSidebar,
           }),
         },
       );

@@ -51,6 +51,8 @@ model User {
   updatedAt      DateTime     @updatedAt @map("updated_at")
 
   autoGenerateTitle Boolean @default(true)
+  theme             String  @default("dark")
+  compactSidebar    Boolean @default(false) @map("compact_sidebar")
   
   accounts        Account[]
   sessions        Session[]

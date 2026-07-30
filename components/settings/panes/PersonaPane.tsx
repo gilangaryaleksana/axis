@@ -17,7 +17,7 @@ export default function PersonaPane() {
         <select
           value={data.defaultPersona}
           onChange={(e) => setField("defaultPersona", e.target.value)}
-          className="w-48 rounded-md border border-[#3a3a3d] bg-[#2c2c2f] px-3 py-1.5 text-sm outline-none focus:border-[#6f8fd8] capitalize"
+          className="w-48 rounded-md border border-gray-300 dark:border-[#3a3a3d] bg-white dark:bg-[#2c2c2f] text-[#1a1a1a] dark:text-[#f2f2f0] px-3 py-1.5 text-sm outline-none capitalize"
         >
           {PERSONAS.map((p) => (
             <option key={p.key} value={p.key}>
