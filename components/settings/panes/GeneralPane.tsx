@@ -22,7 +22,7 @@ export default function GeneralPane() {
           className="w-48 rounded-md border border-[#3a3a3d] bg-[#2c2c2f] px-3 py-1.5 text-sm outline-none focus:border-[#6f8fd8]"
         />
       </SettingsRow>
-      <SettingsRow label="Language" desc="Default language for AI responses">
+      <SettingsRow label="Language" desc="Default language for AI responses.">
         <select
           value={data.language}
           onChange={(e) => setField("language", e.target.value)}

@@ -13,10 +13,7 @@ export default function PersonaPane() {
 
   return (
     <div className="space-y-5">
-      <SettingsRow
-        label="Default persona"
-        desc="Persona saat membuka chat baru"
-      >
+      <SettingsRow label="Default persona" desc="Persona for New Chats.">
         <select
           value={data.defaultPersona}
           onChange={(e) => setField("defaultPersona", e.target.value)}
@@ -31,7 +28,7 @@ export default function PersonaPane() {
       </SettingsRow>
       <SettingsRow
         label="Auto-generate chat title"
-        desc="Judul chat dibuat otomatis via Groq"
+        desc="Chat titles are generated automatically by Groq."
       >
         <ToggleSwitch
           checked={data.autoGenerateTitle}
