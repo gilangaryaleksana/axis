@@ -14,5 +14,5 @@ app.use(
 
 // 2. Start the server and listen for requests
 app.listen(PORT, () => {
-  console.log(`✅ Server is running at http://localhost:${PORT}`);
+  console.log(`Server is running at http://localhost:${PORT}`);
 });

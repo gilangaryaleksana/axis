@@ -16,7 +16,7 @@ export function useInView<T extends HTMLElement = HTMLDivElement>(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true);
-          observer.unobserve(el); // animasi cuma sekali
+          observer.unobserve(el); 
         }
       },
       {

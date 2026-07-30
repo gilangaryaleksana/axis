@@ -3,9 +3,13 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import ChatHeader from "../../components/chat/ChatHeader";
 import ChatBody from "../../components/chat/ChatBody";
 import Composer from "../../components/chat/Composer";
+import { PersonaKey } from "../../components/persona/personas";
 import { useChatConversations } from "../../hooks/useChatConversations";
+import { useSettings } from "@/lib/settings-context";
 
 export default function ChatPage() {
+  const { data: settingsData, isLoading: isSettingsLoading } = useSettings();
+
   const {
     persona,
     currentPersona,
@@ -19,7 +23,11 @@ export default function ChatPage() {
     handleSelectPersona,
     handleSelectConvo,
     handleSend,
-  } = useChatConversations();
+  } = useChatConversations(
+    isSettingsLoading
+      ? undefined
+      : ((settingsData.defaultPersona as PersonaKey) || "police"),
+  );
 
   return (
     <div className="flex h-screen">

@@ -15,9 +15,11 @@ interface ConversationSummary {
 
 const isEmptyConvo = (c: ConversationSummary) => c._count.messages === 0;
 
-export function useChatConversations() {
+export function useChatConversations(defaultPersona?: PersonaKey) {
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
-  const [currentPersona, setCurrentPersona] = useState<PersonaKey>("police");
+  const [currentPersona, setCurrentPersona] = useState<PersonaKey>(
+    defaultPersona ?? "police",
+  );
   const [currentConvoId, setCurrentConvoId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
@@ -41,8 +43,6 @@ export function useChatConversations() {
   const startNewConversation = async () => {
     if (isCreatingRef.current || isSwitchingRef.current) return;
 
-    // ⬅️ BARU: cari conversation kosong milik persona AKTIF di seluruh list,
-    // bukan cuma ngecek currentConvoId doang
     const emptyForCurrentPersona = conversations.find(
       (c) => c.persona.type === currentPersona && isEmptyConvo(c),
     );
@@ -73,7 +73,6 @@ export function useChatConversations() {
     if (key === currentPersona || isCreatingRef.current) return;
     setCurrentPersona(key);
 
-    // ⬅️ BARU: prioritaskan conversation kosong milik persona tujuan
     const emptyExisting = conversations.find(
       (c) => c.persona.type === key && isEmptyConvo(c),
     );
@@ -136,6 +135,7 @@ export function useChatConversations() {
 
   useEffect(() => {
     if (hasInitialized.current) return;
+    if (defaultPersona === undefined) return;
     hasInitialized.current = true;
     (async () => {
       const existing = await loadConversationList();
@@ -143,10 +143,21 @@ export function useChatConversations() {
         setCurrentConvoId(existing[0].id);
         setCurrentPersona(existing[0].persona.type as PersonaKey);
       } else {
-        await startNewConversation();
+        setCurrentPersona(defaultPersona);
+        setIsCreatingConversation(true);
+        setMessages([{ from: "bot", text: "hey! what's on your mind today?" }]);
+        try {
+          const conv = await createConversation(defaultPersona);
+          setCurrentConvoId(conv.id);
+          await loadConversationList();
+        } catch (err) {
+          console.error("Failed to create conversation", err);
+        } finally {
+          setIsCreatingConversation(false);
+        }
       }
     })();
-  }, []);
+  }, [defaultPersona]);
 
   useEffect(() => {
     if (!currentConvoId) return;

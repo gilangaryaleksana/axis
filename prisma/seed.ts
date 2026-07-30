@@ -52,7 +52,7 @@ async function main() {
       create: p,
     });
   }
-  console.log("Persona seed completed ✅");
+  console.log("Persona seed completed.");
 
   // Guest user for testing without login
   const guest = await prisma.user.upsert({
