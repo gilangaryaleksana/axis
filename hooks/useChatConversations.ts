@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { PERSONAS, PersonaKey } from "../components/persona/personas";
 import { authFetch } from "../lib/auth";
-import { createConversation } from "../lib/conversations";
+import { createConversation, sendMessage } from "../lib/conversations";
 import { Message } from "../components/chat/ChatBody";
 
 interface ConversationSummary {
@@ -15,7 +15,10 @@ interface ConversationSummary {
 
 const isEmptyConvo = (c: ConversationSummary) => c._count.messages === 0;
 
-export function useChatConversations(defaultPersona?: PersonaKey) {
+export function useChatConversations(
+  defaultPersona?: PersonaKey,
+  inAppSound?: boolean,
+) {
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
   const [currentPersona, setCurrentPersona] = useState<PersonaKey>(
     defaultPersona ?? "police",
@@ -29,6 +32,12 @@ export function useChatConversations(defaultPersona?: PersonaKey) {
   const isCreatingRef = useRef(false);
   const isSwitchingRef = useRef(false);
   const persona = PERSONAS.find((p) => p.key === currentPersona)!;
+
+  const playNotificationSound = () => {
+    const audio = new Audio("/sounds/mixkit-message-pop-alert-2354.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+  };
 
   const loadConversationList = async () => {
     const res = await authFetch(
@@ -111,16 +120,14 @@ export function useChatConversations(defaultPersona?: PersonaKey) {
     setMessages((prev) => [...prev, { from: "user", text }]);
     setIsLoading(true);
     try {
-      const res = await authFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${currentConvoId}/messages`,
-        { method: "POST", body: JSON.stringify({ content: text }) },
-      );
-      if (!res.ok) throw new Error("send failed");
-      const reply = await res.json();
+      const reply = await sendMessage(currentConvoId, text);
       setMessages((prev) => [
         ...prev,
         { from: "bot", text: reply.botMessage.content },
       ]);
+      if (inAppSound) {
+        playNotificationSound();
+      }
       await loadConversationList();
     } catch (err) {
       console.error(err);

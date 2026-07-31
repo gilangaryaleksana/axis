@@ -28,6 +28,7 @@ export default function ChatPage() {
     isSettingsLoading
       ? undefined
       : (settingsData.defaultPersona as PersonaKey) || "police",
+    isSettingsLoading ? false : settingsData.inAppSound,
   );
 
   return (

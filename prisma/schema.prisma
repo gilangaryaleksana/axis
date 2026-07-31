@@ -53,6 +53,8 @@ model User {
   autoGenerateTitle Boolean @default(true)
   theme             String  @default("dark")
   compactSidebar    Boolean @default(false) @map("compact_sidebar")
+  emailNotifications Boolean @default(true) @map("email_notifications")
+  inAppSound         Boolean @default(false) @map("in_app_sound") 
   
   accounts        Account[]
   sessions        Session[]

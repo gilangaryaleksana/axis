@@ -49,6 +49,8 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
       autoGenerateTitle: true,
       theme: true,
       compactSidebar: true,
+      emailNotifications: true,
+      inAppSound: true,
       createdAt: true,
     },
   });
@@ -166,7 +168,7 @@ export const googleOneTap = asyncHandler(
 
 // 6. PATCH /api/auth/me
 export const updateMe = asyncHandler(async (req: Request, res: Response) => {
-  const { name, language, defaultPersona, autoGenerateTitle, theme, compactSidebar } = req.body;
+  const { name, language, defaultPersona, autoGenerateTitle, theme, compactSidebar, emailNotifications, inAppSound } = req.body;
 
   const updated = await prisma.user.update({
     where: { id: req.user!.id },
@@ -177,6 +179,8 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
       ...(autoGenerateTitle !== undefined && { autoGenerateTitle }),
       ...(theme !== undefined && { theme }),                    
       ...(compactSidebar !== undefined && { compactSidebar }),  
+      ...(emailNotifications !== undefined && { emailNotifications }),  
+      ...(inAppSound !== undefined && { inAppSound }),
 
     },
     select: {
@@ -190,6 +194,8 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
       autoGenerateTitle: true,
       theme: true,
       compactSidebar: true,
+      emailNotifications: true,
+      inAppSound: true,
       createdAt: true,
     },
   });

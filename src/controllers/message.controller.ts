@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "@/config/prisma";
+import { sendMissedReplyEmail } from "@/config/mailer";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { AppError } from "@/utils/AppError";
 
@@ -50,6 +51,14 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   const content = (req.body?.content as string)?.trim();
   if (!content) throw new AppError("Message content cannot be empty", 400);
 
+  let clientDisconnected = false;
+  req.on("close", () => {
+    if (!res.writableEnded) {
+      clientDisconnected = true;
+      console.log("🔴 CLIENT DISCONNECTED, flag set to true"); // ⬅️ cuma log ringkas di sini
+    }
+  });
+
   // First check whether this is the FIRST message in this conversation (before insert)
   const messageCount = await prisma.message.count({
     where: { conversationId: req.params.id },
@@ -59,6 +68,8 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   const userMessage = await prisma.message.create({
     data: { conversationId: req.params.id, sender: "user", content },
   });
+
+  await new Promise((resolve) => setTimeout(resolve, 8000));
 
   const botReplyText = await generateBotReply(
     conversation.persona.systemPrompt,
@@ -96,6 +107,39 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
     data: { updatedAt: new Date(), title: updatedTitle },
   });
 
+  // ⬅️ Logic email tetap di SINI, di bagian bawah, bukan di dalam req.on("close")
+  console.log("🔎 Cek clientDisconnected:", clientDisconnected); // ⬅️ debug
+  if (clientDisconnected) {
+    console.log("📧 clientDisconnected = true, mencoba kirim email...");
+    if (ownerId) {
+      console.log("👤 ownerId ada:", ownerId);
+      const user = await prisma.user.findUnique({
+        where: { id: ownerId },
+        select: { email: true, emailNotifications: true },
+      });
+      console.log("📋 User data:", user);
+
+      if (user?.emailNotifications && user.email) {
+        try {
+          await sendMissedReplyEmail(
+            user.email,
+            botMessage.content,
+            conversation.persona.displayName,
+          );
+          console.log("✅ EMAIL BERHASIL DIKIRIM ke", user.email);
+        } catch (err) {
+          console.error("❌ GAGAL KIRIM EMAIL:", err);
+        }
+      } else {
+        console.log("⚠️ emailNotifications OFF atau email kosong, skip kirim");
+      }
+    } else {
+      console.log("⚠️ Ini guest (ownerId kosong), skip kirim email");
+    }
+    return; // jangan res.json(), koneksi udah putus
+  }
+
+  console.log("✅ Client masih connect, response normal terkirim");
   res.status(201).json({ userMessage, botMessage, title: updatedTitle });
 });
 

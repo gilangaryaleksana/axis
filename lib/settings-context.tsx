@@ -15,6 +15,8 @@ interface SettingsData {
   autoGenerateTitle: boolean;
   theme: string;
   compactSidebar: boolean;
+  emailNotifications: boolean;
+  inAppSound: boolean;
 }
 
 const DEFAULTS: SettingsData = {
@@ -24,6 +26,8 @@ const DEFAULTS: SettingsData = {
   autoGenerateTitle: true,
   theme: "dark",
   compactSidebar: false,
+  emailNotifications: true,
+  inAppSound: true,
 };
 
 interface SettingsContextValue {
@@ -62,6 +66,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
             autoGenerateTitle: user.autoGenerateTitle ?? true,
             theme: user.theme ?? "dark",
             compactSidebar: user.compactSidebar ?? false,
+            emailNotifications: user.emailNotifications ?? true,
+            inAppSound: user.inAppSound ?? true,
           };
           setOriginal(loaded);
           setData(loaded);
@@ -96,6 +102,8 @@ const setField: SettingsContextValue["setField"] = (key, value) => {
             autoGenerateTitle: data.autoGenerateTitle,
             theme: data.theme,
             compactSidebar: data.compactSidebar,
+            emailNotifications: data.emailNotifications,
+            inAppSound: data.inAppSound,
           }),
         },
       );
