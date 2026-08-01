@@ -202,3 +202,11 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
 
   res.json(updated);
 });
+
+// 7. DELETE /api/auth/me
+export const deleteAccount = asyncHandler(async (req: Request, res: Response) => {
+  await prisma.user.delete({
+    where: { id: req.user!.id },
+  });
+  res.json({ message: "Account deleted successfully" });
+});

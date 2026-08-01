@@ -8,6 +8,7 @@ import {
   register,
   login,
   googleOneTap,
+  deleteAccount,
 } from "@/controllers/auth.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 import { guestMiddleware } from "@/middlewares/guest.middleware";
@@ -58,5 +59,8 @@ router.post("/login", guestMiddleware, login);
 
 // --- One Tap Login ---
 router.post("/google/onetap", guestMiddleware, googleOneTap);
+
+// --- Manual delete account ---
+router.delete("/me", authenticate, deleteAccount);
 
 export default router;

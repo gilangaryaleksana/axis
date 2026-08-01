@@ -7,6 +7,7 @@ import {
   getConversationById,
   updateConversation,
   deleteConversation,
+  clearAllConversations,
 } from "@/controllers/conversation.controller";
 import { getMessages, sendMessage } from "@/controllers/message.controller";
 
@@ -17,6 +18,7 @@ router.use(optionalAuthenticate, guestMiddleware);
 
 router.get("/", getConversations);
 router.post("/", createConversation);
+router.delete("/clear", clearAllConversations);
 router.get("/:id", getConversationById);
 router.patch("/:id", updateConversation);
 router.delete("/:id", deleteConversation);

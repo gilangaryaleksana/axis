@@ -116,7 +116,7 @@ export const deleteConversation = asyncHandler(
   },
 );
 
-// Migrate guest conversations
+// POST /api/conversations/migrate — migrate guest conversations to user
 export async function migrateGuestConversations(
   guestId: string,
   userId: string,
@@ -128,3 +128,17 @@ export async function migrateGuestConversations(
     data: { userId, guestId: null },
   });
 }
+
+// DELETE /api/conversations — clear all conversations
+export const clearAllConversations = asyncHandler(
+  async (req: Request, res: Response) => {
+    const ownerFilter = getOwnerFilter(req);
+
+    await prisma.conversation.updateMany({
+      where: { ...ownerFilter, isDeleted: false },
+      data: { isDeleted: true, deletedAt: new Date() },
+    });
+
+    res.json({ message: "All conversations cleared successfully" });
+  },
+);
