@@ -41,10 +41,15 @@ export async function authFetch(input: string, init: RequestInit = {}) {
   });
 
   if (res.status === 401 && !isRedirecting) {
-    isRedirecting = true;
-    clearToken();
-    if (typeof window !== "undefined") {
-      window.location.href = "/login?error=session_expired";
+    const isOnLoginPage =
+      typeof window !== "undefined" && window.location.pathname === "/login";
+
+    if (!isOnLoginPage) {
+      isRedirecting = true;
+      clearToken();
+      if (typeof window !== "undefined") {
+        window.location.href = "/login?error=session_expired";
+      }
     }
   }
 

@@ -6,7 +6,7 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { authFetch } from "@/lib/auth";
+import { authFetch, getToken } from "@/lib/auth";
 
 interface SettingsData {
   displayName: string;
@@ -53,6 +53,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function fetchSettings() {
+      const token = getToken(); 
+      if (!token) {
+        setIsLoading(false); 
+        return;
+      }
       try {
         const res = await authFetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
@@ -81,9 +86,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     fetchSettings();
   }, []);
 
-const setField: SettingsContextValue["setField"] = (key, value) => {
-  setData((prev) => ({ ...prev, [key]: value }));
-};
+  const setField: SettingsContextValue["setField"] = (key, value) => {
+    setData((prev) => ({ ...prev, [key]: value }));
+  };
 
   const isDirty = JSON.stringify(data) !== JSON.stringify(original);
 

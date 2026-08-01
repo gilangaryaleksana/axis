@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { dmSans, crimsonText } from "../../lib/font";
 import { Persona, PERSONAS } from "../../components/persona/personas";
@@ -11,6 +12,7 @@ export default function LoginPage() {
   const router = useRouter();
   const persona = PERSONAS.find((p) => p.name === "Police") ?? PERSONAS[0];
   const Icon = persona.icon;
+  const [showPassword, setShowPassword] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,37 +26,42 @@ export default function LoginPage() {
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError(null);
+  setIsSubmitting(true);
 
-    const endpoint = mode === "signin" ? "login" : "register";
+  const endpoint = mode === "signin" ? "login" : "register";
 
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/${endpoint}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        },
-      );
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/${endpoint}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      },
+    );
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || "An error occurred");
-      }
-
-      setToken(data.token);
-      router.push("/chat");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setIsSubmitting(false);
+    if (!res.ok) {
+      throw new Error(data.message || "An error occurred");
     }
-  };
+
+    setToken(data.token);
+
+    if (mode === "signup") {
+      router.push("/onboarding/background");
+    } else {
+      router.push("/chat");
+    }
+  } catch (err) {
+    setError(err instanceof Error ? err.message : "An error occurred");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleOAuth = (provider: "google" | "github") => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/${provider}`;
@@ -143,15 +150,25 @@ export default function LoginPage() {
                 >
                   Password
                 </label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  className="w-full px-3.5 py-2.5 border border-neutral-200 rounded-xl text-[14px]  text-neutral-900 outline-none focus:border-black transition-colors placeholder:text-neutral-400"
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    className="w-full px-3.5 py-2.5 pr-10 border border-neutral-200 rounded-xl text-[14px] text-neutral-900 outline-none focus:border-black transition-colors placeholder:text-neutral-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-center justify-between text-[13px]">
@@ -169,11 +186,17 @@ export default function LoginPage() {
                 </a>
               </div>
 
+              {error && (
+                <p className="text-[13px] text-red-500 -mt-1">{error}</p>
+              )}
+
               <button
                 type="submit"
-                className="mt-1 py-3 rounded-xl bg-black text-white text-[14px] font-semibold hover:opacity-85 transition-opacity"
+                disabled={isSubmitting}
+                className="mt-1 py-3 rounded-xl bg-black text-white text-[14px] font-semibold hover:opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Continue
+                {isSubmitting ? "Please wait..." : "Continue"}{" "}
+                {/* ⬅️ BARU: feedback loading */}
               </button>
             </form>
 
@@ -251,7 +274,7 @@ export default function LoginPage() {
           </div>
         </div>
         {/* RIGHT: chat preview visual */}
-        <div className="hidden md:flex relative bg-[#202023]items-center justify-center p-12 overflow-hidden">
+        <div className="hidden md:flex relative bg-[#202023] items-center justify-center p-12 overflow-hidden">
           <div
             className="absolute w-[480px] h-[480px] rounded-full -top-20 -right-28 z-10"
             style={{

@@ -7,6 +7,7 @@ import { signJwt } from "@/utils/jwt";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { OAuth2Client } from "google-auth-library";
 import { migrateGuestConversations } from "./conversation.controller";
+import { AppError } from "../utils/AppError";
 
 // 1. OAuth Callback (Google/GitHub via Passport redirect flow)
 export const oauthCallback = asyncHandler(
@@ -63,8 +64,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
-    res.status(409);
-    throw new Error("Email already registered");
+    throw new AppError("Email already registered", 409);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -98,14 +98,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user || !user.password) {
-    res.status(401);
-    throw new Error("Email or password is incorrect");
+    throw new AppError("Email or password is incorrect", 401);
   }
 
   const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) {
-    res.status(401);
-    throw new Error("Email or password is incorrect");
+    throw new AppError("Email or password is incorrect", 401);
   }
 
   if (req.guestId) {
@@ -140,8 +138,7 @@ export const googleOneTap = asyncHandler(
 
     const payload = ticket.getPayload();
     if (!payload?.email) {
-      res.status(401);
-      throw new Error("Google token is invalid");
+      throw new AppError("Google token is invalid", 401);
     }
 
     const user = await findOrCreateUser({
@@ -168,7 +165,16 @@ export const googleOneTap = asyncHandler(
 
 // 6. PATCH /api/auth/me
 export const updateMe = asyncHandler(async (req: Request, res: Response) => {
-  const { name, language, defaultPersona, autoGenerateTitle, theme, compactSidebar, emailNotifications, inAppSound } = req.body;
+  const {
+    name,
+    language,
+    defaultPersona,
+    autoGenerateTitle,
+    theme,
+    compactSidebar,
+    emailNotifications,
+    inAppSound,
+  } = req.body;
 
   const updated = await prisma.user.update({
     where: { id: req.user!.id },
@@ -177,11 +183,10 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
       ...(language !== undefined && { language }),
       ...(defaultPersona !== undefined && { defaultPersona }),
       ...(autoGenerateTitle !== undefined && { autoGenerateTitle }),
-      ...(theme !== undefined && { theme }),                    
-      ...(compactSidebar !== undefined && { compactSidebar }),  
-      ...(emailNotifications !== undefined && { emailNotifications }),  
+      ...(theme !== undefined && { theme }),
+      ...(compactSidebar !== undefined && { compactSidebar }),
+      ...(emailNotifications !== undefined && { emailNotifications }),
       ...(inAppSound !== undefined && { inAppSound }),
-
     },
     select: {
       id: true,
@@ -204,9 +209,11 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // 7. DELETE /api/auth/me
-export const deleteAccount = asyncHandler(async (req: Request, res: Response) => {
-  await prisma.user.delete({
-    where: { id: req.user!.id },
-  });
-  res.json({ message: "Account deleted successfully" });
-});
+export const deleteAccount = asyncHandler(
+  async (req: Request, res: Response) => {
+    await prisma.user.delete({
+      where: { id: req.user!.id },
+    });
+    res.json({ message: "Account deleted successfully" });
+  },
+);
