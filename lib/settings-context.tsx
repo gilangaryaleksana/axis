@@ -17,6 +17,11 @@ interface SettingsData {
   compactSidebar: boolean;
   emailNotifications: boolean;
   inAppSound: boolean;
+  tradingGoal: string;
+  tradingBackground: string;
+  communicationStyle: string;
+  tradingInstrument: string;
+  tradingStruggle: string;
 }
 
 const DEFAULTS: SettingsData = {
@@ -28,6 +33,11 @@ const DEFAULTS: SettingsData = {
   compactSidebar: false,
   emailNotifications: true,
   inAppSound: true,
+  tradingGoal: "",
+  tradingBackground: "",
+  communicationStyle: "",
+  tradingInstrument: "",
+  tradingStruggle: "",
 };
 
 interface SettingsContextValue {
@@ -41,6 +51,7 @@ interface SettingsContextValue {
   isSaving: boolean;
   save: () => Promise<boolean>;
   reset: () => void;
+  refetch: () => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
@@ -51,38 +62,44 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    async function fetchSettings() {
-      const token = getToken(); 
-      if (!token) {
-        setIsLoading(false); 
-        return;
-      }
-      try {
-        const res = await authFetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
-        );
-        if (res.ok) {
-          const user = await res.json();
-          const loaded: SettingsData = {
-            displayName: user.name ?? "",
-            language: user.language ?? "id",
-            defaultPersona: user.defaultPersona ?? "",
-            autoGenerateTitle: user.autoGenerateTitle ?? true,
-            theme: user.theme ?? "dark",
-            compactSidebar: user.compactSidebar ?? false,
-            emailNotifications: user.emailNotifications ?? true,
-            inAppSound: user.inAppSound ?? true,
-          };
-          setOriginal(loaded);
-          setData(loaded);
-        }
-      } catch (err) {
-        console.error("Failed to fetch settings:", err);
-      } finally {
-        setIsLoading(false);
-      }
+  const fetchSettings = async () => {
+    const token = getToken();
+    if (!token) {
+      setIsLoading(false);
+      return;
     }
+    try {
+      const res = await authFetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
+      );
+      if (res.ok) {
+        const user = await res.json();
+        const loaded: SettingsData = {
+          displayName: user.name ?? "",
+          language: user.language ?? "id",
+          defaultPersona: user.defaultPersona ?? "",
+          autoGenerateTitle: user.autoGenerateTitle ?? true,
+          theme: user.theme ?? "dark",
+          compactSidebar: user.compactSidebar ?? false,
+          emailNotifications: user.emailNotifications ?? true,
+          inAppSound: user.inAppSound ?? true,
+          tradingGoal: user.tradingGoal ?? "",
+          tradingBackground: user.tradingBackground ?? "",
+          communicationStyle: user.communicationStyle ?? "",
+          tradingInstrument: user.tradingInstrument ?? "",
+          tradingStruggle: user.tradingStruggle ?? "",
+        };
+        setOriginal(loaded);
+        setData(loaded);
+      }
+    } catch (err) {
+      console.error("Failed to fetch settings:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchSettings();
   }, []);
 
@@ -109,6 +126,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
             compactSidebar: data.compactSidebar,
             emailNotifications: data.emailNotifications,
             inAppSound: data.inAppSound,
+            tradingGoal: data.tradingGoal,
+            tradingBackground: data.tradingBackground,
+            communicationStyle: data.communicationStyle,
+            tradingInstrument: data.tradingInstrument,
+            tradingStruggle: data.tradingStruggle,
           }),
         },
       );
@@ -129,7 +151,16 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   return (
     <SettingsContext.Provider
-      value={{ data, setField, isDirty, isLoading, isSaving, save, reset }}
+      value={{
+        data,
+        setField,
+        isDirty,
+        isLoading,
+        isSaving,
+        save,
+        reset,
+        refetch: fetchSettings,
+      }}
     >
       {children}
     </SettingsContext.Provider>

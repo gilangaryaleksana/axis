@@ -14,7 +14,6 @@ export const oauthCallback = asyncHandler(
   async (req: Request, res: Response) => {
     const user = req.user as any;
 
-    // Migrate guest to user if guestId exists in the cookie
     if (req.guestId) {
       await migrateGuestConversations(req.guestId, user.id);
       res.clearCookie("guest_id");
@@ -30,7 +29,7 @@ export const oauthCallback = asyncHandler(
       },
     });
 
-    const redirectUrl = `${process.env.FRONTEND_URL}/auth/callback?token=${token}`;
+    const redirectUrl = `${process.env.FRONTEND_URL}/auth/callback?token=${token}&isNewUser=${user.isNewUser ?? false}`;
     res.redirect(redirectUrl);
   },
 );
@@ -52,6 +51,11 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
       compactSidebar: true,
       emailNotifications: true,
       inAppSound: true,
+      tradingGoal: true,
+      tradingBackground: true,
+      communicationStyle: true,
+      tradingInstrument: true,
+      tradingStruggle: true,
       createdAt: true,
     },
   });
@@ -174,6 +178,11 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
     compactSidebar,
     emailNotifications,
     inAppSound,
+    tradingGoal,
+    tradingBackground,
+    communicationStyle,
+    tradingInstrument,
+    tradingStruggle,
   } = req.body;
 
   const updated = await prisma.user.update({
@@ -187,6 +196,11 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
       ...(compactSidebar !== undefined && { compactSidebar }),
       ...(emailNotifications !== undefined && { emailNotifications }),
       ...(inAppSound !== undefined && { inAppSound }),
+      ...(tradingGoal !== undefined && { tradingGoal }),
+      ...(tradingBackground !== undefined && { tradingBackground }),
+      ...(communicationStyle !== undefined && { communicationStyle }),
+      ...(tradingInstrument !== undefined && { tradingInstrument }),
+      ...(tradingStruggle !== undefined && { tradingStruggle }),
     },
     select: {
       id: true,

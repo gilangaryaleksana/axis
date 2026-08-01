@@ -27,10 +27,11 @@ export async function findOrCreateUser(params: {
   });
 
   if (existingAccount) {
-    return existingAccount.user;
+    return { ...existingAccount.user, isNewUser: false };
   }
 
   let user = await prisma.user.findUnique({ where: { email: params.email } });
+  let isNewUser = false; 
 
   if (!user) {
     user = await prisma.user.create({
@@ -41,6 +42,7 @@ export async function findOrCreateUser(params: {
         role: "user",
       },
     });
+    isNewUser = true;
   }
 
   await prisma.account.create({
@@ -53,7 +55,7 @@ export async function findOrCreateUser(params: {
     },
   });
 
-  return user;
+  return { ...user, isNewUser };
 }
 
 // Google Strategy is only registered when credentials are present in .env

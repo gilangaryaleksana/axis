@@ -55,6 +55,12 @@ model User {
   compactSidebar    Boolean @default(false) @map("compact_sidebar")
   emailNotifications Boolean @default(true) @map("email_notifications")
   inAppSound         Boolean @default(false) @map("in_app_sound") 
+
+  tradingGoal         String? @map("trading_goal")
+  tradingBackground   String? @map("trading_background")
+  communicationStyle  String? @map("communication_style")
+  tradingInstrument   String? @map("trading_instrument")
+  tradingStruggle     String? @map("trading_struggle")
   
   accounts        Account[]
   sessions        Session[]

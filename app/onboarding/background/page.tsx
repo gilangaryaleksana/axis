@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { crimsonText, dmSans } from "../../../lib/font";
 import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
+import { authFetch } from "../../../lib/auth";
 
 const OPTIONS = [
   { value: "beginner", label: "Beginner, just getting started" },
@@ -26,14 +27,25 @@ const OPTIONS = [
 export default function BackgroundQuizPage() {
   const router = useRouter();
   const [background, setBackground] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!background) return;
+    setIsSubmitting(true);
 
-    // TODO: save to global state / send to API here
-    // example: await fetch("/api/onboarding/background", { method: "POST", body: JSON.stringify({ background }) })
+    try {
+      await authFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tradingBackground: background }),
+      });
+    } catch (err) {
+      console.error("Failed to save background:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
 
-    router.push("/onboarding/next-step");
+    router.push("/onboarding/communication-style");
   };
 
   const handleBack = () => {
@@ -123,10 +135,10 @@ export default function BackgroundQuizPage() {
             <button
               type="button"
               onClick={handleNext}
-              disabled={!background}
+              disabled={!background || isSubmitting}
               className="px-8 py-3.5 rounded-xl bg-black text-white text-sm font-semibold hover:opacity-85 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
             >
-              Next
+              {isSubmitting ? "Saving..." : "Next"}
             </button>
           </div>
         </div>

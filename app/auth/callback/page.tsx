@@ -10,6 +10,7 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const token = searchParams.get("token");
+    const isNewUser = searchParams.get("isNewUser") === "true"; 
 
     if (!token) {
       setError("Token not found in the URL. Login failed.");
@@ -17,7 +18,12 @@ export default function AuthCallbackPage() {
     }
 
     setToken(token);
-    router.replace("/chat");
+
+    if (isNewUser) {
+      router.replace("/onboarding/goal"); 
+    } else {
+      router.replace("/chat"); 
+    }
   }, [searchParams, router]);
 
   if (error) {

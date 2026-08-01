@@ -52,7 +52,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     setToken(data.token);
 
     if (mode === "signup") {
-      router.push("/onboarding/background");
+      router.push("/onboarding/goal");
     } else {
       router.push("/chat");
     }
