@@ -8,6 +8,7 @@ import LatestList from "./LatestList";
 import SettingsModal from "../../components/settings/SettingsModal";
 import { crimsonText, dmSans } from "@/lib/font";
 import { authFetch, getToken } from "@/lib/auth";
+import { useSettings } from "@/lib/settings-context";
 
 interface SidebarProps {
   currentPersona: PersonaKey;
@@ -42,6 +43,7 @@ export default function Sidebar({
   const [user, setUser] = useState<MeResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { data } = useSettings();
 
   useEffect(() => {
     async function fetchMe() {
@@ -78,7 +80,7 @@ export default function Sidebar({
     <aside
       className={`flex flex-col h-full bg-white dark:bg-[#202023] border-gray-200 dark:border-[#333336] border-r text-[#1a1a1a] dark:text-[#e8e8e6] transition-all duration-200 ${
         collapsed ? "w-[82px] px-4" : "w-[280px] px-[18px]"
-      } py-[22px]`}
+      } ${data.compactSidebar ? "py-[12px]" : "py-[22px]"}`}
     >
       {/* Header / Logo */}
       <div
@@ -130,6 +132,7 @@ export default function Sidebar({
         current={currentPersona}
         collapsed={collapsed}
         onSelect={onSelectPersona}
+        compact={data.compactSidebar}
       />
 
       {/* History / Latest Conversations */}
@@ -144,6 +147,7 @@ export default function Sidebar({
             items={latest}
             currentId={currentConvoId}
             onSelect={onSelectConvo}
+            compact={data.compactSidebar}
           />
         </>
       )}
