@@ -149,8 +149,16 @@ export default function Sidebar({
       )}
 
       {/* User Profile Footer */}
-      <div className="flex items-center justify-between gap-3 pt-4 mt-auto border-t border-gray-200 dark:border-[#444]">
-        <div className="flex items-center gap-2 overflow-hidden">
+      <div
+        className={`flex items-center gap-3 pt-4 mt-auto border-t border-gray-200 dark:border-[#444] ${
+          collapsed ? "justify-center" : "justify-between"
+        }`}
+      >
+        <div
+          className={`flex items-center gap-2 overflow-hidden ${
+            collapsed ? "justify-center" : ""
+          }`}
+        >
           {loading ? (
             <div className="w-[34px] h-[34px] rounded-full bg-gray-300 dark:bg-[#5a5a56] animate-pulse shrink-0" />
           ) : isLoggedIn && userImage && !imgError ? (
