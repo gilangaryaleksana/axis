@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { dmSans, crimsonText } from "../../lib/font";
 import { Persona, PERSONAS } from "../../components/persona/personas";
@@ -19,6 +19,15 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const passwordChecks = {
+    lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+    minLength: password.length >= 8,
+  };
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const isPasswordValid = Object.values(passwordChecks).every(Boolean);
 
   useEffect(() => {
     if (getToken()) {
@@ -26,42 +35,48 @@ export default function LoginPage() {
     }
   }, [router]);
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError(null);
-  setIsSubmitting(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
 
-  const endpoint = mode === "signin" ? "login" : "register";
-
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/${endpoint}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      },
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message || "An error occurred");
+    if (mode === "signup" && !isPasswordValid) {
+      setError("Password does not meet the requirements.");
+      return;
     }
 
-    setToken(data.token);
+    setIsSubmitting(true);
 
-    if (mode === "signup") {
-      router.push("/onboarding/goal");
-    } else {
-      router.push("/chat");
+    const endpoint = mode === "signin" ? "login" : "register";
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+
+      setToken(data.token);
+
+      if (mode === "signup") {
+        router.push("/onboarding/goal");
+      } else {
+        router.push("/chat");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsSubmitting(false);
     }
-  } catch (err) {
-    setError(err instanceof Error ? err.message : "An error occurred");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   const handleOAuth = (provider: "google" | "github") => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/${provider}`;
@@ -74,14 +89,14 @@ const handleSubmit = async (e: React.FormEvent) => {
         {/* LEFT: form */}
         <div className="p-6 md:p-8 flex flex-col overflow-y-auto">
           <div
-            className={`text-2xl mb-6 leading-snug ${crimsonText.className}`}
+            className={`absolute text-2xl mb-6 leading-snug ${crimsonText.className}`}
           >
             <h1 className="text-5xl text-black">
               A<span className="text-3xl">xis</span>
             </h1>
           </div>
 
-          <div className="max-w-[340px] w-full mx-auto flex-1 flex flex-col justify-center">
+          <div className="max-w-[340px] w-full mx-auto flex flex-col pt-20">
             <h1
               className={`text-3xl font-extralight text-black ${crimsonText.className}`}
             >
@@ -156,6 +171,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setPasswordFocused(true)}
+                    onBlur={() => setPasswordFocused(false)}
                     placeholder="••••••••"
                     required
                     className="w-full px-3.5 py-2.5 pr-10 border border-neutral-200 rounded-xl text-[14px] text-neutral-900 outline-none focus:border-black transition-colors placeholder:text-neutral-400"
@@ -169,6 +186,41 @@ const handleSubmit = async (e: React.FormEvent) => {
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
+
+                {mode === "signup" && (
+                  <div
+                    className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                      passwordFocused || password.length > 0
+                        ? "grid-rows-[1fr]"
+                        : "grid-rows-[0fr]"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
+                        <PasswordRule
+                          met={passwordChecks.lowercase}
+                          label="one lowercase character"
+                        />
+                        <PasswordRule
+                          met={passwordChecks.special}
+                          label="one special character"
+                        />
+                        <PasswordRule
+                          met={passwordChecks.uppercase}
+                          label="one uppercase character"
+                        />
+                        <PasswordRule
+                          met={passwordChecks.minLength}
+                          label="8 character minimum"
+                        />
+                        <PasswordRule
+                          met={passwordChecks.number}
+                          label="one number"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between text-[13px]">
@@ -274,7 +326,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
         {/* RIGHT: chat preview visual */}
-        <div className="hidden md:flex relative bg-[#202023] items-center justify-center p-12 overflow-hidden">
+        <div className="hidden md:flex relative bg-[#202023] items-center justify-center p-12 overflow-hidden dark">
           <div
             className="absolute w-[480px] h-[480px] rounded-full -top-20 -right-28 z-10"
             style={{
@@ -282,7 +334,6 @@ const handleSubmit = async (e: React.FormEvent) => {
                 "radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%)",
             }}
           />
-
           <div
             className="relative w-full max-w-md flex flex-col gap-2.5 font-extralight"
             style={{
@@ -291,8 +342,9 @@ const handleSubmit = async (e: React.FormEvent) => {
             }}
           >
             <ChatHeader
+              className="-translate-y-25"
               persona={persona}
-              sub="Trading discipline, no excuses"
+              title="Trading discipline, no excuses"
             />
             <div
               className={`px-4 py-3 max-w-[80%] self-start leading-relaxed text-[13.5px] rounded-r-[35px] rounded-bl-[25px] bg-[#e7e5e0] text-[#2a2a28] font-extralight ${dmSans.className}`}
@@ -311,7 +363,6 @@ const handleSubmit = async (e: React.FormEvent) => {
               we can continue talking.
             </div>
           </div>
-
           <div
             className={`absolute bottom-12 left-12 right-12 text-neutral-400 text-[13px] leading-relaxed ${dmSans.className}`}
           >
@@ -325,6 +376,20 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function PasswordRule({ met, label }: { met: boolean; label: string }) {
+  return (
+    <div className="flex items-center gap-1.5 text-[12.5px]">
+      <CheckCircle2
+        size={14}
+        className={met ? "text-green-600" : "text-neutral-300"}
+      />
+      <span className={met ? "text-green-700" : "text-neutral-400"}>
+        {label}
+      </span>
     </div>
   );
 }
