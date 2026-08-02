@@ -58,6 +58,40 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
     }
   });
 
+  let userContext = "";
+  if (ownerId) {
+    const userProfile = await prisma.user.findUnique({
+      where: { id: ownerId },
+      select: {
+        language: true,
+        tradingGoal: true,
+        tradingBackground: true,
+        tradingInstrument: true,
+        tradingStruggle: true,
+      },
+    });
+
+    if (userProfile) {
+      const contextParts: string[] = [];
+      if (userProfile.tradingGoal)
+        contextParts.push(`Trading goal: ${userProfile.tradingGoal}`);
+      if (userProfile.tradingBackground)
+        contextParts.push(`Experience level: ${userProfile.tradingBackground}`);
+      if (userProfile.tradingInstrument)
+        contextParts.push(`Mainly trades: ${userProfile.tradingInstrument}`);
+      if (userProfile.tradingStruggle)
+        contextParts.push(`Biggest struggle: ${userProfile.tradingStruggle}`);
+
+      if (contextParts.length > 0) {
+        userContext = `\n\nUser context:\n${contextParts.join("\n")}`;
+      }
+
+      if (userProfile.language === "id") {
+        userContext += `\n\nRespond in Bahasa Indonesia.`;
+      }
+    }
+  }
+
   // First check whether this is the FIRST message in this conversation (before insert)
   const messageCount = await prisma.message.count({
     where: { conversationId: req.params.id },
@@ -69,7 +103,7 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   });
 
   const botReplyText = await generateBotReply(
-    conversation.persona.systemPrompt,
+    conversation.persona.systemPrompt + userContext,
     content,
   );
 

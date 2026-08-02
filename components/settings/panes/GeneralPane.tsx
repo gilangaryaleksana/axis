@@ -75,8 +75,12 @@ export default function GeneralPane() {
       </SettingsRow>
 
       <div className="pt-3 border-t border-gray-200 dark:border-[#333336]">
-        <p className="text-xs font-semibold text-gray-500 dark:text-[#9a9a9e] mb-3">
+        <p className="text-xs font-semibold text-gray-500 dark:text-[#9a9a9e] mb-1">
           Trading Profile
+        </p>
+
+        <p className="text-xs text-gray-400 dark:text-[#6f6f6b] mb-3">
+          Axis uses this to personalize how it responds to you in chat.
         </p>
 
         <div className="space-y-5">
