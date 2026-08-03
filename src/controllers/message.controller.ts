@@ -3,6 +3,7 @@ import { prisma } from "@/config/prisma";
 import { sendMissedReplyEmail } from "@/config/mailer";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { AppError } from "@/utils/AppError";
+import { encrypt, decrypt } from "@/utils/crypto";
 
 // GET /api/conversations/:id/messages
 export const getMessages = asyncHandler(async (req: Request, res: Response) => {
@@ -26,7 +27,12 @@ export const getMessages = asyncHandler(async (req: Request, res: Response) => {
     where: { conversationId: req.params.id },
     orderBy: { createdAt: "asc" },
   });
-  res.json(messages);
+
+  const decryptedMessages = messages.map((m) => ({
+    ...m,
+    content: decrypt(m.content),
+  }));
+  res.json(decryptedMessages);
 });
 
 // POST /api/conversations/:id/messages
@@ -99,7 +105,7 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   const isFirstMessage = messageCount === 0;
 
   const userMessage = await prisma.message.create({
-    data: { conversationId: req.params.id, sender: "user", content },
+    data: { conversationId: req.params.id, sender: "user", content: encrypt(content) },
   });
 
   const botReplyText = await generateBotReply(
@@ -111,7 +117,7 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
     data: {
       conversationId: req.params.id,
       sender: "bot",
-      content: botReplyText,
+      content: encrypt(botReplyText),
     },
   });
 
@@ -149,7 +155,7 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
         try {
           await sendMissedReplyEmail(
             user.email,
-            botMessage.content,
+            botReplyText,
             conversation.persona.displayName,
           );
         } catch (err) {
@@ -160,7 +166,11 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  res.status(201).json({ userMessage, botMessage, title: updatedTitle });
+  res.status(201).json({
+    userMessage: { ...userMessage, content }, 
+    botMessage: { ...botMessage, content: botReplyText }, 
+    title: updatedTitle,
+  });
 });
 
 async function generateBotReply(
