@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react"; // tambahin useEffect
 import Sidebar from "../../components/sidebar/Sidebar";
 import ChatHeader from "../../components/chat/ChatHeader";
 import ChatBody from "../../components/chat/ChatBody";
@@ -31,6 +32,16 @@ export default function ChatPage() {
     isSettingsLoading ? false : settingsData.inAppSound,
   );
 
+  const activeConvoTitle = conversations.find(
+    (c) => c.id === currentConvoId,
+  )?.title;
+
+  useEffect(() => {
+    document.title = activeConvoTitle
+      ? `${activeConvoTitle} - Axis`
+      : "Chat - Axis";
+  }, [activeConvoTitle]);
+
   return (
     <ThemeApplier>
       <div className="flex h-screen">
@@ -50,10 +61,7 @@ export default function ChatPage() {
         <div className="flex-1 flex flex-col relative overflow-hidden">
           <ChatHeader
             persona={persona}
-            title={
-              conversations.find((c) => c.id === currentConvoId)?.title ??
-              persona.sub
-            }
+            title={activeConvoTitle ?? persona.sub}
           />
           <ChatBody
             messages={messages}
