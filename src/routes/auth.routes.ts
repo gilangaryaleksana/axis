@@ -2,6 +2,7 @@ import { Router } from "express";
 import passport from "@/config/passport";
 import { oauthCallback, getMe, logout, register, login } from "@/controllers/auth.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
+import { getNonce, verifyWallet } from "@/controllers/wallet.controller";
 
 const router = Router();
 
@@ -26,6 +27,9 @@ router.get(
   passport.authenticate("github", { session: false, failureRedirect: "/login" }),
   oauthCallback
 );
+
+router.get("/wallet/nonce", getNonce);
+router.post("/wallet/verify", verifyWallet);
 
 // --- Umum ---
 router.get("/me", authenticate, getMe);

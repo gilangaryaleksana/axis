@@ -40,8 +40,10 @@ enum MessageSender {
 model User {
   id             String       @id @default(uuid())
   name           String
-  email          String       @unique
+  email          String?       @unique
   password       String?
+  walletAddress  String?      @unique @map("wallet_address")
+  nonce          String?
   avatarUrl      String?      @map("avatar_url")
   role           UserRole     @default(user)
   defaultPersona PersonaType? @map("default_persona")
