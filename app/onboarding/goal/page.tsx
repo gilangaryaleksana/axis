@@ -39,13 +39,15 @@ export default function GoalQuizPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-black">
-      <nav className="flex items-center justify-between px-16 py-7">
-        <div className={`text-2xl mb-6 leading-snug ${crimsonText.className}`}>
-          <h1 className="text-5xl text-black">
-            A<span className="text-3xl">xis</span>
+      <nav className="flex items-center justify-between px-6 md:px-16 py-5 md:py-7">
+        <div className={`text-2xl md:mb-6 leading-snug ${crimsonText.className}`}>
+          <h1 className="text-3xl md:text-5xl text-black">
+            A<span className="text-xl md:text-3xl">xis</span>
           </h1>
         </div>
-        <div className="text-sm text-neutral-500">Question 1 of 5</div>
+        <div className="text-xs md:text-sm text-neutral-500">
+          Question 1 of 5
+        </div>
       </nav>
 
       <div className="h-[3px] bg-neutral-200 w-full">
@@ -55,13 +57,15 @@ export default function GoalQuizPage() {
         />
       </div>
 
-      <main className="flex-1 flex items-center justify-center px-6 py-10">
+      <main className="flex-1 flex items-center justify-center px-4 md:px-6 py-8 md:py-10">
         <div className="w-full max-w-md">
           <p className={`text-sm text-neutral-500 mb-3 ${dmSans.className}`}>
             Get to know yourself
           </p>
 
-          <h1 className={`text-3xl mb-3 leading-snug ${crimsonText.className}`}>
+          <h1
+            className={`text-2xl md:text-3xl mb-3 leading-snug ${crimsonText.className}`}
+          >
             What's your main goal in trading?
           </h1>
 
@@ -98,7 +102,7 @@ export default function GoalQuizPage() {
               type="button"
               onClick={handleNext}
               disabled={!goal || isSubmitting}
-              className="px-8 py-3.5 rounded-xl bg-black text-white text-sm font-semibold hover:opacity-85 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+              className="w-full md:w-auto px-8 py-3.5 rounded-xl bg-black text-white text-sm font-semibold hover:opacity-85 disabled:opacity-40 transition-opacity"
             >
               {isSubmitting ? "Saving..." : "Next"}
             </button>

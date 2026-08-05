@@ -55,7 +55,7 @@ export default function BackgroundQuizPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white text-black">
       <nav className="flex items-center justify-between px-16 py-7">
-        <div className={`text-2xl mb-6 leading-snug ${crimsonText.className}`}>
+        <div className={`text-2xl md:mb-6 leading-snug ${crimsonText.className}`}>
           <h1 className="text-5xl text-black">
             A<span className="text-3xl">xis</span>
           </h1>
@@ -136,7 +136,7 @@ export default function BackgroundQuizPage() {
               type="button"
               onClick={handleNext}
               disabled={!background || isSubmitting}
-              className="px-8 py-3.5 rounded-xl bg-black text-white text-sm font-semibold hover:opacity-85 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+              className="px-8 py-3.5 rounded-xl bg-black text-white text-sm font-semibold hover:opacity-85 disabled:opacity-40 transition-opacity"
             >
               {isSubmitting ? "Saving..." : "Next"}
             </button>

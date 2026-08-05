@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import SettingsNav, { SettingsCategory } from "./SettingsNav";
 import GeneralPane from "./panes/GeneralPane";
@@ -56,11 +57,11 @@ function SettingsModalContent({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="flex h-[560px] w-full max-w-[820px] overflow-hidden rounded-xl border border-gray-200 dark:border-[#333336] bg-white dark:bg-[#1b1b1d] text-[#1a1a1a] dark:text-[#f2f2f0] shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 md:p-4">
+      <div className="flex flex-col md:flex-row h-full md:h-[560px] w-full max-w-[820px] overflow-hidden md:rounded-xl border-0 md:border border-gray-200 dark:border-[#333336] bg-white dark:bg-[#1b1b1d] text-[#1a1a1a] dark:text-[#f2f2f0] md:shadow-2xl">
         <SettingsNav active={active} onSelect={setActive} />
-        <section className="flex flex-1 flex-col">
-          <div className="flex items-center justify-between border-b border-gray-200 dark:border-[#333336] px-6 py-4">
+        <section className="flex flex-1 flex-col min-h-0">
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-[#333336] px-4 md:px-6 py-4">
             <h2 className="text-base font-semibold">{TITLES[active]}</h2>
             <button
               onClick={requestClose}
@@ -69,10 +70,10 @@ function SettingsModalContent({
               <X size={18} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto px-6 py-5">
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5">
             {PANES[active]}
           </div>
-          <div className="flex justify-end gap-2 border-t border-gray-200 dark:border-[#333336] px-6 py-3">
+          <div className="flex justify-end gap-2 border-t border-gray-200 dark:border-[#333336] px-4 md:px-6 py-3">
             <button
               onClick={requestClose}
               className="rounded-md px-4 py-2 text-sm text-gray-500 dark:text-[#9a9a9e] hover:bg-gray-100 dark:hover:bg-[#2c2c2f]"
@@ -92,7 +93,7 @@ function SettingsModalContent({
 
       {showConfirm && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4"
           onClick={() => setShowConfirm(false)}
         >
           <div
@@ -133,6 +134,18 @@ export default function SettingsModal({
   onClose: () => void;
   onSaved?: (data: { displayName: string; language: string }) => void;
 }) {
-  if (!isOpen) return null;
-  return <SettingsModalContent onClose={onClose} onSaved={onSaved} />; 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
+
+  // Portal ke document.body -> keluar total dari DOM tree Sidebar,
+  // jadi gak mungkin lagi kena "containing block" ancestor manapun (transform/overflow dsb)
+  return createPortal(
+    <SettingsModalContent onClose={onClose} onSaved={onSaved} />,
+    document.body,
+  );
 }

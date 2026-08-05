@@ -19,6 +19,7 @@ interface SidebarProps {
   currentConvoId: string;
   onSelectConvo: (id: string) => void;
   userName?: string;
+  onClose?: () => void;
 }
 
 interface MeResponse {
@@ -38,6 +39,7 @@ export default function Sidebar({
   onSelectConvo,
   userName = "Guest",
   isCreatingConversation = false,
+  onClose,
 }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<MeResponse | null>(null);
@@ -78,25 +80,34 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`flex flex-col h-full bg-white dark:bg-[#202023] border-gray-200 dark:border-[#333336] border-r text-[#1a1a1a] dark:text-[#e8e8e6] transition-all duration-200 ${
-        collapsed ? "w-[82px] px-4" : "w-[280px] px-[18px]"
+      className={`flex flex-col h-full bg-white dark:bg-[#202023] border-gray-200 dark:border-[#333336] border-r text-[#1a1a1a] dark:text-[#e8e8e6] transition-all duration-200 w-full ${
+        collapsed ? "md:w-[82px] md:px-4 px-[18px]" : "md:w-[280px] px-[18px]"
       } ${data.compactSidebar ? "py-[12px]" : "py-[22px]"}`}
     >
       {/* Header / Logo */}
       <div
         className={`flex items-center mb-6 ${
-          collapsed ? "justify-center" : "justify-between"
+          collapsed ? "md:justify-center justify-between" : "justify-between"
         }`}
       >
-        {!collapsed && (
-          <span
-            className={`font-serif text-4xl tracking-wide ${crimsonText.className}`}
-          >
-            A<span className="text-2xl">xis</span>
-          </span>
-        )}
+        <span
+          className={`font-serif text-4xl tracking-wide ${crimsonText.className} ${
+            collapsed ? "md:hidden" : ""
+          }`}
+        >
+          A<span className="text-2xl">xis</span>
+        </span>
         <button
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => {
+            if (
+              typeof window !== "undefined" &&
+              window.matchMedia("(max-width: 767px)").matches
+            ) {
+              onClose?.();
+            } else {
+              setCollapsed(!collapsed);
+            }
+          }}
           className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#2c2c2f] transition-colors"
         >
           <PanelLeft size={18} />
@@ -107,26 +118,28 @@ export default function Sidebar({
       <button
         onClick={onNewConversation}
         disabled={isCreatingConversation}
-        className={`flex items-center gap-2 bg-[#D9D9D9] rounded-full text-[#5A5A5A] mb-6 text-sm ${isCreatingConversation ? "opacity-50" : ""} ${
-          crimsonText.className
-        } ${collapsed ? "justify-center w-7 h-7 mx-auto" : "px-4 py-2"}`}
+        className={`flex items-center gap-2 bg-[#D9D9D9] rounded-full text-[#5A5A5A] mb-6 text-sm px-4 py-2 ${
+          isCreatingConversation ? "opacity-50" : ""
+        } ${crimsonText.className} ${
+          collapsed
+            ? "md:justify-center md:w-7 md:h-7 md:px-0 md:py-0 md:mx-auto"
+            : ""
+        }`}
       >
-        <Plus size={14} className="text-[#2a2a28]" />
-        {!collapsed && (
-          <span>
-            {isCreatingConversation ? "Creating..." : "New Conversation"}
-          </span>
-        )}
+        <Plus size={14} className="text-[#2a2a28] shrink-0" />
+        <span className={collapsed ? "md:hidden" : ""}>
+          {isCreatingConversation ? "Creating..." : "New Conversation"}
+        </span>
       </button>
 
       {/* Persona Selection */}
-      {!collapsed && (
-        <p
-          className={`text-xs tracking-wider text-gray-500 dark:text-[#9a9a97] mb-3.5 ${dmSans.className}`}
-        >
-          Select Persona
-        </p>
-      )}
+      <p
+        className={`text-xs tracking-wider text-gray-500 dark:text-[#9a9a97] mb-3.5 ${dmSans.className} ${
+          collapsed ? "md:hidden" : ""
+        }`}
+      >
+        Select Persona
+      </p>
       <PersonaList
         personas={PERSONAS}
         current={currentPersona}
@@ -136,21 +149,21 @@ export default function Sidebar({
       />
 
       {/* History / Latest Conversations */}
-      {!collapsed && (
-        <>
-          <p
-            className={`text-xs tracking-wider text-gray-500 dark:text-[#9a9a97] mt-7 mb-3.5 ${dmSans.className}`}
-          >
-            Latest
-          </p>
-          <LatestList
-            items={latest}
-            currentId={currentConvoId}
-            onSelect={onSelectConvo}
-            compact={data.compactSidebar}
-          />
-        </>
-      )}
+      <div
+        className={`flex flex-col flex-1 min-h-0 ${collapsed ? "md:hidden" : ""}`}
+      >
+        <p
+          className={`text-xs tracking-wider text-gray-500 dark:text-[#9a9a97] mt-7 mb-3.5 ${dmSans.className}`}
+        >
+          Latest
+        </p>
+        <LatestList
+          items={latest}
+          currentId={currentConvoId}
+          onSelect={onSelectConvo}
+          compact={data.compactSidebar}
+        />
+      </div>
 
       {/* User Profile Footer */}
       <div
@@ -180,8 +193,10 @@ export default function Sidebar({
             </div>
           )}
 
-          {!collapsed && !loading && (
-            <div className="flex flex-col truncate">
+          {!loading && (
+            <div
+              className={`flex flex-col truncate ${collapsed ? "md:hidden" : ""}`}
+            >
               <span className="text-sm font-medium text-[#1a1a1a] dark:text-white truncate">
                 {displayName}
               </span>
@@ -192,13 +207,13 @@ export default function Sidebar({
           )}
         </div>
 
-        {!collapsed && (
-          <Settings
-            size={18}
-            onClick={() => setIsSettingsOpen(true)}
-            className="cursor-pointer shrink-0 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
-          />
-        )}
+        <Settings
+          size={18}
+          onClick={() => setIsSettingsOpen(true)}
+          className={`cursor-pointer shrink-0 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors ${
+            collapsed ? "md:hidden" : ""
+          }`}
+        />
       </div>
 
       <SettingsModal

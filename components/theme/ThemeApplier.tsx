@@ -7,18 +7,18 @@ export default function ThemeApplier({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isLoading || !ref.current) return;
-    const el = ref.current;
+    if (isLoading) return;
 
     const applyTheme = (theme: string) => {
+      let isDark: boolean;
       if (theme === "system") {
-        const prefersDark = window.matchMedia(
-          "(prefers-color-scheme: dark)",
-        ).matches;
-        el.classList.toggle("dark", prefersDark);
+        isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       } else {
-        el.classList.toggle("dark", theme === "dark");
+        isDark = theme === "dark";
       }
+      // toggle on <html> so content portaled to document.body
+      // (for example modals) still follow dark/light theme
+      document.documentElement.classList.toggle("dark", isDark);
     };
 
     applyTheme(data.theme);
@@ -26,7 +26,7 @@ export default function ThemeApplier({ children }: { children: ReactNode }) {
     if (data.theme === "system") {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
       const listener = (e: MediaQueryListEvent) =>
-        el.classList.toggle("dark", e.matches);
+        document.documentElement.classList.toggle("dark", e.matches);
       mq.addEventListener("change", listener);
       return () => mq.removeEventListener("change", listener);
     }

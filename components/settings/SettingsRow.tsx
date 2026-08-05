@@ -8,7 +8,7 @@ export default function SettingsRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
       <div>
         <div className="text-sm font-medium">{label}</div>
         <div className="text-xs text-[#6f6f73]">{desc}</div>

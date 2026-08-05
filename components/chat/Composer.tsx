@@ -27,7 +27,8 @@ export default function Composer({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    // On mobile, Enter should insert a newline instead of sending
+    if (e.key === "Enter" && !e.shiftKey && window.innerWidth >= 768) {
       e.preventDefault();
       handleSend();
     }
@@ -36,8 +37,8 @@ export default function Composer({
   const hasValue = value.trim().length > 0;
 
   return (
-    <div className="px-10 pt-4 pb-2 bg-white dark:bg-[#202023]">
-      <div className="flex max-w-3xl mx-auto items-end gap-2.5 bg-gray-100 dark:bg-[#2c2c2f] rounded-2xl pl-5 pr-2 py-2">
+    <div className="px-4 md:px-10 pt-3 md:pt-4 pb-2 bg-white dark:bg-[#202023]">
+      <div className="flex max-w-3xl mx-auto items-end gap-2 md:gap-2.5 bg-gray-100 dark:bg-[#2c2c2f] rounded-2xl pl-4 md:pl-5 pr-2 py-2">
         <textarea
           ref={textareaRef}
           value={value}
@@ -45,12 +46,12 @@ export default function Composer({
           onKeyDown={handleKeyDown}
           placeholder="Write a Message..."
           rows={1}
-          className="flex-1 bg-transparent outline-none resize-none text-[#1a1a1a] dark:text-[#f4f3f0] placeholder:text-gray-400 dark:placeholder:text-[#c9c8c4] text-[15px] py-2 max-h-[200px] overflow-y-auto chat-scrollbar"
+          className="flex-1 bg-transparent outline-none resize-none text-[#1a1a1a] dark:text-[#f4f3f0] placeholder:text-gray-400 dark:placeholder:text-[#c9c8c4] text-[14px] md:text-[15px] py-2 max-h-[200px] overflow-y-auto chat-scrollbar"
         />
         <button
           onClick={handleSend}
           disabled={!hasValue}
-          className={`w-[42px] h-[42px] rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+          className={`w-[38px] h-[38px] md:w-[42px] md:h-[42px] rounded-xl flex items-center justify-center shrink-0 transition-colors ${
             hasValue
               ? "bg-[#2b2b2b] dark:bg-[#f4f3f0] text-white dark:text-[#2b2b2b] hover:bg-black dark:hover:bg-[#e0dfda]"
               : "bg-gray-300 dark:bg-[#3d3d3a] text-gray-500 dark:text-[#6f6f6b]"
@@ -59,7 +60,7 @@ export default function Composer({
           <ArrowRight size={18} />
         </button>
       </div>
-      <p className="text-center italic text-xs text-gray-500 dark:text-[#6f6f6b] pt-1.5">
+      <p className="text-center italic text-[10px] md:text-xs text-gray-500 dark:text-[#6f6f6b] pt-1.5 px-2">
         AI can make mistakes. It is not a substitute for certified
         professionals.
       </p>
