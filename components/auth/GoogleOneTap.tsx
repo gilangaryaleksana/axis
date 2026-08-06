@@ -46,11 +46,10 @@ export function GoogleOneTap() {
       if (!window.google) return;
 
       window.google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse,
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      });
+  client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+  callback: handleCredentialResponse,
+  use_fedcm_for_prompt: false, // <-- Tambahkan baris ini
+});
 
       window.google.accounts.id.prompt();
     };

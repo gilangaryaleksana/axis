@@ -45,10 +45,10 @@ export default function ChatPage() {
   }, [activeConvoTitle]);
 
   // close sidebar automatically when a convo/persona is picked (mobile UX)
-  const wrapSelectPersona: typeof handleSelectPersona = (...args) => {
-    handleSelectPersona(...args);
-    setIsSidebarOpen(false);
-  };
+  const wrapSelectPersona: typeof handleSelectPersona = async (...args) => {
+  await handleSelectPersona(...args);
+  setIsSidebarOpen(false);
+};
   const wrapSelectConvo: typeof handleSelectConvo = (...args) => {
     handleSelectConvo(...args);
     setIsSidebarOpen(false);
