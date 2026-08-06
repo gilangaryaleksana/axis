@@ -1,18 +1,13 @@
 "use client";
 
-import { Metadata } from "next";
 import { useState, useEffect } from "react";
 import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { dmSans, crimsonText } from "../../lib/font";
 import { Persona, PERSONAS } from "../../components/persona/personas";
 import ChatHeader from "../../components/chat/ChatHeader";
+import { WalletLoginButton } from "../../components/auth/WalletLoginButton";
 import { setToken, getToken } from "../../lib/auth";
-
-export const metadata: Metadata = {
-  title: "Login - Axis",
-  description: "Login to your Axis account",
-};
 
 export default function LoginForm() {
   const router = useRouter();
@@ -102,7 +97,7 @@ export default function LoginForm() {
             </h1>
           </div>
 
-          <div className="max-w-[340px] w-full mx-auto flex flex-col pt-20">
+          <div className="max-w-[340px] w-full mx-auto flex flex-col pt-10">
             <h1
               className={`text-3xl font-extralight text-black ${crimsonText.className}`}
             >
@@ -302,6 +297,10 @@ export default function LoginForm() {
                 </svg>
                 GitHub
               </button>
+            </div>
+
+            <div className="mt-2.5">
+              <WalletLoginButton />
             </div>
 
             <p className="text-center text-[12.5px] text-neutral-500 mt-4">

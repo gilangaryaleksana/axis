@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { prisma } from "@/config/prisma";
 import { signJwt } from "@/utils/jwt";
 import { asyncHandler } from "@/utils/asyncHandler";
+import { migrateGuestConversations } from "./conversation.controller";
 import crypto from "crypto";
 
 // 1. GET nonce
@@ -66,5 +67,12 @@ export const verifyWallet = asyncHandler(async (req: Request, res: Response) => 
     },
   });
 
-  res.json({ message: "Login wallet berhasil", token, user });
+  // Migrate percakapan guest kalau ada, sama seperti login/register manual
+  if (req.guestId) {
+    await migrateGuestConversations(req.guestId, user.id);
+    res.clearCookie("guest_id");
+  }
+
+  const { nonce: _, ...safeUser } = user;
+  res.json({ message: "Login wallet berhasil", token, user: safeUser });
 });

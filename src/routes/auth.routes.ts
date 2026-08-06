@@ -10,6 +10,7 @@ import {
   googleOneTap,
   deleteAccount,
 } from "@/controllers/auth.controller";
+import { getNonce, verifyWallet } from "@/controllers/wallet.controller";
 import { authenticate } from "@/middlewares/auth.middleware";
 import { guestMiddleware } from "@/middlewares/guest.middleware";
 
@@ -47,6 +48,10 @@ router.get(
   guestMiddleware,
   oauthCallback,
 );
+
+// --- Wallet Login ---
+router.get("/wallet/nonce", getNonce);
+router.post("/wallet/verify", guestMiddleware, verifyWallet);
 
 // --- General ---
 router.get("/me", authenticate, getMe);
