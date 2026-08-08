@@ -210,6 +210,27 @@ export default function Home() {
                     height={40}
                     className="w-40 h-auto"
                   />
+                  <Image
+                    src="/icons/Tailwindcss-LightSymbol.svg"
+                    alt="Tailwind CSS"
+                    width={40}
+                    height={40}
+                    className="w-40 h-auto"
+                  />
+                  <Image
+                    src="/icons/Typescript-LightSymbol.svg"
+                    alt="TypeScript"
+                    width={15}
+                    height={15}
+                    className="w-15 h-auto"
+                  />
+                  <Image
+                    src="/icons/Nextauth-LightSymbol.svg"
+                    alt="Nextauth"
+                    width={15}
+                    height={15}
+                    className="w-15 h-auto"
+                  />
                 </div>
 
                 <ChatWindow />
