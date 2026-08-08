@@ -115,7 +115,7 @@ export default function Home() {
                     like someone, not something.
                   </p>
                 </Reveal>
-                <div className="grid grid-cols-4 gap-12 justify-center items-start w-6xl mx-auto">
+                <div className="grid grid-cols-4 justify-center items-start w-6xl mx-auto">
                   <Reveal direction="up" delay={0}>
                     <div className="w-55 h-auto gap-4 flex flex-col justify-center items-start">
                       <h1
@@ -257,43 +257,7 @@ export default function Home() {
 
                 <PersonasGrid />
               </div>
-
-              <div className="relative flex h-142.75 w-full items-center">
-                <div className="relative z-10 flex w-full flex-col items-center gap-10 pr-0 text-center">
-                  <Reveal direction="up">
-                    <h1
-                      className={`text-6xl font-bold leading-tight text-black ${dmSans.className}`}
-                    >
-                      Your Next Conversation Is Waiting
-                    </h1>
-                  </Reveal>
-                  <Reveal direction="up" delay={100}>
-                    <p
-                      className={`text-lg text-[#757575] ${dmSans.className} max-w-2xl text-center`}
-                    >
-                      No credit card, no commitment — just start talking.
-                    </p>
-                  </Reveal>
-                  <Reveal direction="up" delay={200}>
-                    <button
-                      className={`rounded-xl bg-black px-8 py-3 text-sm font-black text-white transition hover:bg-neutral-800 ${dmSans.className}`}
-                    >
-                      Try Axis Now
-                    </button>
-                  </Reveal>
-                </div>
-
-                <div className="absolute right-0 bottom-9 h-125.75 w-35.75 overflow-hidden rounded-tl-[35px] rounded-tr-[250px] rounded-bl-[250px] rounded-br-none md:block hidden">
-                  <Image
-                    src="/images/decoration/cta-laptop.jpg"
-                    alt="Person typing on a laptop"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-
-                <Footer />
-              </div>
+              <Footer />
             </div>
           </div>
         </div>

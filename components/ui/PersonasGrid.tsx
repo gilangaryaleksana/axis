@@ -2,18 +2,26 @@ import { Siren, GraduationCap, Stethoscope, Shield } from "lucide-react";
 import { Reveal } from "../animations/Reveal";
 
 const personas = [
-  { icon: Siren, label: "Police", desc: "witty study buddy" },
+  {
+    icon: Siren,
+    label: "Police",
+    desc: "firm about risks, keeping you from making rash decisions",
+  },
   {
     icon: GraduationCap,
     label: "Teacher",
-    desc: "curious mind, endless questions",
+    desc: "patiently explains trading and economic basics from scratch",
   },
   {
     icon: Stethoscope,
     label: "Doctor",
-    desc: "calm, thoughtful, always listening",
+    desc: "calm analysis, diagnosing your portfolio and market conditions",
   },
-  { icon: Shield, label: "Soldier", desc: "direct, sharp, no fluff" },
+  {
+    icon: Shield,
+    label: "Soldier",
+    desc: "straight-to-the-point strategy, no-nonsense for rapid execution",
+  },
 ];
 
 export default function PersonasGrid() {
