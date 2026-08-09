@@ -190,7 +190,9 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
     data: {
       ...(name !== undefined && { name }),
       ...(language !== undefined && { language }),
-      ...(defaultPersona !== undefined && { defaultPersona }),
+      ...(defaultPersona !== undefined && {
+        defaultPersona: defaultPersona === "" ? null : defaultPersona,
+      }),
       ...(autoGenerateTitle !== undefined && { autoGenerateTitle }),
       ...(theme !== undefined && { theme }),
       ...(compactSidebar !== undefined && { compactSidebar }),
