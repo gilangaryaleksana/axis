@@ -3,22 +3,24 @@ import { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
 import { prisma } from "@/config/prisma";
 import { verifyJwt } from "@/utils/jwt";
 
-/**
- * Authentication required. Read the token from the "Authorization: Bearer <token>" header.
- * If valid, populate req.user for the next controller.
- */
+function extractToken(req: Request): string | null {
+  if (req.cookies?.token) return req.cookies.token;
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith("Bearer ")) return authHeader.split(" ")[1];
+  return null;
+}
+
 export async function authenticate(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
+    const token = extractToken(req);
+    if (!token) {
       return res.status(401).json({ message: "Not logged in" });
     }
 
-    const token = authHeader.split(" ")[1];
     const payload = verifyJwt(token);
 
     const user = await prisma.user.findUnique({
@@ -49,9 +51,6 @@ export async function authenticate(
   }
 }
 
-/**
- * Requires admin role. Place it after the `authenticate` middleware.
- */
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   if (req.user?.role !== "admin") {
     return res.status(403).json({ message: "Only admins can access this" });
@@ -65,12 +64,9 @@ export async function optionalAuthenticate(
   next: NextFunction,
 ) {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
-      return next();
-    }
+    const token = extractToken(req);
+    if (!token) return next();
 
-    const token = authHeader.split(" ")[1];
     const payload = verifyJwt(token);
 
     const user = await prisma.user.findUnique({
@@ -78,9 +74,7 @@ export async function optionalAuthenticate(
       select: { id: true, role: true, defaultPersona: true, isActive: true },
     });
 
-    if (!user || !user.isActive) {
-      return next(); 
-    }
+    if (!user || !user.isActive) return next();
 
     req.user = {
       id: user.id,

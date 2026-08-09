@@ -7,7 +7,6 @@ import PersonaList from "./PersonaList";
 import LatestList from "./LatestList";
 import SettingsModal from "../../components/settings/SettingsModal";
 import { crimsonText, dmSans } from "@/lib/font";
-import { authFetch, getToken } from "@/lib/auth";
 import { useSettings } from "@/lib/settings-context";
 
 interface SidebarProps {
@@ -49,15 +48,10 @@ export default function Sidebar({
 
   useEffect(() => {
     async function fetchMe() {
-      const token = getToken();
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const res = await authFetch(
+        const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
+          { credentials: "include" },
         );
         if (res.ok) {
           const data = await res.json();

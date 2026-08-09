@@ -6,7 +6,7 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { authFetch, getToken } from "@/lib/auth";
+import { authFetch } from "@/lib/auth";
 
 interface SettingsData {
   displayName: string;
@@ -63,11 +63,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [isSaving, setIsSaving] = useState(false);
 
   const fetchSettings = async () => {
-    const token = getToken();
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
     try {
       const res = await authFetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
