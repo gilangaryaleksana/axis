@@ -16,7 +16,11 @@ export const getNonce = asyncHandler(async (req: Request, res: Response) => {
 
   const nonce = crypto.randomBytes(16).toString("hex");
 
-  const user = await prisma.user.upsert({
+  const existing = await prisma.user.findUnique({
+    where: { walletAddress: address },
+  });
+
+  await prisma.user.upsert({
     where: { walletAddress: address },
     update: { nonce },
     create: {
@@ -29,6 +33,7 @@ export const getNonce = asyncHandler(async (req: Request, res: Response) => {
   res.json({
     message: `Sign this message to login: ${nonce}`,
     nonce,
+    isNewUser: !existing,
   });
 });
 
@@ -52,7 +57,6 @@ export const verifyWallet = asyncHandler(
       throw new Error("Signature tidak valid");
     }
 
-    // Nonce sekali pakai — reset setelah berhasil
     await prisma.user.update({
       where: { id: user.id },
       data: { nonce: crypto.randomBytes(16).toString("hex") },
@@ -68,14 +72,24 @@ export const verifyWallet = asyncHandler(
       },
     });
 
-    res.cookie("token", token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "lax" as const,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    };
+    res.cookie("token", token, cookieOptions);
+
+    if (req.guestId) {
+      await migrateGuestConversations(req.guestId, user.id);
+      res.clearCookie("guest_id");
+    }
 
     const { nonce: _, ...safeUser } = user;
-    res.json({ message: "Login wallet berhasil", user: safeUser });
+    res.json({
+      message: "Login wallet berhasil",
+      user: safeUser,
+      isNewUser: !user.defaultPersona,
+    });
   },
 );

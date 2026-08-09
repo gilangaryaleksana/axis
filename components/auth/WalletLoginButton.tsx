@@ -45,7 +45,8 @@ export function WalletLoginButton() {
       );
       if (!verifyRes.ok) throw new Error("Verifikasi wallet gagal");
 
-      window.location.href = "/chat";
+      const data = await verifyRes.json();
+      window.location.href = data.isNewUser ? "/onboarding/goal" : "/chat";
     } catch (err) {
       console.error("Wallet login gagal:", err);
       const msg =
