@@ -62,37 +62,37 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  const fetchSettings = async () => {
-    try {
-      const res = await authFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
-      );
-      if (res.ok) {
-        const user = await res.json();
-        const loaded: SettingsData = {
-          displayName: user.name ?? "",
-          language: user.language ?? "id",
-          defaultPersona: user.defaultPersona ?? "",
-          autoGenerateTitle: user.autoGenerateTitle ?? true,
-          theme: user.theme ?? "dark",
-          compactSidebar: user.compactSidebar ?? false,
-          emailNotifications: user.emailNotifications ?? true,
-          inAppSound: user.inAppSound ?? true,
-          tradingGoal: user.tradingGoal ?? "",
-          tradingBackground: user.tradingBackground ?? "",
-          communicationStyle: user.communicationStyle ?? "",
-          tradingInstrument: user.tradingInstrument ?? "",
-          tradingStruggle: user.tradingStruggle ?? "",
-        };
-        setOriginal(loaded);
-        setData(loaded);
-      }
-    } catch (err) {
-      console.error("Failed to fetch settings:", err);
-    } finally {
-      setIsLoading(false);
+const fetchSettings = async () => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
+      credentials: "include",
+    });
+    if (res.ok) {
+      const user = await res.json();
+      const loaded: SettingsData = {
+        displayName: user.name ?? "",
+        language: user.language ?? "id",
+        defaultPersona: user.defaultPersona ?? "",
+        autoGenerateTitle: user.autoGenerateTitle ?? true,
+        theme: user.theme ?? "dark",
+        compactSidebar: user.compactSidebar ?? false,
+        emailNotifications: user.emailNotifications ?? true,
+        inAppSound: user.inAppSound ?? true,
+        tradingGoal: user.tradingGoal ?? "",
+        tradingBackground: user.tradingBackground ?? "",
+        communicationStyle: user.communicationStyle ?? "",
+        tradingInstrument: user.tradingInstrument ?? "",
+        tradingStruggle: user.tradingStruggle ?? "",
+      };
+      setOriginal(loaded);
+      setData(loaded);
     }
-  };
+  } catch (err) {
+    console.error("Failed to fetch settings:", err);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchSettings();
