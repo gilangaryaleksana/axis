@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDisconnect } from "wagmi";
 import SettingsRow from "../SettingsRow";
 import { authFetch, clearToken } from "@/lib/auth";
 
 export default function PrivacyPane() {
   const router = useRouter();
+  const { disconnect } = useDisconnect();
   const [confirmAction, setConfirmAction] = useState<
     "logout" | "clearHistory" | "deleteAccount" | null
   >(null);
@@ -21,6 +23,7 @@ export default function PrivacyPane() {
       console.error("Logout request failed:", err);
     } finally {
       clearToken();
+      disconnect();
       router.push("/login");
     }
   };
@@ -52,6 +55,7 @@ export default function PrivacyPane() {
       );
       if (res.ok) {
         clearToken();
+        disconnect();
         router.push("/login");
       }
     } catch (err) {

@@ -31,7 +31,7 @@ export const getNonce = asyncHandler(async (req: Request, res: Response) => {
   });
 
   res.json({
-    message: `Sign this message to login: ${nonce}`,
+    message: `Axis - Sign this message to login: ${nonce}`,
     nonce,
     isNewUser: !existing,
   });
@@ -49,7 +49,7 @@ export const verifyWallet = asyncHandler(
       throw new Error("Nonce tidak ditemukan, request nonce dulu");
     }
 
-    const message = `Sign this message to login: ${user.nonce}`;
+    const message = `Axis - Sign this message to login: ${user.nonce}`;
     const recoveredAddress = ethers.verifyMessage(message, signature);
 
     if (recoveredAddress.toLowerCase() !== walletAddress) {

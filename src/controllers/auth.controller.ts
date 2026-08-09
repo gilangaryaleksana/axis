@@ -29,7 +29,14 @@ export const oauthCallback = asyncHandler(
       },
     });
 
-    const redirectUrl = `${process.env.FRONTEND_URL}/auth/callback?token=${token}&isNewUser=${user.isNewUser ?? false}`;
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const redirectUrl = `${process.env.FRONTEND_URL}/auth/callback?isNewUser=${user.isNewUser ?? false}`;
     res.redirect(redirectUrl);
   },
 );
@@ -126,6 +133,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
 // 5. POST /api/auth/logout
 export const logout = asyncHandler(async (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
   res.json({ message: "Logout successful" });
 });
 

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { setToken } from "@/lib/auth";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -9,20 +8,12 @@ export default function AuthCallbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const isNewUser = searchParams.get("isNewUser") === "true"; 
-
-    if (!token) {
-      setError("Token not found in the URL. Login failed.");
-      return;
-    }
-
-    setToken(token);
+    const isNewUser = searchParams.get("isNewUser") === "true";
 
     if (isNewUser) {
-      router.replace("/onboarding/goal"); 
+      router.replace("/onboarding/goal");
     } else {
-      router.replace("/chat"); 
+      router.replace("/chat");
     }
   }, [searchParams, router]);
 

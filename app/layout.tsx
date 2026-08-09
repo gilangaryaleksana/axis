@@ -33,8 +33,8 @@ export default function RootLayout({
         <Web3Provider>
           <SettingsProvider>{children}</SettingsProvider>
         </Web3Provider>
+        <script src="https://accounts.google.com/gsi/client" async defer />
       </body>
-      <script src="https://accounts.google.com/gsi/client" async defer />
     </html>
   );
 }
