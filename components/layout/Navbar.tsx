@@ -4,15 +4,26 @@ import { crimsonText } from "../../lib/font";
 import { ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { GoogleOneTap } from "../auth/GoogleOneTap";
-import { getToken } from "../../lib/auth";
 
 export function Navbar() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    setIsLoggedIn(!!getToken());
+    async function checkSession() {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
+          { credentials: "include" },
+        );
+        setIsLoggedIn(res.ok);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    }
+    checkSession();
   }, []);
+
   return (
     <nav className={crimsonText.className}>
       <GoogleOneTap />
