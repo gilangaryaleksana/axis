@@ -95,10 +95,17 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   const token = signJwt({ userId: newUser.id, role: newUser.role });
 
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
   res.status(201).json({
     message: "Registration successful",
-    token,
     user: { id: newUser.id, email: newUser.email },
+    isNewUser: true,
   });
 });
 
@@ -124,10 +131,17 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   const token = signJwt({ userId: user.id, role: user.role });
 
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
   res.json({
     message: "Login successful",
-    token,
     user: { id: user.id, email: user.email, role: user.role },
+    isNewUser: !user.defaultPersona,
   });
 });
 
@@ -172,9 +186,16 @@ export const googleOneTap = asyncHandler(
 
     const token = signJwt({ userId: user.id, role: user.role });
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.json({
-      token,
       user: { id: user.id, email: user.email, name: user.name },
+      isNewUser: !user.defaultPersona,
     });
   },
 );

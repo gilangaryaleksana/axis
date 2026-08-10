@@ -7,7 +7,6 @@ import { dmSans, crimsonText } from "../../lib/font";
 import { Persona, PERSONAS } from "../../components/persona/personas";
 import ChatHeader from "../../components/chat/ChatHeader";
 import { WalletLoginButton } from "../../components/auth/WalletLoginButton";
-import { setToken, getToken } from "../../lib/auth";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -31,9 +30,16 @@ export default function LoginForm() {
   const isPasswordValid = Object.values(passwordChecks).every(Boolean);
 
   useEffect(() => {
-    if (getToken()) {
-      router.replace("/chat");
+    async function checkSession() {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
+          { credentials: "include" },
+        );
+        if (res.ok) router.replace("/chat");
+      } catch {}
     }
+    checkSession();
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,6 +61,7 @@ export default function LoginForm() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ email, password }),
         },
       );
@@ -65,13 +72,7 @@ export default function LoginForm() {
         throw new Error(data.message || "An error occurred");
       }
 
-      setToken(data.token);
-
-      if (mode === "signup") {
-        router.push("/onboarding/goal");
-      } else {
-        router.push("/chat");
-      }
+      window.location.href = data.isNewUser ? "/onboarding/goal" : "/chat";
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

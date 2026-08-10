@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { setToken, getToken } from "@/lib/auth";
 
 declare global {
   interface Window {
@@ -15,57 +14,68 @@ export function GoogleOneTap() {
   const initialized = useRef(false);
 
   useEffect(() => {
-    if (getToken()) return;
     if (initialized.current) return;
-    initialized.current = true;
 
-    const handleCredentialResponse = async (response: {
-      credential: string;
-    }) => {
+    async function checkSessionAndInit() {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google/onetap`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ idToken: response.credential }),
-          },
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
+          { credentials: "include" },
         );
-
-        if (!res.ok) throw new Error("Login failed");
-
-        const data = await res.json();
-        setToken(data.token);
-        router.push("/chat");
-      } catch (err) {
-        console.error("One Tap login failed:", err);
+        if (res.ok) return; 
+      } catch {
       }
-    };
 
-    const initOneTap = () => {
-      if (!window.google) return;
+      initialized.current = true;
 
-      window.google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse,
-        use_fedcm_for_prompt: false,
-      });
+      const handleCredentialResponse = async (response: {
+        credential: string;
+      }) => {
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google/onetap`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ idToken: response.credential }),
+            },
+          );
 
-      window.google.accounts.id.prompt();
-    };
+          if (!res.ok) throw new Error("Login failed");
 
-    if (window.google) {
-      initOneTap();
-    } else {
-      window.addEventListener("load", initOneTap);
+          const data = await res.json();
+          window.location.href = data.isNewUser ? "/onboarding/goal" : "/chat";
+        } catch (err) {
+          console.error("One Tap login failed:", err);
+        }
+      };
+
+      const initOneTap = () => {
+        if (!window.google) return;
+        window.google.accounts.id.initialize({
+          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+          callback: handleCredentialResponse,
+          use_fedcm_for_prompt: false,
+        });
+        window.google.accounts.id.prompt();
+      };
+
+      if (window.google) {
+        initOneTap();
+      } else {
+        window.addEventListener("load", initOneTap);
+      }
     }
 
+    checkSessionAndInit();
+
     return () => {
-      window.removeEventListener("load", initOneTap);
+      window.removeEventListener("load", () => {});
       if (window.google) {
         window.google.accounts.id.cancel();
       }
-      initialized.current = false; // ← reset so it can initialize again on the next mount
+      initialized.current = false;
     };
   }, [router]);
 
