@@ -48,7 +48,7 @@ export function WalletLoginButton() {
       const nonceRes = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/auth/wallet/nonce?address=${address}`,
       );
-      if (!nonceRes.ok) throw new Error("Gagal ambil nonce");
+      if (!nonceRes.ok) throw new Error("Failed to fetch nonce");
       const { message } = await nonceRes.json();
 
       const signature = await signMessageAsync({ message });
@@ -62,16 +62,16 @@ export function WalletLoginButton() {
           body: JSON.stringify({ address, signature }),
         },
       );
-      if (!verifyRes.ok) throw new Error("Verifikasi wallet gagal");
+      if (!verifyRes.ok) throw new Error("Wallet verification failed");
 
       const data = await verifyRes.json();
       window.location.href = data.isNewUser ? "/onboarding/goal" : "/chat";
     } catch (err) {
-      console.error("Wallet login gagal:", err);
+      console.error("Wallet login failed:", err);
       const msg =
         err instanceof Error && err.message.includes("User rejected")
-          ? "Kamu membatalkan tanda tangan."
-          : "Login gagal, coba lagi.";
+          ? "You cancelled the signature."
+          : "Login failed, please try again.";
       setError(msg);
       setLoading(false);
     }
