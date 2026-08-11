@@ -1,4 +1,5 @@
-import { crimsonText, dmSans } from "../../lib/font";
+import { dmSans } from "../../lib/font";
+import Image from "next/image";
 
 const footerLinks = {
   Product: ["Chat", "Personas", "Pricing", "Download app", "Log in"],
@@ -10,18 +11,17 @@ const footerLinks = {
 export const Footer = () => {
   return (
     <footer
-      className={`w-full bg-[#0D0D0D] px-10 py-16 text-[#B2B2B2] ${dmSans.className}`}
+      className={`w-full bg-[#090908] px-10 py-16 text-[#B2B2B2] ${dmSans.className}`}
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[20rem_2fr]">
           <div>
-            <div
-              className={`text-2xl md:mb-6 leading-snug ${crimsonText.className}`}
-            >
-              <h1 className="text-5xl text-white">
-                A<span className="text-3xl">xis</span>
-              </h1>
-            </div>
+            <Image
+              src="/icons/Axis.png"
+              alt="Axis Logo"
+              width={100}
+              height={100}
+            />
           </div>
           <div>
             <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
