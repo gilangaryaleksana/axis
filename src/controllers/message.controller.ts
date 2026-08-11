@@ -35,6 +35,13 @@ export const getMessages = asyncHandler(async (req: Request, res: Response) => {
   res.json(decryptedMessages);
 });
 
+// Detects if the user message contains a wallet-related intent (e.g., checking balance)
+function detectWalletIntent(text: string): "balance" | null {
+  const lower = text.toLowerCase();
+  if (/saldo|balance|cek.*wallet|cek.*dompet/.test(lower)) return "balance";
+  return null;
+}
+
 // POST /api/conversations/:id/messages
 export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   const ownerId = req.user?.id;
@@ -105,21 +112,65 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   const isFirstMessage = messageCount === 0;
 
   const userMessage = await prisma.message.create({
-    data: { conversationId: req.params.id, sender: "user", content: encrypt(content) },
-  });
-
-  const botReplyText = await generateBotReply(
-    conversation.persona.systemPrompt + userContext,
-    content,
-  );
-
-  const botMessage = await prisma.message.create({
     data: {
       conversationId: req.params.id,
-      sender: "bot",
-      content: encrypt(botReplyText),
+      sender: "user",
+      content: encrypt(content),
     },
   });
+
+  const walletIntent = detectWalletIntent(content);
+
+  let botMessage;
+  let botReplyText: string;
+
+  if (walletIntent === "balance") {
+    // Ambil walletAddress user (kalau ada)
+    const userWallet = ownerId
+      ? await prisma.user.findUnique({
+          where: { id: ownerId },
+          select: { walletAddress: true },
+        })
+      : null;
+
+    if (!userWallet?.walletAddress) {
+      botReplyText =
+        "Kamu belum menghubungkan wallet. Silakan connect wallet dulu ya.";
+      botMessage = await prisma.message.create({
+        data: {
+          conversationId: req.params.id,
+          sender: "bot",
+          type: "text",
+          content: encrypt(botReplyText),
+        },
+      });
+    } else {
+      const payload = JSON.stringify({ address: userWallet.walletAddress });
+      botMessage = await prisma.message.create({
+        data: {
+          conversationId: req.params.id,
+          sender: "bot",
+          type: "wallet_balance",
+          content: encrypt(payload),
+        },
+      });
+      botReplyText = payload; // dipakai buat response JSON di bawah
+    }
+  } else {
+    botReplyText = await generateBotReply(
+      conversation.persona.systemPrompt + userContext,
+      content,
+    );
+
+    botMessage = await prisma.message.create({
+      data: {
+        conversationId: req.params.id,
+        sender: "bot",
+        type: "text",
+        content: encrypt(botReplyText),
+      },
+    });
+  }
 
   // If this is the first message, automatically generate the title from the message content
   let updatedTitle = conversation.title;
@@ -167,8 +218,8 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   }
 
   res.status(201).json({
-    userMessage: { ...userMessage, content }, 
-    botMessage: { ...botMessage, content: botReplyText }, 
+    userMessage: { ...userMessage, content },
+    botMessage: { ...botMessage, content: botReplyText },
     title: updatedTitle,
   });
 });

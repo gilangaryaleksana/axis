@@ -34,6 +34,12 @@ enum MessageSender {
   bot
 }
 
+enum MessageType {
+  text
+  wallet_balance
+  wallet_tx
+}
+
 // ---------------------------------------------------------------------
 // USER — user/admin accounts created from registration and login
 // ---------------------------------------------------------------------
@@ -156,6 +162,7 @@ model Message {
   id             String        @id @default(uuid())
   conversationId String        @map("conversation_id")
   sender         MessageSender
+  type           MessageType   @default(text)
   content        String        @db.Text
   createdAt      DateTime      @default(now()) @map("created_at")
 
