@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import Image from "next/image";
 import { VenetianMask, Zap, HardDriveDownload, Shield } from "lucide-react";
 
@@ -14,12 +13,14 @@ import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 
 // UI
-import ChatWindow from "../components/ui/ChatWindow";
 import PersonasGrid from "../components/ui/PersonasGrid";
 import ScrollIndicator from "../components/ui/ScrollIndicator";
 
 // Animations
 import { Reveal } from "../components/animations/Reveal";
+
+// Sections
+import ChatMorphSection from "../components/sections/ChatMorphSection";
 
 // Navigation
 import { useRouter } from "next/navigation";
@@ -33,40 +34,6 @@ export default function Home() {
         <Navbar />
         <div className="w-full flex mt-20 flex-col justify-center items-center">
           <div className="w-full mx-auto relative">
-            <div className="flex flex-col gap-12 justify-center items-center min-h-screen">
-              <Reveal direction="up">
-                <h1
-                  className={`text-5xl font-bold text-center text-black ${dmSans.className}`}
-                >
-                  Meet AI That Actually Has a Personality
-                  <div className="w-6xl h-px mx-auto mt-2 bg-linear-to-r from-transparent via-gray-300 to-transparent" />{" "}
-                </h1>
-              </Reveal>
-              <Reveal direction="up" delay={100}>
-                <p
-                  className={`text-xl text-center text-[#757575] ${dmSans.className}`}
-                >
-                  Axis lets you chat with AI personas built to think, respond,
-                  and connect — not just answer.
-                </p>
-              </Reveal>
-              <Reveal direction="up" delay={200}>
-                <div className="flex justify-center gap-20 items-center w-full">
-                  <button
-                    onClick={() => router.push("/chat")}
-                    className={`bg-black text-xl font-semibold text-white py-4 px-14 rounded-xl tracking-tighter hover:bg-neutral-800 ${dmSans.className}`}
-                  >
-                    Start Chatting
-                  </button>
-                  <a
-                    href=""
-                    className={`text-xl text-[#303030] ${dmSans.className}`}
-                  >
-                    See How It Works
-                  </a>
-                </div>
-              </Reveal>
-            </div>
 
             <Reveal direction="down" delay={300}>
               <div className="flex flex-col gap-12 pt-24 justify-center items-center">
@@ -181,7 +148,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="w-7xl h-auto flex flex-col justify-center items-center gap-20 pt-20 mx-auto relative">
+              <div className="w-7xl h-auto flex flex-col justify-center items-center gap-20 py-20 mx-auto relative">
                 <h1
                   className={`absolute left-10 top-0 text-black text-xs ${dmSans.className}`}
                 >
@@ -232,29 +199,11 @@ export default function Home() {
                     className="w-15 h-auto"
                   />
                 </div>
-
-                <ChatWindow />
               </div>
 
-              <div className="w-full flex flex-col gap-20 justify-center items-center my-20">
-                <div className="flex flex-col gap-8 justify-center items-center w-full relative z-20">
-                  <Reveal direction="up">
-                    <h1
-                      className={`text-5xl text-black font-bold ${dmSans.className}`}
-                    >
-                      Find Your Match
-                    </h1>
-                  </Reveal>
-                  <Reveal direction="up" delay={100}>
-                    <p
-                      className={`text-2xl text-[#757575] ${dmSans.className}`}
-                    >
-                      Every persona is built with its own personality, tone, and
-                      way of talking
-                    </p>
-                  </Reveal>
-                </div>
+              <ChatMorphSection />
 
+              <div className="w-full flex flex-col gap-20 justify-center items-center mb-10">
                 <PersonasGrid />
               </div>
               <Footer />

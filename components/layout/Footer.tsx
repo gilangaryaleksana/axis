@@ -1,5 +1,6 @@
 import { dmSans } from "../../lib/font";
 import Image from "next/image";
+import { GoogleLoginShortcut } from "../auth/GoogleLoginShortcut";
 
 const footerLinks = {
   Product: ["Chat", "Personas", "Pricing", "Download app", "Log in"],
@@ -47,6 +48,7 @@ export const Footer = () => {
             </div>
           </div>
         </div>
+        <GoogleLoginShortcut />
         <div className="mt-16 flex items-center justify-between border-t border-[#2A2A2A] pt-6 text-xs text-[#8A8A8A]">
           <span>Axis © 2026</span>
           <div className="flex gap-6">

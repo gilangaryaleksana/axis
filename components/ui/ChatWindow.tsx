@@ -1,5 +1,6 @@
 "use client";
 
+import { forwardRef } from "react";
 import { useState } from "react";
 import ChatBubble from "./ChatBubble";
 import { Reveal } from "../animations/Reveal";
@@ -24,12 +25,15 @@ const initialMessages: Message[] = [
   },
 ];
 
-export default function ChatWindow() {
+const ChatWindow = forwardRef<HTMLDivElement>((_, ref) => {
   const [messages] = useState<Message[]>(initialMessages);
 
   return (
-    <div className="mx-auto flex h-80 w-full max-w-3xl flex-col rounded-[65px] bg-neutral-100 p-6">
-      {/* Message area */}
+    <div
+      ref={ref}
+      className="mx-auto flex flex-col overflow-hidden bg-neutral-100 p-6"
+      // width, height, borderRadius sekarang di-drive oleh useScrollMorph via inline style
+    >
       <div className="flex flex-1 flex-col justify-center gap-5 overflow-y-auto mx-10">
         {messages.map((msg, index) => (
           <Reveal
@@ -43,4 +47,7 @@ export default function ChatWindow() {
       </div>
     </div>
   );
-}
+});
+
+ChatWindow.displayName = "ChatWindow";
+export default ChatWindow;
