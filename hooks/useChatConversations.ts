@@ -123,7 +123,12 @@ export function useChatConversations(
       const reply = await sendMessage(currentConvoId, text);
       setMessages((prev) => [
         ...prev,
-        { from: "bot", text: reply.botMessage.content },
+        {
+          from: "bot",
+          text: reply.botMessage.content,
+          type: reply.botMessage.type,
+          id: reply.botMessage.id,
+        },
       ]);
       if (inAppSound) {
         playNotificationSound();
@@ -133,7 +138,7 @@ export function useChatConversations(
       console.error(err);
       setMessages((prev) => [
         ...prev,
-        { from: "bot", text: "Sorry, something went wrong." },
+        { from: "bot", text: "Sorry, something went wrong.", type: "text" },
       ]);
     } finally {
       setIsLoading(false);
@@ -182,6 +187,8 @@ export function useChatConversations(
               ? data.map((m: any) => ({
                   from: m.sender === "user" ? "user" : "bot",
                   text: m.content,
+                  type: m.type,
+                  id: m.id,
                 }))
               : [{ from: "bot", text: "hey! what's on your mind today?" }],
           );

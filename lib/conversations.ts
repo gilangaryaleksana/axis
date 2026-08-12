@@ -29,3 +29,23 @@ export async function sendMessage(conversationId: string, content: string) {
   }
   return res.json();
 }
+
+export async function updateMessageStatus(
+  conversationId: string,
+  messageId: string,
+  data: { status: string; txHash?: string },
+) {
+  const res = await authFetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${conversationId}/messages/${messageId}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    },
+  );
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ message: "Request failed" }));
+    throw new Error(error.message || `HTTP ${res.status}`);
+  }
+  return res.json();
+}

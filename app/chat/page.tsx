@@ -98,6 +98,7 @@ export default function ChatPage() {
             messages={messages}
             PersonaIcon={persona.icon}
             isLoading={isLoading || isLoadingHistory}
+            currentConvoId={currentConvoId ?? undefined}
           />
           <Composer onSend={handleSend} />
         </div>

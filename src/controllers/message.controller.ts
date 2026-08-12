@@ -36,9 +36,29 @@ export const getMessages = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // Detects if the user message contains a wallet-related intent (e.g., checking balance)
-function detectWalletIntent(text: string): "balance" | null {
+function detectWalletIntent(
+  text: string,
+):
+  | { type: "balance" }
+  | { type: "transfer"; to: string; amount: string }
+  | null {
   const lower = text.toLowerCase();
-  if (/saldo|balance|cek.*wallet|cek.*dompet/.test(lower)) return "balance";
+
+  if (/saldo|balance|cek.*wallet|cek.*dompet/.test(lower)) {
+    return { type: "balance" };
+  }
+
+  const transferMatch = text.match(
+    /(?:kirim|transfer|send)\s+([\d.]+)\s*(?:eth)?\s*(?:ke|to)\s+(0x[a-fA-F0-9]{40})/i,
+  );
+  if (transferMatch) {
+    return {
+      type: "transfer",
+      amount: transferMatch[1],
+      to: transferMatch[2],
+    };
+  }
+
   return null;
 }
 
@@ -124,8 +144,7 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   let botMessage;
   let botReplyText: string;
 
-  if (walletIntent === "balance") {
-    // Ambil walletAddress user (kalau ada)
+  if (walletIntent?.type === "balance") {
     const userWallet = ownerId
       ? await prisma.user.findUnique({
           where: { id: ownerId },
@@ -154,7 +173,42 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
           content: encrypt(payload),
         },
       });
-      botReplyText = payload; // dipakai buat response JSON di bawah
+      botReplyText = payload;
+    }
+  } else if (walletIntent?.type === "transfer") {
+    const userWallet = ownerId
+      ? await prisma.user.findUnique({
+          where: { id: ownerId },
+          select: { walletAddress: true },
+        })
+      : null;
+
+    if (!userWallet?.walletAddress) {
+      botReplyText =
+        "Kamu belum menghubungkan wallet. Silakan connect wallet dulu ya.";
+      botMessage = await prisma.message.create({
+        data: {
+          conversationId: req.params.id,
+          sender: "bot",
+          type: "text",
+          content: encrypt(botReplyText),
+        },
+      });
+    } else {
+      const payload = JSON.stringify({
+        to: walletIntent.to,
+        amount: walletIntent.amount,
+        symbol: "ETH",
+      });
+      botMessage = await prisma.message.create({
+        data: {
+          conversationId: req.params.id,
+          sender: "bot",
+          type: "wallet_tx",
+          content: encrypt(payload),
+        },
+      });
+      botReplyText = payload;
     }
   } else {
     botReplyText = await generateBotReply(
@@ -282,3 +336,41 @@ async function generateConversationTitle(userMessage: string): Promise<string> {
   const data = await response.json();
   return data.choices[0].message.content.trim();
 }
+
+// PATCH /api/conversations/:id/messages/:messageId
+export const updateMessageStatus = asyncHandler(async (req: Request, res: Response) => {
+  const ownerId = req.user?.id;
+  const guestId = req.guestId;
+
+  if (!ownerId && !guestId) {
+    throw new AppError("No user or guest identity found", 400);
+  }
+
+  const conversation = await prisma.conversation.findFirst({
+    where: {
+      id: req.params.id,
+      isDeleted: false,
+      ...(ownerId ? { userId: ownerId } : { guestId }),
+    },
+  });
+  if (!conversation) throw new AppError("Conversation not found", 404);
+
+  const message = await prisma.message.findFirst({
+    where: { id: req.params.messageId, conversationId: req.params.id },
+  });
+  if (!message) throw new AppError("Message not found", 404);
+
+  const currentPayload = JSON.parse(decrypt(message.content));
+  const updatedPayload = {
+    ...currentPayload,
+    status: req.body.status,
+    txHash: req.body.txHash,
+  };
+
+  const updated = await prisma.message.update({
+    where: { id: message.id },
+    data: { content: encrypt(JSON.stringify(updatedPayload)) },
+  });
+
+  res.json({ ...updated, content: JSON.stringify(updatedPayload) });
+});
