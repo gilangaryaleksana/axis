@@ -45,13 +45,13 @@ function WalletBalanceContent({ payload }: { payload: string }) {
   try {
     address = JSON.parse(payload).address;
   } catch {
-    return <span>Gagal membaca data wallet.</span>;
+    return <span>Failed to read wallet data.</span>;
   }
 
   const { data, isLoading } = useBalance({ address });
 
-  if (isLoading) return <span>Mengecek saldo...</span>;
-  if (!data) return <span>Saldo tidak ditemukan.</span>;
+  if (isLoading) return <span>Checking balance...</span>;
+  if (!data) return <span>Balance not found.</span>;
 
   return (
     <span className="font-mono">

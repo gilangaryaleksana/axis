@@ -5,12 +5,12 @@ import { useAccount } from "wagmi";
 
 const SUGGESTIONS = [
   {
-    label: "Cek Saldo",
+    label: "Check Balance",
     icon: Wallet,
     action: "quick" as const,
-    text: "cek saldo saya",
+    text: "check my balance",
   },
-  { label: "Kirim ETH", icon: Send, action: "form" as const },
+  { label: "Send ETH", icon: Send, action: "form" as const },
 ];
 
 export default function Composer({
@@ -61,7 +61,7 @@ export default function Composer({
 
   const handleSubmitTransferForm = () => {
     if (!isValidAddress || !isValidAmount) return;
-    onSend(`kirim ${amount} eth ke ${toAddress}`);
+    onSend(`send ${amount} eth to ${toAddress}`);
     setToAddress("");
     setAmount("");
     setShowTransferForm(false);
@@ -72,7 +72,7 @@ export default function Composer({
   return (
     <div className="px-4 md:px-10 pt-3 md:pt-4 pb-2 bg-white dark:bg-[#202023]">
       <div className="max-w-3xl mx-auto">
-        {/* Suggestion chips - hanya muncul kalau wallet sudah connect */}
+        {/* Suggestion chips - only appear when wallet is connected */}
         {isConnected && !showTransferForm && (
           <div className="flex gap-2 mb-2.5 flex-wrap">
             {SUGGESTIONS.map((s) => {
@@ -96,7 +96,7 @@ export default function Composer({
           <div className="mb-2.5 rounded-2xl border border-gray-200 dark:border-[#3a3a3d] bg-gray-50 dark:bg-[#26262a] p-3.5">
             <div className="flex items-center justify-between mb-2.5">
               <p className="text-xs font-medium text-gray-500 dark:text-[#9a9a97]">
-                Kirim ETH
+                Send ETH
               </p>
               <button
                 onClick={() => setShowTransferForm(false)}
@@ -107,7 +107,7 @@ export default function Composer({
             </div>
 
             <label className="block text-[11px] text-gray-500 dark:text-[#9a9a97] mb-1">
-              Alamat tujuan
+              Recipient address
             </label>
             <input
               value={toAddress}
@@ -121,7 +121,7 @@ export default function Composer({
             />
 
             <label className="block text-[11px] text-gray-500 dark:text-[#9a9a97] mb-1">
-              Jumlah (ETH)
+              Amount (ETH)
             </label>
             <input
               value={amount}
@@ -140,7 +140,7 @@ export default function Composer({
                   : "bg-gray-200 dark:bg-[#3d3d3a] text-gray-400 dark:text-[#6f6f6b] cursor-not-allowed"
               }`}
             >
-              Lanjut
+              Continue
             </button>
           </div>
         )}

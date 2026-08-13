@@ -70,7 +70,7 @@ export default function GeneralPane() {
           className={selectClass}
         >
           <option value="en">English</option>
-          <option value="id">Bahasa Indonesia</option>
+          <option value="id">Indonesian</option>
         </select>
       </SettingsRow>
 

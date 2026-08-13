@@ -142,8 +142,8 @@ export default function SettingsModal({
 
   if (!isOpen || !mounted) return null;
 
-  // Portal ke document.body -> keluar total dari DOM tree Sidebar,
-  // jadi gak mungkin lagi kena "containing block" ancestor manapun (transform/overflow dsb)
+  // Portal to document.body -> completely exit the Sidebar's DOM tree,
+  // so it can no longer be affected by any containing-block ancestor (transform/overflow, etc.)
   return createPortal(
     <SettingsModalContent onClose={onClose} onSaved={onSaved} />,
     document.body,

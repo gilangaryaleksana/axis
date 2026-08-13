@@ -89,13 +89,13 @@ function WalletBalanceContent({ payload }: { payload: string }) {
   try {
     address = JSON.parse(payload).address;
   } catch {
-    return <span>Gagal membaca data wallet.</span>;
+    return <span>Failed to read wallet data.</span>;
   }
 
   const { data, isLoading } = useBalance({ address });
 
-  if (isLoading) return <span>Mengecek saldo...</span>;
-  if (!data) return <span>Saldo tidak ditemukan.</span>;
+  if (isLoading) return <span>Checking balance...</span>;
+  if (!data) return <span>Balance not found.</span>;
 
   return (
     <span className="font-mono">
@@ -126,14 +126,14 @@ function WalletTransferContent({
     parsed = null;
   }
 
-const [status, setStatus] = useState<"idle" | "pending" | "success" | "error">(
-  parsed?.status === "success" ? "success" : "idle",
-);
+  const [status, setStatus] = useState<
+    "idle" | "pending" | "success" | "error"
+  >(parsed?.status === "success" ? "success" : "idle");
   const [errorMsg, setErrorMsg] = useState("");
   const { sendTransactionAsync } = useSendTransaction();
   const { switchChainAsync } = useSwitchChain();
 
-  if (!parsed) return <span>Gagal membaca data transaksi.</span>;
+  if (!parsed) return <span>Failed to read transaction data.</span>;
 
   async function handleSend() {
     setStatus("pending");
@@ -159,8 +159,8 @@ const [status, setStatus] = useState<"idle" | "pending" | "success" | "error">(
       const message = err instanceof Error ? err.message : "Unknown error";
       setErrorMsg(
         message.includes("User rejected")
-          ? "Transaksi dibatalkan."
-          : `Gagal: ${message.slice(0, 150)}`,
+          ? "Transaction cancelled."
+          : `Failed: ${message.slice(0, 150)}`,
       );
     }
   }
@@ -169,13 +169,13 @@ const [status, setStatus] = useState<"idle" | "pending" | "success" | "error">(
     <div className="flex flex-col gap-3 min-w-[240px]">
       <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/10 p-3">
         <p className="text-[11px] uppercase tracking-wide text-neutral-500 mb-1">
-          Kirim Transaksi
+          Send Transaction
         </p>
         <p className="font-mono text-sm font-medium">
           {parsed.amount} {parsed.symbol}
         </p>
         <p className="text-xs text-neutral-500 mt-1">
-          ke {parsed.to.slice(0, 6)}...{parsed.to.slice(-4)}
+          to {parsed.to.slice(0, 6)}...{parsed.to.slice(-4)}
         </p>
       </div>
 
@@ -184,20 +184,20 @@ const [status, setStatus] = useState<"idle" | "pending" | "success" | "error">(
           onClick={handleSend}
           className="rounded-lg bg-black text-white text-sm font-medium px-4 py-2 hover:opacity-85 transition-opacity"
         >
-          Konfirmasi Kirim
+          Confirm Send
         </button>
       )}
 
       {status === "pending" && (
         <div className="flex items-center gap-2 text-xs text-neutral-500">
           <div className="w-3 h-3 border-2 border-neutral-400 border-t-transparent rounded-full animate-spin" />
-          Menunggu konfirmasi wallet...
+          Waiting for wallet confirmation...
         </div>
       )}
 
       {status === "success" && (
         <div className="flex items-center gap-2 text-xs text-green-600 font-medium">
-          <span>✓</span> Transaksi berhasil dikirim!
+          <span>✓</span> Transaction successfully sent!
         </div>
       )}
 
@@ -208,7 +208,7 @@ const [status, setStatus] = useState<"idle" | "pending" | "success" | "error">(
             onClick={handleSend}
             className="rounded-lg border border-neutral-300 text-sm font-medium px-4 py-2 hover:bg-neutral-100 transition-colors w-fit"
           >
-            Coba Lagi
+            Try Again
           </button>
         </div>
       )}

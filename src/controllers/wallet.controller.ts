@@ -11,7 +11,7 @@ export const getNonce = asyncHandler(async (req: Request, res: Response) => {
   const address = (req.query.address as string)?.toLowerCase();
   if (!address) {
     res.status(400);
-    throw new Error("Address wallet wajib diisi");
+    throw new Error("Wallet address is required");
   }
 
   const nonce = crypto.randomBytes(16).toString("hex");
@@ -46,7 +46,7 @@ export const verifyWallet = asyncHandler(
     const user = await prisma.user.findUnique({ where: { walletAddress } });
     if (!user || !user.nonce) {
       res.status(400);
-      throw new Error("Nonce tidak ditemukan, request nonce dulu");
+      throw new Error("Nonce not found, request a nonce first");
     }
 
     const message = `Axis - Sign this message to login: ${user.nonce}`;
@@ -54,7 +54,7 @@ export const verifyWallet = asyncHandler(
 
     if (recoveredAddress.toLowerCase() !== walletAddress) {
       res.status(401);
-      throw new Error("Signature tidak valid");
+      throw new Error("Invalid signature");
     }
 
     await prisma.user.update({
@@ -87,7 +87,7 @@ export const verifyWallet = asyncHandler(
 
     const { nonce: _, ...safeUser } = user;
     res.json({
-      message: "Login wallet berhasil",
+      message: "Wallet login successful",
       user: safeUser,
       isNewUser: !user.defaultPersona,
     });
