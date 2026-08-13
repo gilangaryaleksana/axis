@@ -17,7 +17,7 @@ export default function ChatMorphSection() {
 
   return (
     <div ref={wrapperRef} className="relative h-[150vh] w-full">
-      <div className="sticky top-0 w-full flex flex-col items-center justify-center">
+      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center">
         {/* Text di tengah, fade barengan shrink */}
         <div
           ref={textRef}
