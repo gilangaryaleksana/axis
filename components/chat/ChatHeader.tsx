@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   PanelLeft,
   MoreVertical,
@@ -30,25 +31,48 @@ export default function ChatHeader({
   onRename?: (newTitle: string) => void;
   onToggleUnread?: (isUnread: boolean) => void;
   isUnread?: boolean;
-  onDelete?: () => void;
+  onDelete?: () => void | Promise<void>;
 }) {
   const Icon = persona.icon;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(title);
+  const renameBlockRef = useRef<HTMLDivElement>(null);
+  const renameInputRef = useRef<HTMLInputElement>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setIsMenuOpen(false);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutsideRename(e: MouseEvent) {
+      if (
+        renameBlockRef.current &&
+        !renameBlockRef.current.contains(e.target as Node)
+      ) {
+        setIsRenaming(false); // cancel
       }
     }
-    if (isMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+    if (isRenaming) {
+      document.addEventListener("mousedown", handleClickOutsideRename);
     }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isMenuOpen]);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutsideRename);
+  }, [isRenaming]);
+
+  useEffect(() => {
+    if (isRenaming) {
+      const raf = requestAnimationFrame(() => {
+        renameInputRef.current?.focus();
+        renameInputRef.current?.select();
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [isRenaming]);
 
   const hasActions = onRename || onToggleUnread || onDelete;
 
@@ -63,6 +87,17 @@ export default function ChatHeader({
       onRename(renameValue.trim());
     }
     setIsRenaming(false);
+  };
+
+  const confirmDelete = async () => {
+    if (!onDelete) return;
+    try {
+      setIsDeleting(true);
+      await onDelete();
+      setShowDeleteConfirm(false);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -84,44 +119,31 @@ export default function ChatHeader({
         </div>
 
         <div className="min-w-0 flex-1">
+          <p
+            className={`text-sm font-semibold text-[#1a1a1a] dark:text-[#e8e8e6] truncate ${dmSans.className}`}
+          >
+            {persona.name}
+          </p>
+
           {isRenaming ? (
-            <div className="flex items-center gap-1.5">
+            <div ref={renameBlockRef}>
               <input
-                autoFocus
+                ref={renameInputRef}
                 value={renameValue}
                 onChange={(e) => setRenameValue(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") confirmRename();
                   if (e.key === "Escape") setIsRenaming(false);
                 }}
-                className={`w-3xs min-w-0 text-sm font-semibold bg-white dark:bg-[#1b1b1d] border border-gray-300 dark:border-[#3a3a3d] rounded-md px-2 py-1 outline-none focus:border-black dark:focus:border-white text-[#1a1a1a] dark:text-[#f2f2f0] ${dmSans.className}`}
+                className={`w-full min-w-0 text-xs text-gray-500 dark:text-[#6f6f6b] truncate mt-0.5 bg-transparent border-0 outline-none focus:text-[#1a1a1a] dark:focus:text-[#f2f2f0] p-0 ${dmSans.className}`}
               />
-              <button
-                onClick={confirmRename}
-                className="text-green-600 shrink-0"
-              >
-                <Check size={16} />
-              </button>
-              <button
-                onClick={() => setIsRenaming(false)}
-                className="text-gray-400 shrink-0"
-              >
-                <X size={16} />
-              </button>
             </div>
           ) : (
-            <>
-              <p
-                className={`text-sm font-semibold text-[#1a1a1a] dark:text-[#e8e8e6] truncate ${dmSans.className}`}
-              >
-                {persona.name}
-              </p>
-              <p
-                className={`text-xs text-gray-500 dark:text-[#6f6f6b] mt-0.5 truncate ${dmSans.className}`}
-              >
-                {title}
-              </p>
-            </>
+            <input
+              disabled
+              value={title}
+              className={`w-full min-w-0 text-xs text-gray-500 dark:text-[#6f6f6b] truncate mt-0.5 bg-transparent border-0 outline-none p-0 cursor-default ${dmSans.className}`}
+            />
           )}
         </div>
 
@@ -164,8 +186,8 @@ export default function ChatHeader({
                 {onDelete && (
                   <button
                     onClick={() => {
-                      onDelete();
                       setIsMenuOpen(false);
+                      setShowDeleteConfirm(true);
                     }}
                     className={`w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 ${dmSans.className}`}
                   >
@@ -179,6 +201,44 @@ export default function ChatHeader({
         )}
       </div>
       <div className="h-5 bg-gradient-to-b from-white dark:from-[#202023] to-white/0 dark:to-[#202023]/0" />
+
+      {mounted &&
+        showDeleteConfirm &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70"
+            onClick={() => !isDeleting && setShowDeleteConfirm(false)}
+          >
+            <div
+              className="w-full max-w-sm rounded-lg border border-gray-200 dark:border-[#333336] bg-white dark:bg-[#232326] p-5 text-[#1a1a1a] dark:text-[#f2f2f0]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <p className={`text-sm font-medium ${dmSans.className}`}>
+                Delete this conversation?
+              </p>
+              <p className="mt-1 text-xs text-gray-500 dark:text-[#9a9a9e]">
+                This chat and all its messages will be permanently removed.
+              </p>
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                  className="rounded-md px-3 py-1.5 text-sm text-gray-500 dark:text-[#9a9a9e] hover:bg-gray-100 dark:hover:bg-[#2c2c2f] disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  disabled={isDeleting}
+                  className="rounded-md bg-red-500/90 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-500 disabled:opacity-50"
+                >
+                  {isDeleting ? "Deleting..." : "Confirm"}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

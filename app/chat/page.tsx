@@ -37,8 +37,8 @@ export default function ChatPage() {
     isSettingsLoading ? false : settingsData.inAppSound,
   );
 
- const activeConvo = conversations.find((c) => c.id === currentConvoId);
- const activeConvoTitle = activeConvo?.title;
+  const activeConvo = conversations.find((c) => c.id === currentConvoId);
+  const activeConvoTitle = activeConvo?.title;
 
   useEffect(() => {
     document.title = activeConvoTitle
@@ -107,9 +107,7 @@ export default function ChatPage() {
               if (currentConvoId) handleToggleUnread(currentConvoId, isUnread);
             }}
             onDelete={() => {
-              if (currentConvoId && confirm("Hapus percakapan ini?")) {
-                handleDeleteConvo(currentConvoId);
-              }
+              if (currentConvoId) handleDeleteConvo(currentConvoId);
             }}
           />
           <ChatBody
