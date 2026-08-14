@@ -68,7 +68,7 @@ export default function LatestList({
       const rect = btn.getBoundingClientRect();
       setMenuPosition({
         top: rect.bottom + 4,
-        left: rect.right - 208, // 208px = lebar menu (w-52)
+        left: rect.right - 208, // 208px = menu width (w-52)
       });
     }
     setOpenMenuId(id);
@@ -200,7 +200,7 @@ export default function LatestList({
                 className="w-full flex items-center gap-2.5 px-3 py-1.5 text-xs text-left text-[#1a1a1a] dark:text-[#f2f2f0] hover:bg-gray-100 dark:hover:bg-[#2c2c2f]"
               >
                 <Pencil size={13} strokeWidth={1.75} />
-                Ganti nama
+                Rename
               </button>
             )}
             {onToggleUnread && (
@@ -214,12 +214,12 @@ export default function LatestList({
                 {openItem.isUnread ? (
                   <>
                     <Mail size={13} strokeWidth={1.75} />
-                    Tandai sebagai dibaca
+                    Mark as read
                   </>
                 ) : (
                   <>
                     <MailOpen size={13} strokeWidth={1.75} />
-                    Tandai belum dibaca
+                    Mark as unread
                   </>
                 )}
               </button>
@@ -233,7 +233,7 @@ export default function LatestList({
                 className="w-full flex items-center gap-2.5 px-3 py-1.5 text-xs text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
               >
                 <Trash2 size={13} strokeWidth={1.75} />
-                Hapus percakapan
+                Delete conversation
               </button>
             )}
           </div>,

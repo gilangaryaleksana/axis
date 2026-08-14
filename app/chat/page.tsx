@@ -100,7 +100,7 @@ export default function ChatPage() {
             title={activeConvoTitle ?? persona.sub}
             onMenuClick={() => setIsSidebarOpen((v) => !v)}
             onRename={() => {
-              const newTitle = prompt("Nama baru:", activeConvoTitle);
+              const newTitle = prompt("New title:", activeConvoTitle);
               if (newTitle?.trim() && currentConvoId) {
                 handleRenameConvo(currentConvoId, newTitle.trim());
               }
@@ -110,7 +110,7 @@ export default function ChatPage() {
               if (currentConvoId) handleToggleUnread(currentConvoId, isUnread);
             }}
             onDelete={() => {
-              if (currentConvoId && confirm("Hapus percakapan ini?")) {
+              if (currentConvoId && confirm("Delete this conversation?")) {
                 handleDeleteConvo(currentConvoId);
               }
             }}
