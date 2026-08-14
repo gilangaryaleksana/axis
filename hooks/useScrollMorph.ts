@@ -12,7 +12,7 @@ type MorphStyle = {
 
 const SPEED = 0.15;
 
-// remap: ubah progress 0-1 jadi sub-range tertentu, lalu clamp 0-1 lagi
+// remap: change progress 0-1 into a specific sub-range, then clamp 0-1 again
 function remap(p: number, start: number, end: number) {
   const t = (p - start) / (end - start);
   return Math.min(Math.max(t, 0), 1);
@@ -53,9 +53,9 @@ export function useScrollMorph(start: MorphStyle, end: MorphStyle) {
       target.style.radius =
         target.style.borderRadius = `${lerp(start.radius, end.radius)}px`;
 
-      // TEXT: pakai progress yang di-remap, selesai duluan (misal di 0 - 0.4 dari scroll total)
+      // TEXT: use the remapped progress so it finishes earlier (e.g., 0 - 0.4 of total scroll)
       if (textRef.current) {
-        const textProgress = remap(p, 0, 0.4); // ← atur di sini
+        const textProgress = remap(p, 0, 0.4); // ← adjust here
         textRef.current.style.opacity =
           `${lerp(start.opacity, end.opacity)}`.replace("REPLACE", "");
         textRef.current.style.opacity = `${start.opacity + (end.opacity - start.opacity) * textProgress}`;

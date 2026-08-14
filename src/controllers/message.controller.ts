@@ -154,7 +154,7 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
 
     if (!userWallet?.walletAddress) {
       botReplyText =
-        "Kamu belum menghubungkan wallet. Silakan connect wallet dulu ya.";
+        "You haven't connected a wallet yet. Please connect your wallet first.";
       botMessage = await prisma.message.create({
         data: {
           conversationId: req.params.id,
@@ -185,7 +185,7 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
 
     if (!userWallet?.walletAddress) {
       botReplyText =
-        "Kamu belum menghubungkan wallet. Silakan connect wallet dulu ya.";
+        "You haven't connected a wallet yet. Please connect your wallet first.";
       botMessage = await prisma.message.create({
         data: {
           conversationId: req.params.id,
@@ -338,39 +338,41 @@ async function generateConversationTitle(userMessage: string): Promise<string> {
 }
 
 // PATCH /api/conversations/:id/messages/:messageId
-export const updateMessageStatus = asyncHandler(async (req: Request, res: Response) => {
-  const ownerId = req.user?.id;
-  const guestId = req.guestId;
+export const updateMessageStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const ownerId = req.user?.id;
+    const guestId = req.guestId;
 
-  if (!ownerId && !guestId) {
-    throw new AppError("No user or guest identity found", 400);
-  }
+    if (!ownerId && !guestId) {
+      throw new AppError("No user or guest identity found", 400);
+    }
 
-  const conversation = await prisma.conversation.findFirst({
-    where: {
-      id: req.params.id,
-      isDeleted: false,
-      ...(ownerId ? { userId: ownerId } : { guestId }),
-    },
-  });
-  if (!conversation) throw new AppError("Conversation not found", 404);
+    const conversation = await prisma.conversation.findFirst({
+      where: {
+        id: req.params.id,
+        isDeleted: false,
+        ...(ownerId ? { userId: ownerId } : { guestId }),
+      },
+    });
+    if (!conversation) throw new AppError("Conversation not found", 404);
 
-  const message = await prisma.message.findFirst({
-    where: { id: req.params.messageId, conversationId: req.params.id },
-  });
-  if (!message) throw new AppError("Message not found", 404);
+    const message = await prisma.message.findFirst({
+      where: { id: req.params.messageId, conversationId: req.params.id },
+    });
+    if (!message) throw new AppError("Message not found", 404);
 
-  const currentPayload = JSON.parse(decrypt(message.content));
-  const updatedPayload = {
-    ...currentPayload,
-    status: req.body.status,
-    txHash: req.body.txHash,
-  };
+    const currentPayload = JSON.parse(decrypt(message.content));
+    const updatedPayload = {
+      ...currentPayload,
+      status: req.body.status,
+      txHash: req.body.txHash,
+    };
 
-  const updated = await prisma.message.update({
-    where: { id: message.id },
-    data: { content: encrypt(JSON.stringify(updatedPayload)) },
-  });
+    const updated = await prisma.message.update({
+      where: { id: message.id },
+      data: { content: encrypt(JSON.stringify(updatedPayload)) },
+    });
 
-  res.json({ ...updated, content: JSON.stringify(updatedPayload) });
-});
+    res.json({ ...updated, content: JSON.stringify(updatedPayload) });
+  },
+);

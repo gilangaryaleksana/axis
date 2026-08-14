@@ -20,11 +20,11 @@ export async function sendMissedReplyEmail(
     to,
     subject: `New reply from ${personaName}`,
     html: `
-      <p>Kamu punya balasan baru dari <strong>${personaName}</strong> yang mungkin belum sempat kamu lihat:</p>
+      <p>You have a new reply from <strong>${personaName}</strong> that you might not have seen yet:</p>
       <blockquote style="border-left: 3px solid #ccc; padding-left: 12px; color: #555;">
         ${botReply}
       </blockquote>
-      <p><a href="${process.env.FRONTEND_URL}/chat">Buka chat</a></p>
+      <p><a href="${process.env.FRONTEND_URL}/chat">Open chat</a></p>
     `,
   });
 }

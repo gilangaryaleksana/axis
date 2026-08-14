@@ -93,6 +93,15 @@ export default function ChatPage() {
             persona={persona}
             title={activeConvoTitle ?? persona.sub}
             onMenuClick={() => setIsSidebarOpen((v) => !v)}
+            onRename={() => {
+              /* buka modal rename atau prompt() */
+            }}
+            onMarkUnread={() => {
+              /* panggil API/local state tandai unread */
+            }}
+            onDelete={() => {
+              /* konfirmasi lalu panggil API delete conversation */
+            }}
           />
           <ChatBody
             messages={messages}

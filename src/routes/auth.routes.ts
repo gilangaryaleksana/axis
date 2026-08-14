@@ -30,7 +30,7 @@ router.get(
     session: false,
     failureRedirect: `${process.env.FRONTEND_URL}/login?error=auth_failed`,
   }),
-  guestMiddleware, // setelah passport, req.user udah keisi -> guestMiddleware skip generate baru
+  guestMiddleware, // after passport, req.user is already populated -> guestMiddleware skips generating a new one
   oauthCallback,
 );
 
