@@ -27,6 +27,9 @@ export default function ChatPage() {
     handleSelectPersona,
     handleSelectConvo,
     handleSend,
+    handleRenameConvo,
+    handleToggleUnread,
+    handleDeleteConvo,
   } = useChatConversations(
     isSettingsLoading
       ? undefined
@@ -34,9 +37,8 @@ export default function ChatPage() {
     isSettingsLoading ? false : settingsData.inAppSound,
   );
 
-  const activeConvoTitle = conversations.find(
-    (c) => c.id === currentConvoId,
-  )?.title;
+ const activeConvo = conversations.find((c) => c.id === currentConvoId);
+ const activeConvoTitle = activeConvo?.title;
 
   useEffect(() => {
     document.title = activeConvoTitle
@@ -46,9 +48,9 @@ export default function ChatPage() {
 
   // close sidebar automatically when a convo/persona is picked (mobile UX)
   const wrapSelectPersona: typeof handleSelectPersona = async (...args) => {
-  await handleSelectPersona(...args);
-  setIsSidebarOpen(false);
-};
+    await handleSelectPersona(...args);
+    setIsSidebarOpen(false);
+  };
   const wrapSelectConvo: typeof handleSelectConvo = (...args) => {
     handleSelectConvo(...args);
     setIsSidebarOpen(false);
@@ -82,10 +84,14 @@ export default function ChatPage() {
               id: c.id,
               title: c.persona.displayName,
               sub: c.title,
+              isUnread: c.isUnread,
             }))}
             currentConvoId={currentConvoId ?? ""}
             onSelectConvo={wrapSelectConvo}
             onClose={() => setIsSidebarOpen(false)}
+            onRenameConvo={handleRenameConvo}
+            onToggleUnreadConvo={handleToggleUnread}
+            onDeleteConvo={handleDeleteConvo}
           />
         </div>
         <div className="flex-1 flex flex-col relative overflow-hidden w-full">
@@ -94,13 +100,19 @@ export default function ChatPage() {
             title={activeConvoTitle ?? persona.sub}
             onMenuClick={() => setIsSidebarOpen((v) => !v)}
             onRename={() => {
-              /* buka modal rename atau prompt() */
+              const newTitle = prompt("Nama baru:", activeConvoTitle);
+              if (newTitle?.trim() && currentConvoId) {
+                handleRenameConvo(currentConvoId, newTitle.trim());
+              }
             }}
-            onMarkUnread={() => {
-              /* panggil API/local state tandai unread */
+            isUnread={activeConvo?.isUnread}
+            onToggleUnread={(isUnread) => {
+              if (currentConvoId) handleToggleUnread(currentConvoId, isUnread);
             }}
             onDelete={() => {
-              /* konfirmasi lalu panggil API delete conversation */
+              if (currentConvoId && confirm("Hapus percakapan ini?")) {
+                handleDeleteConvo(currentConvoId);
+              }
             }}
           />
           <ChatBody

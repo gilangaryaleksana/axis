@@ -8,6 +8,7 @@ import {
   updateConversation,
   deleteConversation,
   clearAllConversations,
+  markConversationUnread,
 } from "@/controllers/conversation.controller";
 import {
   getMessages,
@@ -29,5 +30,6 @@ router.delete("/:id", deleteConversation);
 router.get("/:id/messages", getMessages);
 router.post("/:id/messages", sendMessage);
 router.patch("/:id/messages/:messageId", updateMessageStatus);
+router.patch("/:id/unread", markConversationUnread);
 
 export default router;

@@ -142,3 +142,21 @@ export const clearAllConversations = asyncHandler(
     res.json({ message: "All conversations cleared successfully" });
   },
 );
+
+// PATCH /api/conversations/:id/unread — toggle unread flag
+export const markConversationUnread = asyncHandler(
+  async (req: Request, res: Response) => {
+    const ownerFilter = getOwnerFilter(req);
+
+    const owned = await prisma.conversation.findFirst({
+      where: { id: req.params.id, ...ownerFilter, isDeleted: false },
+    });
+    if (!owned) throw new AppError("Conversation not found", 404);
+
+    const updated = await prisma.conversation.update({
+      where: { id: req.params.id },
+      data: { isUnread: req.body.isUnread ?? true },
+    });
+    res.json(updated);
+  },
+);

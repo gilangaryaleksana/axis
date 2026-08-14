@@ -4,6 +4,7 @@ import {
   PanelLeft,
   MoreVertical,
   Pencil,
+  Mail,
   MailOpen,
   Trash2,
 } from "lucide-react";
@@ -16,7 +17,8 @@ export default function ChatHeader({
   className = "",
   onMenuClick,
   onRename,
-  onMarkUnread,
+  onToggleUnread,
+  isUnread,
   onDelete,
 }: {
   persona: Persona;
@@ -24,7 +26,8 @@ export default function ChatHeader({
   className?: string;
   onMenuClick?: () => void;
   onRename?: () => void;
-  onMarkUnread?: () => void;
+  onToggleUnread?: (isUnread: boolean) => void;
+  isUnread?: boolean;
   onDelete?: () => void;
 }) {
   const Icon = persona.icon;
@@ -43,12 +46,11 @@ export default function ChatHeader({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMenuOpen]);
 
-  const hasActions = onRename || onMarkUnread || onDelete;
+  const hasActions = onRename || onToggleUnread || onDelete;
 
   return (
     <div className={`absolute top-0 left-0 right-0 z-10 ${className}`}>
       <div className="flex items-center gap-3 md:gap-3.5 px-4 md:px-8 py-3 bg-white dark:bg-[#202023] backdrop-blur-md">
-        {/* hamburger, mobile only */}
         <button
           onClick={onMenuClick}
           className="md:hidden shrink-0 w-9 h-9 flex items-center justify-center rounded-lg text-[#1a1a1a] dark:text-[#e8e8e6]"
@@ -76,7 +78,6 @@ export default function ChatHeader({
           </p>
         </div>
 
-        {/* dropdown menu */}
         {hasActions && (
           <div className="relative shrink-0" ref={menuRef}>
             <button
@@ -100,16 +101,20 @@ export default function ChatHeader({
                     Rename
                   </button>
                 )}
-                {onMarkUnread && (
+                {onToggleUnread && (
                   <button
                     onClick={() => {
-                      onMarkUnread();
+                      onToggleUnread(!isUnread);
                       setIsMenuOpen(false);
                     }}
                     className={`w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-left text-[#1a1a1a] dark:text-[#f2f2f0] hover:bg-gray-100 dark:hover:bg-[#2c2c2f] ${dmSans.className}`}
                   >
-                    <MailOpen size={15} strokeWidth={1.75} />
-                    Mark as unread
+                    {isUnread ? (
+                      <Mail size={15} strokeWidth={1.75} />
+                    ) : (
+                      <MailOpen size={15} strokeWidth={1.75} />
+                    )}
+                    {isUnread ? "Mark as read" : "Mark as unread"}
                   </button>
                 )}
                 {onDelete && (

@@ -2,14 +2,21 @@
 import { useEffect, useRef, useState } from "react";
 import { PERSONAS, PersonaKey } from "../components/persona/personas";
 import { authFetch } from "../lib/auth";
-import { createConversation, sendMessage } from "../lib/conversations";
 import { Message } from "../components/chat/ChatBody";
+import {
+  createConversation,
+  sendMessage,
+  renameConversation,
+  markConversationUnread,
+  deleteConversationById,
+} from "../lib/conversations";
 
 interface ConversationSummary {
   id: string;
   title: string;
   persona: { type: string; displayName: string };
   updatedAt: string;
+  isUnread?: boolean;
   _count: { messages: number };
 }
 
@@ -108,11 +115,45 @@ export function useChatConversations(
     }
   };
 
-  const handleSelectConvo = (id: string) => {
-    const conv = conversations.find((c) => c.id === id);
-    if (conv) setCurrentPersona(conv.persona.type as PersonaKey);
-    isSwitchingRef.current = true;
-    setCurrentConvoId(id);
+const handleSelectConvo = (id: string) => {
+  const conv = conversations.find((c) => c.id === id);
+  if (conv) setCurrentPersona(conv.persona.type as PersonaKey);
+  if (conv?.isUnread) {
+    markConversationUnread(id, false).then(loadConversationList);
+  }
+  isSwitchingRef.current = true;
+  setCurrentConvoId(id);
+};
+
+  const handleRenameConvo = async (id: string, newTitle: string) => {
+    try {
+      await renameConversation(id, newTitle);
+      await loadConversationList();
+    } catch (err) {
+      console.error("Failed to rename conversation", err);
+    }
+  };
+
+  const handleToggleUnread = async (id: string, isUnread: boolean) => {
+    try {
+      await markConversationUnread(id, isUnread);
+      await loadConversationList();
+    } catch (err) {
+      console.error("Failed to toggle unread status", err);
+    }
+  };
+
+  const handleDeleteConvo = async (id: string) => {
+    try {
+      await deleteConversationById(id);
+      if (id === currentConvoId) {
+        setCurrentConvoId(null);
+        setMessages([]);
+      }
+      await loadConversationList();
+    } catch (err) {
+      console.error("Failed to delete conversation", err);
+    }
   };
 
   const handleSend = async (text: string) => {
@@ -217,5 +258,8 @@ export function useChatConversations(
     handleSelectPersona,
     handleSelectConvo,
     handleSend,
+    handleRenameConvo,
+    handleToggleUnread,
+    handleDeleteConvo,
   };
 }

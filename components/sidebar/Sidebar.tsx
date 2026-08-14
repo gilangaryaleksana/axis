@@ -19,6 +19,9 @@ interface SidebarProps {
   onSelectConvo: (id: string) => void;
   userName?: string;
   onClose?: () => void;
+  onRenameConvo?: (id: string, newTitle: string) => void;
+  onToggleUnreadConvo?: (id: string, isUnread: boolean) => void;
+  onDeleteConvo?: (id: string) => void;
 }
 
 interface MeResponse {
@@ -39,6 +42,9 @@ export default function Sidebar({
   userName = "Guest",
   isCreatingConversation = false,
   onClose,
+  onRenameConvo,
+  onToggleUnreadConvo,
+  onDeleteConvo,
 }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<MeResponse | null>(null);
@@ -156,6 +162,9 @@ export default function Sidebar({
           currentId={currentConvoId}
           onSelect={onSelectConvo}
           compact={data.compactSidebar}
+          onRename={onRenameConvo}
+          onToggleUnread={onToggleUnreadConvo}
+          onDelete={onDeleteConvo}
         />
       </div>
 

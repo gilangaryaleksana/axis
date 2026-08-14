@@ -49,3 +49,44 @@ export async function updateMessageStatus(
   }
   return res.json();
 }
+
+export async function renameConversation(
+  conversationId: string,
+  title: string,
+) {
+  const res = await authFetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${conversationId}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title }),
+    },
+  );
+  if (!res.ok) throw new Error("Failed to rename conversation");
+  return res.json();
+}
+
+export async function markConversationUnread(
+  conversationId: string,
+  isUnread = true,
+) {
+  const res = await authFetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${conversationId}/unread`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isUnread }),
+    },
+  );
+  if (!res.ok) throw new Error("Failed to mark conversation unread");
+  return res.json();
+}
+
+export async function deleteConversationById(conversationId: string) {
+  const res = await authFetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${conversationId}`,
+    { method: "DELETE" },
+  );
+  if (!res.ok) throw new Error("Failed to delete conversation");
+  return res.json();
+}
