@@ -99,18 +99,15 @@ export default function ChatPage() {
             persona={persona}
             title={activeConvoTitle ?? persona.sub}
             onMenuClick={() => setIsSidebarOpen((v) => !v)}
-            onRename={() => {
-              const newTitle = prompt("New title:", activeConvoTitle);
-              if (newTitle?.trim() && currentConvoId) {
-                handleRenameConvo(currentConvoId, newTitle.trim());
-              }
+            onRename={(newTitle) => {
+              if (currentConvoId) handleRenameConvo(currentConvoId, newTitle);
             }}
             isUnread={activeConvo?.isUnread}
             onToggleUnread={(isUnread) => {
               if (currentConvoId) handleToggleUnread(currentConvoId, isUnread);
             }}
             onDelete={() => {
-              if (currentConvoId && confirm("Delete this conversation?")) {
+              if (currentConvoId && confirm("Hapus percakapan ini?")) {
                 handleDeleteConvo(currentConvoId);
               }
             }}

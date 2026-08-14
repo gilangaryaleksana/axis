@@ -1,7 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MoreVertical, Pencil, Mail, MailOpen, Trash2, Check, X } from "lucide-react";
+import {
+  MoreVertical,
+  Pencil,
+  Mail,
+  MailOpen,
+  Trash2,
+  Check,
+  X,
+} from "lucide-react";
 
 interface Item {
   id: string;
@@ -103,7 +111,7 @@ export default function LatestList({
               : ""
           }`}
         >
-          <div className="flex items-start gap-1.5 pr-6">
+          <div className="flex items-start gap-1.5">
             <span
               className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1 ${
                 item.isUnread ? "bg-blue-500" : "bg-transparent"
@@ -112,7 +120,7 @@ export default function LatestList({
 
             {renamingId === item.id ? (
               <div
-                className="flex items-center gap-1 flex-1"
+                className="flex items-center gap-1 flex-1 min-w-0"
                 onClick={(e) => e.stopPropagation()}
               >
                 <input
@@ -123,7 +131,7 @@ export default function LatestList({
                     if (e.key === "Enter") confirmRename(item.id);
                     if (e.key === "Escape") setRenamingId(null);
                   }}
-                  className="flex-1 text-xs bg-white dark:bg-[#1b1b1d] border border-gray-300 dark:border-[#3a3a3d] rounded px-1.5 py-0.5 outline-none text-[#1a1a1a] dark:text-[#f1f0ee]"
+                  className="w-full min-w-0 text-xs bg-white dark:bg-[#1b1b1d] border border-gray-300 dark:border-[#3a3a3d] rounded px-1.5 py-1 outline-none text-[#1a1a1a] dark:text-[#f1f0ee]"
                 />
                 <button
                   onClick={() => confirmRename(item.id)}

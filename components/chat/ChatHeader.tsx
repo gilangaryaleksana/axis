@@ -7,6 +7,8 @@ import {
   Mail,
   MailOpen,
   Trash2,
+  Check,
+  X,
 } from "lucide-react";
 import { Persona } from "../persona/personas";
 import { dmSans } from "@/lib/font";
@@ -25,13 +27,15 @@ export default function ChatHeader({
   title: string;
   className?: string;
   onMenuClick?: () => void;
-  onRename?: () => void;
+  onRename?: (newTitle: string) => void;
   onToggleUnread?: (isUnread: boolean) => void;
   isUnread?: boolean;
   onDelete?: () => void;
 }) {
   const Icon = persona.icon;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState(title);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,6 +51,19 @@ export default function ChatHeader({
   }, [isMenuOpen]);
 
   const hasActions = onRename || onToggleUnread || onDelete;
+
+  const startRename = () => {
+    setRenameValue(title);
+    setIsRenaming(true);
+    setIsMenuOpen(false);
+  };
+
+  const confirmRename = () => {
+    if (renameValue.trim() && onRename) {
+      onRename(renameValue.trim());
+    }
+    setIsRenaming(false);
+  };
 
   return (
     <div className={`absolute top-0 left-0 right-0 z-10 ${className}`}>
@@ -65,20 +82,50 @@ export default function ChatHeader({
             className="text-[#1a1a1a] dark:text-[#e8e8e6]"
           />
         </div>
+
         <div className="min-w-0 flex-1">
-          <p
-            className={`text-sm font-semibold text-[#1a1a1a] dark:text-[#e8e8e6] truncate ${dmSans.className}`}
-          >
-            {persona.name}
-          </p>
-          <p
-            className={`text-xs text-gray-500 dark:text-[#6f6f6b] mt-0.5 truncate ${dmSans.className}`}
-          >
-            {title}
-          </p>
+          {isRenaming ? (
+            <div className="flex items-center gap-1.5">
+              <input
+                autoFocus
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") confirmRename();
+                  if (e.key === "Escape") setIsRenaming(false);
+                }}
+                className={`w-3xs min-w-0 text-sm font-semibold bg-white dark:bg-[#1b1b1d] border border-gray-300 dark:border-[#3a3a3d] rounded-md px-2 py-1 outline-none focus:border-black dark:focus:border-white text-[#1a1a1a] dark:text-[#f2f2f0] ${dmSans.className}`}
+              />
+              <button
+                onClick={confirmRename}
+                className="text-green-600 shrink-0"
+              >
+                <Check size={16} />
+              </button>
+              <button
+                onClick={() => setIsRenaming(false)}
+                className="text-gray-400 shrink-0"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          ) : (
+            <>
+              <p
+                className={`text-sm font-semibold text-[#1a1a1a] dark:text-[#e8e8e6] truncate ${dmSans.className}`}
+              >
+                {persona.name}
+              </p>
+              <p
+                className={`text-xs text-gray-500 dark:text-[#6f6f6b] mt-0.5 truncate ${dmSans.className}`}
+              >
+                {title}
+              </p>
+            </>
+          )}
         </div>
 
-        {hasActions && (
+        {hasActions && !isRenaming && (
           <div className="relative shrink-0" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen((v) => !v)}
@@ -91,10 +138,7 @@ export default function ChatHeader({
               <div className="absolute right-0 top-full mt-1 w-56 rounded-lg border border-gray-200 dark:border-[#333336] bg-white dark:bg-[#232326] shadow-lg py-1 z-20">
                 {onRename && (
                   <button
-                    onClick={() => {
-                      onRename();
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={startRename}
                     className={`w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-left text-[#1a1a1a] dark:text-[#f2f2f0] hover:bg-gray-100 dark:hover:bg-[#2c2c2f] ${dmSans.className}`}
                   >
                     <Pencil size={15} strokeWidth={1.75} />
