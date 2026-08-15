@@ -29,7 +29,7 @@ export function Navbar() {
       <GoogleOneTap />
       <div className="flex items-end justify-between text-black">
         <div className="absolute top-6 left-10">
-          <h1 className="text-6xl">
+          <h1 className="text-5xl">
             a<span className="text-4xl">xis</span>
           </h1>
         </div>

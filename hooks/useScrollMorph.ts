@@ -18,6 +18,11 @@ function remap(p: number, start: number, end: number) {
   return Math.min(Math.max(t, 0), 1);
 }
 
+// ease-out: fast start, slow finish — gives the morph a settling feel at the end
+function easeOutCubic(t: number) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
 export function useScrollMorph(start: MorphStyle, end: MorphStyle) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const targetRef = useRef<HTMLDivElement>(null);
@@ -45,19 +50,17 @@ export function useScrollMorph(start: MorphStyle, end: MorphStyle) {
       progressCurrent.current +=
         (progressTarget.current - progressCurrent.current) * SPEED;
 
-      const p = progressCurrent.current;
+      const p = easeOutCubic(progressCurrent.current);
       const lerp = (a: number, b: number) => a + (b - a) * p;
 
       target.style.width = `${lerp(start.width, end.width)}px`;
       target.style.height = `${lerp(start.height, end.height)}px`;
-      target.style.radius =
-        target.style.borderRadius = `${lerp(start.radius, end.radius)}px`;
+      target.style.borderRadius = `${lerp(start.radius, end.radius)}px`;
 
-      // TEXT: use the remapped progress so it finishes earlier (e.g., 0 - 0.4 of total scroll)
       if (textRef.current) {
-        const textProgress = remap(p, 0, 0.4); // ← adjust here
-        textRef.current.style.opacity =
-          `${lerp(start.opacity, end.opacity)}`.replace("REPLACE", "");
+        const textProgress = easeOutCubic(
+          remap(progressCurrent.current, 0, 0.4),
+        );
         textRef.current.style.opacity = `${start.opacity + (end.opacity - start.opacity) * textProgress}`;
       }
 
