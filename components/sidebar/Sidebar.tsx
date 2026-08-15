@@ -91,11 +91,19 @@ export default function Sidebar({
         }`}
       >
         <span
-          className={`font-serif text-4xl tracking-wide ${crimsonText.className} ${
+          className={`group inline-flex items-end text-5xl tracking-wide cursor-default ${crimsonText.className} ${
             collapsed ? "md:hidden" : ""
           }`}
         >
-          A<span className="text-2xl">xis</span>
+          a
+          <span className="relative inline-block h-[1em] mb-[3px] overflow-hidden text-4xl leading-none">
+            <span className="absolute inset-0 block translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0">
+              xis
+            </span>
+            <span className="block transition-transform duration-300 ease-out group-hover:-translate-y-full">
+              chat
+            </span>
+          </span>
         </span>
         <button
           onClick={() => {

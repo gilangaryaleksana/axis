@@ -30,7 +30,7 @@ export function Navbar() {
       <div className="flex items-end justify-between text-black">
         <div className="absolute top-6 left-10">
           <h1 className="text-6xl">
-            A<span className="text-4xl">xis</span>
+            a<span className="text-4xl">xis</span>
           </h1>
         </div>
         <div className="flex justify-center items-center gap-10 text-2xl fixed top-12 left-1/2 -translate-x-1/2 z-50 bg-white">

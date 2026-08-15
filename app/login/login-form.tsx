@@ -94,7 +94,7 @@ export default function LoginForm() {
             className={`absolute text-2xl mb-6 leading-snug ${crimsonText.className}`}
           >
             <h1 className="text-5xl text-black">
-              A<span className="text-3xl">xis</span>
+              a<span className="text-3xl">xis</span>
             </h1>
           </div>
 

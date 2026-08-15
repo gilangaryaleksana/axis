@@ -63,9 +63,11 @@ export default function CommunicationStyleQuizPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white text-black">
       <nav className="flex items-center justify-between px-6 md:px-16 py-5 md:py-7">
-        <div className={`text-2xl md:mb-6 leading-snug ${crimsonText.className}`}>
+        <div
+          className={`text-2xl md:mb-6 leading-snug ${crimsonText.className}`}
+        >
           <h1 className="text-3xl md:text-5xl text-black">
-            A<span className="text-xl md:text-3xl">xis</span>
+            a<span className="text-xl md:text-3xl">xis</span>
           </h1>
         </div>
         <div className="text-xs md:text-sm text-neutral-500">
