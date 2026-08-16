@@ -163,7 +163,8 @@ export default function LatestList({
                       if (e.key === "Escape") setRenamingId(null);
                     }}
                     onClick={(e) => e.stopPropagation()}
-                    className="w-full min-w-0 text-[11px] text-gray-500 dark:text-[#9a9a97] truncate mt-0.5 bg-transparent border-0 outline-none focus:text-[#1a1a1a] dark:focus:text-[#f1f0ee] p-0"
+                    style={{ lineHeight: "inherit", fontFamily: "inherit" }}
+                    className="w-full min-w-0 text-[11px] text-gray-500 dark:text-[#9a9a97] truncate mt-0.5 bg-transparent border-0 outline-none focus:text-[#1a1a1a] dark:focus:text-[#f1f0ee] p-0 m-0 block"
                   />
                 )}
               </div>
@@ -179,11 +180,9 @@ export default function LatestList({
                   {item.title}
                 </p>
                 {!compact && (
-                  <input
-                    disabled
-                    value={item.sub}
-                    className="w-full min-w-0 text-[11px] text-gray-500 dark:text-[#9a9a97] truncate mt-0.5 bg-transparent border-0 outline-none p-0 cursor-pointer"
-                  />
+                  <p className="text-[11px] text-gray-500 dark:text-[#9a9a97] truncate mt-0.5">
+                    {item.sub}
+                  </p>
                 )}
               </div>
             )}
