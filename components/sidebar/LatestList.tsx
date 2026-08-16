@@ -221,7 +221,7 @@ export default function LatestList({
               top: menuPosition.top,
               left: menuPosition.left,
             }}
-            className="w-52 rounded-lg border border-gray-200 dark:border-[#333336] bg-white dark:bg-[#232326] shadow-lg py-1 z-[9999]"
+            className="w-52 rounded-lg border border-gray-200 dark:border-[#333336] bg-white dark:bg-[#232326] shadow-lg py-1 z-[50]"
             onClick={(e) => e.stopPropagation()}
           >
             {onRename && (
