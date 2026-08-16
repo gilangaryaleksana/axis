@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PanelLeft, Plus, Settings } from "lucide-react";
+import { PanelLeft, Plus, Settings, Search } from "lucide-react";
 import { PERSONAS, PersonaKey } from "../persona/personas";
 import PersonaList from "./PersonaList";
 import LatestList from "./LatestList";
 import SettingsModal from "../../components/settings/SettingsModal";
+import SearchModal from "./SearchModal";
 import { crimsonText, dmSans } from "@/lib/font";
 import { useSettings } from "@/lib/settings-context";
 
@@ -50,7 +51,19 @@ export default function Sidebar({
   const [user, setUser] = useState<MeResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { data } = useSettings();
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     async function fetchMe() {
@@ -160,11 +173,19 @@ export default function Sidebar({
       <div
         className={`flex flex-col flex-1 min-h-0 ${collapsed ? "md:hidden" : ""}`}
       >
-        <p
-          className={`text-xs tracking-wider text-gray-500 dark:text-[#9a9a97] mt-7 mb-3.5 ${dmSans.className}`}
-        >
-          Latest
-        </p>
+        <div className="flex items-center justify-between mt-7 mb-3.5">
+          <p
+            className={`text-xs tracking-wider text-gray-500 dark:text-[#9a9a97] ${dmSans.className}`}
+          >
+            Latest
+          </p>
+          <button
+            onClick={() => setIsSearchOpen(true)}
+            className="w-6 h-6 flex items-center justify-center rounded-md text-gray-400 dark:text-[#6f6f6b] hover:bg-gray-100 dark:hover:bg-[#2c2c2f] hover:text-black dark:hover:text-white transition-colors"
+          >
+            <Search size={14} />
+          </button>
+        </div>
         <LatestList
           items={latest}
           currentId={currentConvoId}
@@ -235,6 +256,18 @@ export default function Sidebar({
             prev ? { ...prev, name: saved.displayName } : prev,
           );
         }}
+      />
+
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        items={latest.map((item) => ({
+          id: item.id,
+          title: item.sub,
+          sub: item.title,
+          personaName: item.title,
+        }))}
+        onSelect={onSelectConvo}
       />
     </aside>
   );
