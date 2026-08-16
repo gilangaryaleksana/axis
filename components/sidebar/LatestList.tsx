@@ -128,12 +128,12 @@ export default function LatestList({
         <div
           key={item.id}
           onClick={() => renamingId !== item.id && onSelect(item.id)}
-          className={`group relative px-1.5 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#2c2c2f] ${
+          className={`group relative px-1.5 rounded-lg border-l-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-[#2c2c2f] ${
             compact ? "py-0.5 mb-0" : "py-1.5 mb-0.5"
           } ${currentId === item.id ? "bg-gray-100 dark:bg-[#2c2c2f]" : ""} ${
             item.isUnread
-              ? "bg-blue-50 dark:bg-blue-500/10 border-l-2 border-blue-500"
-              : ""
+              ? "bg-blue-50 dark:bg-blue-500/10 border-blue-500"
+              : "border-transparent"
           }`}
         >
           <div className="flex items-start gap-1.5">
@@ -148,7 +148,7 @@ export default function LatestList({
                 <p
                   className={`text-xs truncate ${
                     item.isUnread
-                      ? "font-semibold text-[#1a1a1a] dark:text-white"
+                      ? "text-[#1a1a1a] dark:text-white"
                       : "text-[#1a1a1a] dark:text-[#f1f0ee]"
                   }`}
                 >
@@ -173,7 +173,7 @@ export default function LatestList({
                 <p
                   className={`text-xs truncate ${
                     item.isUnread
-                      ? "font-semibold text-[#1a1a1a] dark:text-white"
+                      ? "text-[#1a1a1a] dark:text-white"
                       : "text-[#1a1a1a] dark:text-[#f1f0ee]"
                   }`}
                 >
